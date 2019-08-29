@@ -1,68 +1,133 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# ANDROMEDA 
 
-## Available Scripts
+## AUTHENTICATION API ENDPOINTS
 
-In the project directory, you can run:
+### POST
+/authentication/login
 
-### `npm start`
+## CONTAINER API ENDPOINTS
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### GET
+/containers/:container_id
+/containers/:container_id/get_log
+/containers/:container_id/stdout_contents
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+## JOBS API ENDPOINTS
 
-### `npm test`
+### GET
+/jobs/list
+/jobs/:job_id
+/jobs/:job_id/get_log
+/jobs/:job_id/model_version
+/jobs/:job_id/files/stdout
+/jobs/:job_id/files/list
+/jobs/:job_id/containers/current
+/jobs/:job_id/containers/list
+/jobs/:job_id/job_state_id
+/jobs/:job_id/state
+/jobs/:job_id/stop
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### POST
+/jobs/create
+/jobs/run_command
+/jobs/run_python
+/jobs/:job_id/parameters
+/jobs/:job_id/parameters/:parameter_name
 
-### `npm run build`
+## JOB DEFINITIONS API ENDPOINTS
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### GET
+/job_definitions/list
+/job_definitions/public_list
+/job_definitions/:job_definition_id
+/job_definitions/:job_definition_id/parameters
+/job_definitions/:job_definition_id/parameters/:parameter_name
+/job_definitions/:job_definition_id/archive
+/job_definitions/:job_definition_id/unarchive
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+### POST
+/job_definitions/create
+/job_definitions/update
+/job_definitions/get_job_definition_id
+/job_definitions/:job_definition_id/update
+/job_definitions/:job_definition_id/jobs/list
+/job_definitions/:job_definition_id/parameters/:parameter_name/create
+/job_definitions/:job_definition_id/parameters/:parameter_name/update
+/job_definitions/:job_definition_id/parameters/:parameter_name/delete
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## PROJECTS API ENDPOINTS
 
-### `npm run eject`
+### GET
+/projects/list
+/projects/:project_id
+/projects/:project_id/delete
+/projects/:project_id/jobs/list
+/projects/:project_id/batches/list
+/projects/:project_id/batch_definitions/list
+/projects/:project_id/batch_definitions/archived_list
+/projects/:project_id/job_definitions/list
+/projects/:project_id/job_definitions/archived_list
+/projects/:project_id/scheduled_batches/list
+/projects/:project_id/scheduled_batches/archived_list
+/projects/:project_id/files/list
+/projects/:project_id/models/list
+/projects/:project_id/models/formatted_list
+/projects/:project_id/parameters
+/projects/:project_id/parameters/:parameter_name
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### POST
+/projects/get_project_id
+/projects/create
+/projects/:project_id
+/projects/:project_id/rename
+/projects/:project_id/jobs/list_for_parameter
+/projects/:project_id/jobs/query_list
+/projects/:project_id/batches/list_for_parameter
+/projects/:project_id/parameters/:parameter_name/create
+/projects/:project_id/parameters/:parameter_name/update
+/projects/:project_id/parameters/:parameter_name/delete
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## BATCHES API ENDPOINTS
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### GET
+/batches/:batch_id
+/batches/list
+/batches/:batch_id/jobs/list
+/batches/:batch_id/parameters
+/batches/:batch_id/parameters/:parameter_name
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### POST
+/batches/create
+/batches/get_batch_id
+/batches/:batch_id/parameters/:parameter_name/create
+/batches/:batch_id/parameters/:parameter_name/update
+/batches/:batch_id/parameters/:parameter_name/delete
 
-## Learn More
+## MODELS API ENDPOINTS
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### GET
+/models/:model_id
+/models/:model_id/model_versions/list
+/models/:model_id/model_versions/formatted_list
+/models/:model_id/hidden_layers/list
+/models/:model_id/hidden_layers/clear
+/models/:model_id/hidden_layers/:layer_id
+/models/:model_id/hidden_layers/:layer_id/delete
+/models/:model_id/hyperparameter_searches/list
+/models/:model_id/hyperparameter_searches/:version
+/models/:model_id/metrics/list
+/models/:model_id/metrics/clear
+/models/:model_id/metrics/:metric_id/create
+/models/:model_id/metrics/:metric_id/delete
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+### POST
+/models/create
+/models/get_model_id
+/models/:model_id/fit
+/models/:model_id/update
+/models/:model_id/subscribe
+/models/:model_id/unsubscribe
+/models/:model_id/model_versions/create
+/models/:model_id/hidden_layers/create
+/models/:model_id/hidden_layers/:layer_id/update
+/models/:model_id/hyperparameter_searches/create
