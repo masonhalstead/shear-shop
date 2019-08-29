@@ -13,8 +13,6 @@
 
 # misc
 .DS_Store
-.env
-.env_dev
 .env_prod
 .env.local
 .env.development.local
