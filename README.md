@@ -1,18 +1,18 @@
 ## AUTHENTICATION API ENDPOINTS
 
-* ### POST
+ ### POST
  * /authentication/login
 
 ## CONTAINER API ENDPOINTS
 
-* ### GET
+ ### GET
  * /containers/:container_id
  * /containers/:container_id/get_log
  * /containers/:container_id/stdout_contents
 
 ## JOBS API ENDPOINTS
 
-* ### GET
+ ### GET
  * /jobs/list
  * /jobs/:job_id
  * /jobs/:job_id/get_log
@@ -25,7 +25,7 @@
  * /jobs/:job_id/state
  * /jobs/:job_id/stop
 
-* ### POST
+ ### POST
  * /jobs/create
  * /jobs/run_command
  * /jobs/run_python
@@ -34,7 +34,7 @@
 
 ## JOB DEFINITIONS API ENDPOINTS
 
-* ### GET
+ ### GET
  * /job_definitions/list
  * /job_definitions/public_list
  * /job_definitions/:job_definition_id
@@ -43,7 +43,7 @@
  * /job_definitions/:job_definition_id/archive
  * /job_definitions/:job_definition_id/unarchive
 
-* ### POST
+ ### POST
  * /job_definitions/create
  * /job_definitions/update
  * /job_definitions/get_job_definition_id
@@ -55,7 +55,7 @@
 
 ## PROJECTS API ENDPOINTS
 
-* ### GET
+ ### GET
  * /projects/list
  * /projects/:project_id
  * /projects/:project_id/delete
@@ -73,7 +73,7 @@
  * /projects/:project_id/parameters
  * /projects/:project_id/parameters/:parameter_name
 
-* ### POST
+ ### POST
  * /projects/get_project_id
  * /projects/create
  * /projects/:project_id
@@ -87,14 +87,14 @@
 
 ## BATCHES API ENDPOINTS
 
-* ### GET
+ ### GET
  * /batches/:batch_id
  * /batches/list
  * /batches/:batch_id/jobs/list
  * /batches/:batch_id/parameters
  * /batches/:batch_id/parameters/:parameter_name
 
-* ### POST
+ ### POST
  * /batches/create
  * /batches/get_batch_id
  * /batches/:batch_id/parameters/:parameter_name/create
@@ -103,7 +103,7 @@
 
 ## MODELS API ENDPOINTS
 
-* ### GET
+ ### GET
  * /models/:model_id
  * /models/:model_id/model_versions/list
  * /models/:model_id/model_versions/formatted_list
@@ -118,7 +118,7 @@
  * /models/:model_id/metrics/:metric_id/create
  * /models/:model_id/metrics/:metric_id/delete
 
-* ### POST
+ ### POST
  * /models/create
  * /models/get_model_id
  * /models/:model_id/fit
