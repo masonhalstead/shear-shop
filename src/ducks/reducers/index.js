@@ -10,6 +10,8 @@ import { userReducer } from './userReducer';
 import { lookupsReducer } from './lookupsReducer';
 import { settingsReducer } from './settingsReducer';
 import { containerReducer } from './containerReducer';
+import { hamburgerReducer } from './hamburgerReducer';
+import { projectsReducer } from './projectsReducer';
 
 const rootReducer = combineReducers({
   batch: batchReducer,
@@ -23,6 +25,8 @@ const rootReducer = combineReducers({
   lookups: lookupsReducer,
   user: userReducer,
   settings: settingsReducer,
+  hamburger: hamburgerReducer,
+  projects: projectsReducer,
 });
 
 export default rootReducer;

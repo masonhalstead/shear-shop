@@ -4,3 +4,7 @@ export function selectIsAuthenticated(state) {
 export function selectUser(state) {
   return state.user;
 }
+
+export function selectLoading(state) {
+  return state.loading;
+}
