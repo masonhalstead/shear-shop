@@ -103,3 +103,13 @@ export const setParameters = parameters => ({
 export const clearParameters = () => ({
   type: constants.CLEAR_PARAMETERS,
 });
+
+export const setHamburger = settings => ({
+  type: constants.SET_HAMBURGER,
+  payload: settings,
+});
+
+export const setProjects = projects => ({
+  type: constants.SET_PROJECTS,
+  payload: projects,
+});

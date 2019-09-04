@@ -1,0 +1,71 @@
+// color palette
+
+$color-1: #f7f8fb; // light grey
+$color-2: #e7ebf3; // light grey
+$color-3: #e9f2ff; // light blue
+$color-4: #cfd7e6; // light grey
+$color-5: #818fa3; // grey
+$color-6: #62738d; // blue grey
+$color-7: #3b4253; // dark grey
+$color-8: #2e3440; // dark grey
+$color-9: #39404c; // dark grey
+$color-10: #3e96ed; // blue
+$color-11: #b8c2d1; // grey
+$color-12: #5db85b; // green
+$color-13: #d9534f; // red
+$color-14: #ef6f6f; // light red
+$color-15: #f7d7da; // light red
+
+// fonts
+
+$font-1: 'Roboto', sans-serif; // primary - google fonts
+$font-2: 'Inconsolata', monospace; // secondary - google fonts
+
+$font-weight-1: 400; // regular fonts
+$font-weight-2: 500; // medium fonts
+
+$font-color-1: $color-6; // primary & secondary fonts
+
+$font-size-lg: 18px;
+$font-size: 13px;
+$font-size-sm: 12px;
+
+// shadows
+
+$shadow-1: 0 2px 4px 0 rgba(0,0,0,0.12);
+
+// anchors
+
+$anchor-color: $color-10;
+
+// icons
+
+$icon-color-1: $color-5; // primary
+$icon-color-2: #fff; // secondary
+
+// inputs
+
+$inputs-border: $color-4;
+$inputs-placeholder: $color-5;
+$inputs-background: #fff;
+$inputs-color: $color-6;
+
+// buttons
+
+$btn-border-1: $color-7;
+$btn-background-1: $color-9;
+$btn-color-1: #fff;
+
+$btn-border-2: $color-4;
+$btn-background-2: $color-5;
+$btn-color-2: #fff;
+
+// tables
+
+$table-header-background: $color-1;
+$table-header-weight: $font-weight-2;
+$table-border: $color-2;
+$table-row-hover-color: $color-3;
+$table-box-shadow: $shadow-1; // table shadow 50/50 
+$table-footer-text: $color-5; // includes pagination colors 
+

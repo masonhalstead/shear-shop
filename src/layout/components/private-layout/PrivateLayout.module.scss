@@ -1,0 +1,57 @@
+.cognBody {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cognViews {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: flex-start;
+  height: 100%;
+  min-width: 800px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  padding-right: 30px;
+}
+
+.imageMd {
+  width: 60px;
+  height: 60px;
+}
+
+.imageMdBig {
+  width: 220px;
+}
+.fontIconAlign {
+  margin-left: 10px;
+}
+.fontIconAlignChevron {
+  margin-left: 15px;
+}
+.closeButton {
+  position: absolute;
+  margin-left: 180px;
+  bottom: 0;
+}
+.version {
+  position: absolute;
+  bottom: 0;
+  margin-left: 15px;
+  margin-bottom: 5px;
+  color: white;
+}
+.rootColor {
+  color: white;
+}
+.deepMenuItems {
+  margin-left: 56px;
+  color: white;
+}
+.textRoot {
+  margin-left: 1px;
+}

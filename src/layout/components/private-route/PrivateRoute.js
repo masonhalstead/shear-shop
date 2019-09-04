@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { selectIsAuthenticated } from 'ducks/selectors';
 import { routes } from 'layout/routes';
-import { PrivateLayout } from '../private-layout/PrivateLayout';
+import PrivateLayout from '../private-layout/PrivateLayout';
 
 class PrivateRouteWrapper extends React.PureComponent {
   static propTypes = {
@@ -21,7 +21,7 @@ class PrivateRouteWrapper extends React.PureComponent {
       ...rest
     } = this.props;
 
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
       return (
         <Route
           {...rest}

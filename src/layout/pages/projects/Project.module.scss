@@ -1,0 +1,42 @@
+@import "src/scss/styles";
+
+.toolbar {
+  background-color: $color-2;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.contentAlign {
+  display: flex;
+  flex-direction: row;
+  margin-top: 100px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.projectItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid $color-2;
+  border-radius: 15px;
+  width: 200px;
+  height: 150px;
+  padding: 15px;
+}
+.rootColor {
+  color: $color-5;
+}
+.header {
+  color: $color-5;
+  font-weight: bold;
+}
+.secondText {
+  color: $color-4;
+  font-size: 14px;
+  margin-top: 5px;
+}
+.logout {
+  cursor: pointer;
+}

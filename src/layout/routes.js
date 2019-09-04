@@ -8,5 +8,5 @@ export const routes = {
   JOBS: '/projects/:project_id/jobs/:filter',
   JOB: '/projects/:project_id/jobs/:job_id',
   JOB_DEFINITIONS: '/projects/:project_id/definitions/:filter',
-  JOB_DEFINITION: '/projects/:project_id/definitions/:def_id',
+  JOB_DEFINITION: '/projects/:project_id/definitions/:def_id/definition',
 };

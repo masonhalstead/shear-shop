@@ -1,0 +1,134 @@
+@import "src/scss/styles";
+
+.flexLogin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+  min-width: 1000px;
+  height: 100%;
+  flex: 1;
+}
+
+.loginInner {
+  max-width: 850px;
+  padding: 30px;
+  background-color: #ffffff;
+  border: 1px solid $color-1;
+  text-align: center;
+  box-shadow: $shadow-1;
+}
+
+.imageMd {
+  display: block;
+  margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 350px;
+  height: auto;
+}
+
+.flexRow {
+  display: flex;
+}
+
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  text-align: left;
+  padding-left: 25px;
+
+  &:first-child {
+    border-right: 1px solid $color-3;
+    padding-right: 25px;
+    padding-left: 0;
+  }
+}
+
+.publicSubTitle {
+  font-size: 18px;
+  margin-bottom: 25px;
+  color: $color-5;
+}
+
+.loginTerms {
+  flex-grow: 1;
+  line-height: 1.5;
+  color: $color-5;
+}
+
+.publicLoginLink {
+  color: $color-1;
+  margin: 0;
+  cursor: pointer;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formControl {
+  display: block;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn {
+  display: inline-block;
+  font-weight: 300;
+  color: #212529;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btnPrimary {
+  color: #fff;
+  background-color: $color-5;
+  border-radius: 3px;
+  padding: 7px 12px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.error {
+  margin-top: 15px;
+  padding: 5px 15px;
+  border: 1px solid lighten(rgb(255, 0, 24), 25%);
+  background: lighten(rgb(255, 0, 24), 35%);
+}
+
+.checkBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .label {
+    font-weight: 400;
+    margin-right: auto;
+  }
+
+  a {
+    color: $color-1;
+    text-decoration: none;
+    padding: 0;
+  }
+}

@@ -1,0 +1,15 @@
+@import "src/scss/styles";
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+}
+
+.copyright {
+  margin: 0;
+  font-size: 13px;
+  color: $color-5
+}
