@@ -21,12 +21,18 @@ export const CustomInput = React.memo(
     endAdornment,
     InputProps,
     inputStyles,
+    placeholder,
     ...props
   }) => (
     <div className={classNames(cn.cell, { [cn.error]: error }, className)}>
-      {label && <label className={cn.label} htmlFor={id}>{label}</label>}
+      {label && (
+        <label className={cn.label} htmlFor={id}>
+          {label}
+        </label>
+      )}
       <div className={cn.field}>
         <TextField
+          placeholder={placeholder}
           error={!!error}
           select={select}
           fullWidth
@@ -80,6 +86,7 @@ CustomInput.propTypes = {
   disabled: PropTypes.bool,
   error: PropTypes.string,
   variant: PropTypes.string,
+  placeholder: PropTypes.string,
   InputProps: PropTypes.object,
   inputStyles: PropTypes.object,
   endAdornment: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),

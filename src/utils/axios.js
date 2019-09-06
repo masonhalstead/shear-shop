@@ -8,18 +8,23 @@ export function publicPost(url, data) {
     method: 'post',
     url: `${REACT_APP_HOST}${url}`,
     data: JSON.stringify(data),
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 }
 export function getData(url) {
-  const user = JSON.parse(localStorage.getItem('user'));
-
-  if (!isObject(user)) {
-    throw new Error('Error authenticating credentials');
-  }
-
-  const { private_key } = user;
-  const { public_key } = user;
+  // when login functionality will work
+  // const user = JSON.parse(localStorage.getItem('user'));
+  //
+  // if (!isObject(user)) {
+  //   throw new Error('Error authenticating credentials');
+  // }
+  //
+  // const { private_key } = user;
+  // const { public_key } = user;
+  const private_key = 'KVOW-SSE8-724D-BW5S';
+  const public_key = 'GJ90-AK2S-Z35S-LL1A';
   const hmac = cryptoJS.HmacSHA256(url, private_key);
 
   return axios({
