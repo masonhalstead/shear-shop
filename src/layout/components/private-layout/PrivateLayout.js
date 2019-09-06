@@ -194,17 +194,17 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               <div className={cn.deepMenuItems}>
                 <ListItem
                   button
-                  // onClick={() => {
-                  //   history.push(`/projects/${id}/definitions/unarchived`);
-                  // }}
+                  onClick={() => {
+                    history.push(`/projects/${id}/definitions/unarchived`);
+                  }}
                 >
                   Unarchived
                 </ListItem>
                 <ListItem
                   button
-                  // onClick={() => {
-                  //   history.push(`/projects/${id}/definitions/archived`);
-                  // }}
+                  onClick={() => {
+                    history.push(`/projects/${id}/definitions/archived`);
+                  }}
                 >
                   Archived
                 </ListItem>

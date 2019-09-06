@@ -1,0 +1,72 @@
+@import "src/scss/styles";
+
+.containerRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.containerRowSmall {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.inputStyles {
+  height: 10px;
+}
+
+.inputStylesSmall {
+  height: 5px;
+  width: 80px;
+}
+
+.align {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+.top {
+  margin-top: 10px;
+}
+
+.formControl {
+  width: 49%;
+  margin-top: 10px;
+}
+
+.customHeight {
+  height: 5px;
+}
+.longInput {
+  width: 65%
+}
+.shortInput {
+  width: 35%;
+}
+.divider {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  display: flex;
+  flex: 1;
+  border-bottom: 1px solid $color-4;
+}
+.label {
+  font-size: 16px;
+  color: $color-5
+}
+
+.addMore {
+  background-color: $color-4;
+  color: $color-5;
+  padding: 5px;
+  border-radius: 5px;
+  width: 200px;
+  margin-top: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.addMoreButton {
+  margin-left: 5px;
+}
