@@ -21,7 +21,7 @@ class PrivateRouteWrapper extends React.PureComponent {
       ...rest
     } = this.props;
 
-    if (!isAuthenticated) {
+    if (isAuthenticated) {
       return (
         <Route
           {...rest}

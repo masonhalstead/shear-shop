@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   job: jobReducer,
   jobs: jobsReducer,
   job_definition: jobDefinitionReducer,
-  job_definitions: jobDefinitionsReducer,
+  jobDefinitions: jobDefinitionsReducer,
   parameters: parametersReducer,
   container: containerReducer,
   lookups: lookupsReducer,

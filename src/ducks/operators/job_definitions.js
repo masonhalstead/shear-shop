@@ -1,13 +1,21 @@
 import { setLoading, setJobDefinitions } from 'ducks/actions';
 import { normalizeWithUUID } from 'utils/normalizers';
-// import { getData } from 'utils/axios';
-
-const job_data = {};
+import * as Sentry from '@sentry/browser';
+import { getData } from 'utils/axios';
 
 export const getJobDefinitions = () => async dispatch => {
   await dispatch(setLoading(true));
-  // const res = await getData(`/jobs/${job_id}`);
-  const job = await normalizeWithUUID(job_data);
-  await dispatch(setJobDefinitions(job));
-  return job;
+  try {
+    const res = await getData('/job_definitions/list');
+    const definitions = await normalizeWithUUID(res.data);
+    await dispatch(setJobDefinitions(definitions));
+    await dispatch(setLoading(false));
+    return definitions;
+  } catch (err) {
+    Sentry.captureException(err);
+    await dispatch(setLoading(false));
+
+    dispatch(setJobDefinitions([]));
+    throw err;
+  }
 };

@@ -1,94 +1,25 @@
-import React from 'react';
-import * as PropTypes from 'prop-types';
-import { TextField } from '@material-ui/core';
-import classNames from 'classnames';
-import cn from './MaterialInput.module.scss';
+import { fade, withStyles } from '@material-ui/core/styles';
+import { InputBase } from '@material-ui/core';
 
-export const CustomInput = React.memo(
-  ({
-    label,
-    name,
-    id,
-    value,
-    onChange,
-    required,
-    select,
-    children,
-    className,
-    disabled,
-    error,
-    variant,
-    endAdornment,
-    InputProps,
-    inputStyles,
-    placeholder,
-    ...props
-  }) => (
-    <div className={classNames(cn.cell, { [cn.error]: error }, className)}>
-      {label && (
-        <label className={cn.label} htmlFor={id}>
-          {label}
-        </label>
-      )}
-      <div className={cn.field}>
-        <TextField
-          placeholder={placeholder}
-          error={!!error}
-          select={select}
-          fullWidth
-          required={required}
-          name={name}
-          margin="none"
-          variant={variant || 'outlined'}
-          value={value}
-          id={id}
-          onChange={onChange}
-          classes={{
-            root: cn.textField,
-          }}
-          InputLabelProps={{
-            classes: {
-              root: cn.labexl,
-            },
-          }}
-          InputProps={{
-            classes: {
-              focused: cn.inputFocused,
-              notchedOutline:
-                !variant || variant === 'outlined' ? cn.notchedBorder : null,
-              ...inputStyles,
-            },
-            endAdornment,
-            'data-role': props['data-role'],
-            ...InputProps,
-          }}
-          disabled={disabled}
-          {...props}
-        >
-          {children}
-        </TextField>
-        <div className={cn.errorMessage}>{error}</div>
-      </div>
-    </div>
-  ),
-);
-
-CustomInput.propTypes = {
-  label: PropTypes.string,
-  name: PropTypes.string,
-  id: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onChange: PropTypes.func,
-  required: PropTypes.bool,
-  select: PropTypes.bool,
-  children: PropTypes.node,
-  className: PropTypes.string,
-  disabled: PropTypes.bool,
-  error: PropTypes.string,
-  variant: PropTypes.string,
-  placeholder: PropTypes.string,
-  InputProps: PropTypes.object,
-  inputStyles: PropTypes.object,
-  endAdornment: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-  'data-role': PropTypes.string,
-};
+export const CustomInput = withStyles(theme => ({
+  root: {
+    width: '100%',
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid #cfd7e6',
+    fontSize: 13,
+    height: '30px',
+    padding: '5px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    '&:focus': {
+      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+      borderColor: theme.palette.primary.main,
+    },
+  },
+}))(InputBase);

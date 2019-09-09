@@ -1,6 +1,3 @@
-// POST /authentication/login
-// payload = { login: 'email_address', password: 'password'}
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -43,11 +40,17 @@ export class ConnectedLoginWrapper extends React.PureComponent {
     }
 
     try {
-      const clientCustomerId = await login({
-        login: email_address,
+      const user = await login({
+        email_address,
         password,
       });
-      history.push(clientCustomerId ? '/projects' : '/login');
+
+      if (user.authentication_result_id === 2) {
+        this.setState({ error: 'Invalid Login or Password' });
+      }
+      if (user.authentication_result_id === 1) {
+        history.push('/projects');
+      }
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       this.setState({ error: err.message });
@@ -120,9 +123,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  // toggleLoader: toggleLoaderAction,
   login: loginUserAction,
-  // authenticateUser: authenticateUserAction,
 };
 
 const LoginWrapper = connect(

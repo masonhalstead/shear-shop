@@ -13,6 +13,7 @@
   margin-top: 100px;
   margin-left: 10px;
   cursor: pointer;
+  flex-flow: wrap;
 }
 
 .projectItem {
@@ -23,6 +24,7 @@
   border-radius: 15px;
   width: 200px;
   height: 150px;
+  margin: 15px;
   padding: 15px;
 }
 .rootColor {
@@ -31,11 +33,13 @@
 .header {
   color: $color-5;
   font-weight: bold;
+  overflow-wrap: break-word;
 }
 .secondText {
   color: $color-4;
   font-size: 14px;
   margin-top: 5px;
+  overflow-wrap: break-word;
 }
 .logout {
   cursor: pointer;

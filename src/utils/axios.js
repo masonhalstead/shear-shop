@@ -1,6 +1,5 @@
 import axios from 'axios';
 import cryptoJS from 'crypto-js';
-import { isObject } from 'utils/helpers';
 const { REACT_APP_HOST } = process.env;
 
 export function publicPost(url, data) {
@@ -14,17 +13,12 @@ export function publicPost(url, data) {
   });
 }
 export function getData(url) {
-  // when login functionality will work
-  // const user = JSON.parse(localStorage.getItem('user'));
-  //
-  // if (!isObject(user)) {
-  //   throw new Error('Error authenticating credentials');
-  // }
-  //
-  // const { private_key } = user;
-  // const { public_key } = user;
-  const private_key = 'KVOW-SSE8-724D-BW5S';
-  const public_key = 'GJ90-AK2S-Z35S-LL1A';
+  const private_key = localStorage.getItem('private_key');
+  const public_key = localStorage.getItem('public_key');
+
+  if (!private_key || !public_key) {
+    throw new Error('Error authenticating credentials');
+  }
   const hmac = cryptoJS.HmacSHA256(url, private_key);
 
   return axios({
@@ -41,15 +35,14 @@ export function getData(url) {
   });
 }
 export function postData(url, data) {
-  const user = JSON.parse(localStorage.getItem('user'));
   const raw_data = JSON.stringify(data);
 
-  if (!isObject(user)) {
+  const private_key = localStorage.getItem('private_key');
+  const public_key = localStorage.getItem('public_key');
+
+  if (!private_key || !public_key) {
     throw new Error('Error authenticating credentials');
   }
-
-  const { private_key } = user;
-  const { public_key } = user;
   const hmac = cryptoJS.HmacSHA256(url + raw_data, private_key);
 
   return axios({

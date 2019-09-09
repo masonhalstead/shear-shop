@@ -6,7 +6,7 @@ import { TableContainer } from 'components/common/table-view/TableContainer';
 import { TableContent } from 'components/common/table-view/TableContent';
 import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/common/appBar/AppBar';
-import { getProjects as getProjectsAction } from 'ducks/operators/projects';
+import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
 import * as Sentry from '@sentry/browser';
 import cn from './JobDefinitionPage.module.scss';
 import { configureColumns } from './columns';
@@ -64,9 +64,9 @@ const result = {
 
 class JobDefinitionPage extends PureComponent {
   static propTypes = {
-    getProjects: PropTypes.func,
+    getJobDefinitions: PropTypes.func,
     hamburger: PropTypes.object,
-    projects: PropTypes.array,
+    jobDefinitions: PropTypes.array,
     history: PropTypes.object,
     location: PropTypes.object,
     lookups: PropTypes.object,
@@ -102,9 +102,9 @@ class JobDefinitionPage extends PureComponent {
   };
 
   componentDidMount() {
-    const { getProjects } = this.props;
+    const { getJobDefinitions } = this.props;
     try {
-      getProjects();
+      getJobDefinitions();
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
@@ -132,7 +132,7 @@ class JobDefinitionPage extends PureComponent {
   createColumns = () => configureColumns(this.openModal, this.openDefinition);
 
   render() {
-    const { hamburger, projects, history, lookups } = this.props;
+    const { hamburger, jobDefinitions, history, lookups } = this.props;
     const { label, run, title, id } = this.state;
     return (
       <>
@@ -177,12 +177,12 @@ class JobDefinitionPage extends PureComponent {
 
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
-  projects: state.projects,
+  jobDefinitions: state.jobDefinitions,
   lookups: state.lookups,
 });
 
 const mapDispatchToProps = {
-  getProjects: getProjectsAction,
+  getJobDefinitions: getJobDefinitionsAction,
 };
 
 export default connect(

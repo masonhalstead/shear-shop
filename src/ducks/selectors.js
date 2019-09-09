@@ -1,5 +1,8 @@
 export function selectIsAuthenticated(state) {
-  return state.user && state.user.private_key && state.user.public_key;
+  if (state.user && state.user.private_key && state.user.public_key) {
+    return true;
+  }
+  return false;
 }
 export function selectUser(state) {
   return state.user;
