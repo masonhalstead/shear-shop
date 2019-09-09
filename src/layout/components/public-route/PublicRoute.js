@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { selectIsAuthenticated } from 'ducks/selectors';
 import { routes } from 'layout/routes';
-import {PublicLayout} from '../public-layout/PublicLayout';
+import { PublicLayout } from '../public-layout/PublicLayout';
 
 class PublicRouteWrapper extends React.PureComponent {
   static propTypes = {
-    isAuthenticated: PropTypes.string,
+    isAuthenticated: PropTypes.bool,
     component: PropTypes.any,
     location: PropTypes.object,
   };
@@ -39,7 +39,7 @@ class PublicRouteWrapper extends React.PureComponent {
         render={props => (
           <Redirect
             to={{
-              pathname: routes.INTERFACE,
+              pathname: routes.PROJECTS,
               state: {
                 from: props.location,
               },

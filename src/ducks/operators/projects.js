@@ -7,8 +7,9 @@ export const getProjects = () => async dispatch => {
   await dispatch(setLoading(true));
   try {
     const res = await getData('/projects/list');
-    const projects = await normalizeWithUUID(res);
+    const projects = await normalizeWithUUID(res.data);
     await dispatch(setProjects(projects));
+    await dispatch(setLoading(false));
     return projects;
   } catch (err) {
     Sentry.captureException(err);
