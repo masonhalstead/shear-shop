@@ -35,6 +35,10 @@ export const TableContentWrapper = React.memo(
             root: {
               textAlign: 'center',
               backgroundColor: '#e7ebf3 !important',
+              height: '20px',
+              padding: '5px',
+              fontWeight: 400,
+              color: '#62738d',
             },
             toolButton: {
               display: 'block',
@@ -46,6 +50,7 @@ export const TableContentWrapper = React.memo(
           MuiTableCell: {
             body: {
               fontSize: '1rem',
+              padding: '4.5px 8px 4.5px 8px',
             },
             head: {
               fontSize: '1rem',
