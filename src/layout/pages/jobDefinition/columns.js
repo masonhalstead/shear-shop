@@ -9,6 +9,7 @@ export const configureColumns = (openModal, openDefinition) => [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: (value, tableMeta) => (
         <div
           style={{ cursor: 'pointer' }}
@@ -25,6 +26,7 @@ export const configureColumns = (openModal, openDefinition) => [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <span className={cn.textColor}>{value}</span>
@@ -38,6 +40,7 @@ export const configureColumns = (openModal, openDefinition) => [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <span className={cn.textColor}>{value}</span>
@@ -51,6 +54,7 @@ export const configureColumns = (openModal, openDefinition) => [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'right' }}>
           <span className={cn.textColor}>{value}</span>
@@ -64,6 +68,7 @@ export const configureColumns = (openModal, openDefinition) => [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div>
           <span className={cn.textColor}>{value}</span>
@@ -77,6 +82,7 @@ export const configureColumns = (openModal, openDefinition) => [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <span className={cn.textColor}>{value}</span>
@@ -90,6 +96,7 @@ export const configureColumns = (openModal, openDefinition) => [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <span className={cn.textColor}>{value}</span>

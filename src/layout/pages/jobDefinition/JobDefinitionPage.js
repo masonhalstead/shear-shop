@@ -4,14 +4,24 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TableContainer } from 'components/common/table-view/TableContainer';
 import { TableContent } from 'components/common/table-view/TableContent';
-import { Toolbar, Breadcrumbs } from '@material-ui/core';
+import { Toolbar, Breadcrumbs, Dialog, Button } from '@material-ui/core';
 import { CustomAppBar } from 'components/common/appBar/AppBar';
 import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
+import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
+import { CustomizedInputBase } from 'components/common/search/SearchInput';
+import Popover from 'components/common/popover/Popover';
+import TableViewCol from 'components/common/viewColumn/ViewColumn';
+import classNames from 'classnames';
+import {
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from 'components/common/dialogs/Dialogs';
+import { CustomInput } from 'components/common/material-input/CustomInput';
 import cn from './JobDefinitionPage.module.scss';
 import { configureColumns } from './columns';
 import RunDefinition from './runDefinition/RunDefinition';
-import CustomToolbar from './CustomToolbarIcon';
 
 const result = {
   client: 'Edelman',
@@ -86,11 +96,11 @@ class JobDefinitionPage extends PureComponent {
   options = {
     filterType: 'textField',
     selectableRows: 'none',
-    search: true,
+    search: false,
     pagination: true,
-    filter: true,
+    filter: false,
     download: false,
-    viewColumns: true,
+    viewColumns: false,
     print: false,
   };
 
@@ -98,11 +108,16 @@ class JobDefinitionPage extends PureComponent {
     label: 'Unarchived',
     run: false,
     title: '',
-    id: '',
+    search: '',
+    jobName: '',
+    columns: [],
+    viewColumns: [],
+    open: false,
   };
 
   componentDidMount() {
     const { getJobDefinitions } = this.props;
+    this.createColumns();
     try {
       getJobDefinitions();
     } catch (err) {
@@ -119,6 +134,10 @@ class JobDefinitionPage extends PureComponent {
     this.setState({ run: false });
   };
 
+  handleCloseDefinition = () => {
+    this.setState({ open: false });
+  };
+
   openModal = (title, id) => {
     this.setState({ run: true, title, id });
   };
@@ -129,16 +148,63 @@ class JobDefinitionPage extends PureComponent {
     history.push(`/projects/${projectId}/definitions/${id}/definition`);
   };
 
-  createColumns = () => configureColumns(this.openModal, this.openDefinition);
+  onSearch = e => {
+    this.setState({ search: e.target.value });
+  };
+
+  createColumns = () => {
+    const columns = configureColumns(this.openModal, this.openDefinition);
+    this.setState({ columns, viewColumns: columns });
+  };
+
+  changeJobName = name => {
+    this.setState({ jobName: name });
+  };
+
+  handleColChange = (value, index, checked) => {
+    const { viewColumns } = this.state;
+    const filtered = [];
+    const viewColumnsNew = [];
+    viewColumns.forEach(column => {
+      if (value !== column.name) {
+        viewColumnsNew.push(column);
+      } else {
+        column.options.display = checked;
+        viewColumnsNew.push(column);
+      }
+    });
+
+    this.setState({ viewColumns: viewColumnsNew });
+  };
+
+  createDefinition = () => {
+    const { jobName } = this.state;
+    const { addJobDefinition } = this.props;
+    addJobDefinition({ job_definition_name: jobName });
+    this.setState({ open: false });
+  };
 
   render() {
     const { hamburger, jobDefinitions, history, lookups } = this.props;
-    const { label, run, title, id } = this.state;
+    const {
+      label,
+      run,
+      title,
+      search,
+      columns,
+      viewColumns,
+      open,
+      jobName,
+    } = this.state;
     return (
       <>
         <CustomAppBar hamburger={hamburger.open}>
           <Toolbar className={cn.toolbar}>
-            <Breadcrumbs separator="›" aria-label="breadcrumb">
+            <Breadcrumbs
+              separator="›"
+              aria-label="breadcrumb"
+              classes={{ separator: cn.separator }}
+            >
               <div
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
@@ -149,19 +215,55 @@ class JobDefinitionPage extends PureComponent {
               </div>
               <div>{label}</div>
             </Breadcrumbs>
-            <div className={cn.logout}>
-              <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
+            <div
+              style={{ display: 'flex', flexDirection: 'row', width: '50%' }}
+            >
+              <div className={cn.search}>
+                <CustomizedInputBase onSearch={this.onSearch} />
+              </div>
+              <div className={cn.logout}>
+                <Popover
+                  trigger={<FontAwesomeIcon icon="cog" color="#818fa3" />}
+                  content={
+                    <TableViewCol
+                      data={result.data}
+                      columns={viewColumns}
+                      options={this.options}
+                      handleColChange={this.handleColChange}
+                    />
+                  }
+                />
+              </div>
+              <div
+                className={cn.add}
+                onClick={() => this.setState({ open: true })}
+              >
+                <FontAwesomeIcon icon="plus" color="#818fa3" />
+              </div>
+              <div className={cn.upperLine} />
+              <div className={cn.logout}>
+                <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
+              </div>
             </div>
           </Toolbar>
         </CustomAppBar>
-        <TableContainer>
-          <TableContent
-            tableData={result.data}
-            tableOptions={this.options}
-            columns={this.createColumns()}
-            customActions={<CustomToolbar handleClick={() => {}} />}
-          />
-        </TableContainer>
+        {columns.length > 0 && (
+          <div style={{ margin: '25px' }}>
+            <TableContainer style={{ margin: '25px' }}>
+              <TableContent
+                tableData={
+                  search.length > 0
+                    ? result.data.filter(item =>
+                        item.jobdefinition.toLowerCase().includes(search),
+                      )
+                    : result.data
+                }
+                tableOptions={this.options}
+                columns={viewColumns}
+              />
+            </TableContainer>
+          </div>
+        )}
         <RunDefinition
           opened={run}
           toggleModal={() => this.setState({ run: false })}
@@ -170,6 +272,39 @@ class JobDefinitionPage extends PureComponent {
           title={title}
           locations={lookups.locations}
         />
+        <Dialog
+          onClose={this.handleCloseDefinition}
+          aria-labelledby="customized-dialog-title"
+          open={open}
+          classes={{ paper: cn.paper }}
+        >
+          <DialogTitle
+            id="customized-dialog-title"
+            onClose={this.handleCloseDefinition}
+          >
+            <div className={cn.title}>Create Job Definition</div>
+          </DialogTitle>
+          <DialogContent dividers>
+            <div className={cn.container}>
+              <div className={cn.label}>Job Definition Name</div>
+              <CustomInput
+                value={jobName}
+                name="jobName"
+                onChange={e => this.changeJobName(e.target.value)}
+              />
+            </div>
+          </DialogContent>
+          <DialogActions className={cn.actions}>
+            <Button
+              onClick={this.createDefinition}
+              color="primary"
+              size="large"
+              className={classNames(cn.btn, cn.btnPrimary)}
+            >
+              Create Definition
+            </Button>
+          </DialogActions>
+        </Dialog>
       </>
     );
   }
@@ -183,6 +318,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getJobDefinitions: getJobDefinitionsAction,
+  addJobDefinition: addJobDefinitionAction,
 };
 
 export default connect(

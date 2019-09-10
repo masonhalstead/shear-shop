@@ -1,7 +1,5 @@
 @import "src/scss/styles";
 
-@import "src/scss/styles";
-
 .toolbar {
   background-color: $color-2;
   display: flex;
@@ -14,15 +12,15 @@
   display: flex;
   flex-direction: column;
   margin-top: 80px;
-  margin-left: 10px;
-  padding: 20px;
+  margin-left: 25px;
+  padding: 25px;
 }
 
 .contentAlignSecond {
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
-  margin-left: 10px;
+  margin-top: 25px;
+  margin-left: 25px;
 }
 
 .projectItem {
@@ -70,13 +68,14 @@
   justify-content: space-between;
 }
 .inputStyles {
-  height: 5px;
+  height: 30px;
 }
 .containerRow {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   flex: 1;
+  margin-bottom: 10px;
 }
 
 .smallItem {
@@ -85,25 +84,30 @@
 }
 
 .top {
-  margin-top: 10px;
+  margin-top: 0;
 }
 
 .tabValue {
-  padding: 20px;
+  padding: 25px;
 }
 
 .rowPadding {
-  padding: 5px;
+  padding: 0;
 }
 
 .label {
   font-size: 16px;
-  color: $color-5
+  color: $color-5;
+  margin-bottom: 3px;
 }
 
 .rowPaddingSelect {
-  padding: 5px;
-  width: 32.7%;
+  width: 32.4%;
+  margin-right: 20px;
+}
+
+.rowPaddingSelectLast {
+  width: 32.3%;
 }
 
 .addMore {
@@ -122,8 +126,8 @@
 }
 
 .align {
-  margin-left: 20px;
-  margin-top: 10px;
+  margin-left: 0;
+  margin-top: 0;
 }
 
 .tableContainerWrapper {
@@ -132,6 +136,16 @@
   margin: -30px 16px 16px 16px;
 }
 
-.customHeight {
-  height: 5px;
+.container {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.containerLast {
+  flex: 1;
+}
+
+.separator {
+  margin-left: 30px;
+  margin-right: 30px;
 }

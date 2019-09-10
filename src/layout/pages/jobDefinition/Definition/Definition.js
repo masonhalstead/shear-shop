@@ -17,7 +17,10 @@ import {
 } from '@material-ui/core';
 import { CustomAppBar } from 'components/common/appBar/AppBar';
 import * as Sentry from '@sentry/browser';
-import { CustomInput } from 'components/common/material-input/CustomInput';
+import {
+  CustomInput,
+  CustomInputTextArea,
+} from 'components/common/material-input/CustomInput';
 import BootstrapInput from 'components/common/bootsrapInput/BootstrapInput';
 import { TableContainer } from 'components/common/table-view/TableContainer';
 import { TableContent } from 'components/common/table-view/TableContent';
@@ -67,7 +70,7 @@ class DefinitionPage extends PureComponent {
     location: 'empty',
     retries: '',
     gpu: '',
-    memory: 'empty',
+    memory: '',
     method: '',
     region: 'empty',
     success: '',
@@ -226,22 +229,26 @@ class DefinitionPage extends PureComponent {
       <>
         {params.map((param, index) => (
           <div className={cn.containerRow}>
-            <CustomInput
-              label={`Parameter ${index} Name`}
-              value={param.value}
-              name={`name_${index}`}
-              onChange={e => this.changeName(e.target.value, index)}
-              inputStyles={{ input: cn.inputStyles }}
-              className={cn.top}
-            />
-            <CustomInput
-              className={cn.align}
-              label={`Parameter ${index} Description`}
-              value={param.description}
-              name={`desc_${index}`}
-              onChange={e => this.changeDescription(e.target.value, index)}
-              inputStyles={{ input: cn.inputStyles }}
-            />
+            <div className={cn.container}>
+              <div className={cn.label}>{`Parameter ${index} Name`}</div>
+              <CustomInput
+                value={param.value}
+                name={`name_${index}`}
+                onChange={e => this.changeName(e.target.value, index)}
+                inputStyles={{ input: cn.inputStyles }}
+                className={cn.top}
+              />
+            </div>
+            <div className={cn.containerLast}>
+              <div className={cn.label}>{`Parameter ${index} Description`}</div>
+              <CustomInput
+                className={cn.align}
+                value={param.description}
+                name={`desc_${index}`}
+                onChange={e => this.changeDescription(e.target.value, index)}
+                inputStyles={{ input: cn.inputStyles }}
+              />
+            </div>
           </div>
         ))}
         <div className={cn.addMore} onClick={this.addMoreParameters}>
@@ -280,41 +287,53 @@ class DefinitionPage extends PureComponent {
     return (
       <>
         <div className={cn.containerRow}>
-          <CustomInput
-            className={cn.rowPadding}
-            label="CPU"
-            value={cpu}
-            name="cpu"
-            onChange={e => this.setState({ cpu: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-          />
-          <CustomInput
-            type="time"
-            className={cn.rowPadding}
-            label="Timeout"
-            value={timeout}
-            name="dockerImage"
-            onChange={e => this.setState({ timeout: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-          />
-          <CustomInput
-            className={cn.rowPadding}
-            label="Max Retries"
-            value={retries}
-            name="retries"
-            onChange={e => this.setState({ retries: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-          />
+          <div className={cn.container}>
+            <div className={cn.label}>CPU</div>
+            <CustomInput
+              className={cn.rowPadding}
+              label="CPU"
+              value={cpu}
+              name="cpu"
+              onChange={e => this.setState({ cpu: e.target.value })}
+              inputStyles={{ input: cn.inputStyles }}
+            />
+          </div>
+          <div className={cn.container}>
+            <div className={cn.label}>Timeout</div>
+            <CustomInput
+              type="time"
+              className={cn.rowPadding}
+              label="Timeout"
+              value={timeout}
+              name="dockerImage"
+              onChange={e => this.setState({ timeout: e.target.value })}
+              inputStyles={{ input: cn.inputStyles }}
+            />
+          </div>
+          <div className={cn.containerLast}>
+            <div className={cn.label}>Max Retries</div>
+            <CustomInput
+              className={cn.rowPadding}
+              label="Max Retries"
+              value={retries}
+              name="retries"
+              onChange={e => this.setState({ retries: e.target.value })}
+              inputStyles={{ input: cn.inputStyles }}
+            />
+          </div>
         </div>
         <div className={cn.containerRow}>
-          <CustomInput
-            className={cn.rowPadding}
-            label="GPU"
-            value={gpu}
-            name="gpu"
-            onChange={e => this.setState({ gpu: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-          />
+          <div className={cn.container}>
+            <div className={cn.label}>GPU</div>
+            <CustomInput
+              className={cn.rowPadding}
+              label="GPU"
+              value={gpu}
+              name="gpu"
+              onChange={e => this.setState({ gpu: e.target.value })}
+              inputStyles={{ input: cn.inputStyles }}
+            />
+          </div>
           <FormControl className={cn.rowPaddingSelect}>
             <div className={cn.label}>Location</div>
             <NativeSelect
@@ -331,7 +350,7 @@ class DefinitionPage extends PureComponent {
               ))}
             </NativeSelect>
           </FormControl>
-          <FormControl className={cn.rowPaddingSelect}>
+          <FormControl className={cn.rowPaddingSelectLast}>
             <div className={cn.label}>Result Method</div>
             <NativeSelect
               value={method}
@@ -348,14 +367,17 @@ class DefinitionPage extends PureComponent {
           </FormControl>
         </div>
         <div className={cn.containerRow}>
-          <CustomInput
-            className={cn.rowPadding}
-            label="Memory GB"
-            value={memory}
-            name="memory"
-            onChange={e => this.setState({ memory: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-          />
+          <div className={cn.container}>
+            <div className={cn.label}>Memory GB</div>
+            <CustomInput
+              className={cn.rowPadding}
+              label="Memory GB"
+              value={memory}
+              name="memory"
+              onChange={e => this.setState({ memory: e.target.value })}
+              inputStyles={{ input: cn.inputStyles }}
+            />
+          </div>
           <FormControl className={cn.rowPaddingSelect}>
             <div className={cn.label}>Region Hint</div>
             <NativeSelect
@@ -372,14 +394,17 @@ class DefinitionPage extends PureComponent {
               ))}
             </NativeSelect>
           </FormControl>
-          <CustomInput
-            className={cn.rowPadding}
-            label="Success Text"
-            value={success}
-            name="success"
-            onChange={e => this.setState({ success: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-          />
+          <div className={cn.containerLast}>
+            <div className={cn.label}>Success Text</div>
+            <CustomInput
+              className={cn.rowPadding}
+              label="Success Text"
+              value={success}
+              name="success"
+              onChange={e => this.setState({ success: e.target.value })}
+              inputStyles={{ input: cn.inputStyles }}
+            />
+          </div>
         </div>
       </>
     );
@@ -422,7 +447,11 @@ class DefinitionPage extends PureComponent {
       <>
         <CustomAppBar hamburger={hamburger.open}>
           <Toolbar className={cn.toolbar}>
-            <Breadcrumbs separator="›" aria-label="breadcrumb">
+            <Breadcrumbs
+              separator="›"
+              aria-label="breadcrumb"
+              classes={{ separator: cn.separator }}
+            >
               <div
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
@@ -449,42 +478,54 @@ class DefinitionPage extends PureComponent {
         <Paper className={cn.contentAlign}>
           <div className={cn.containerRow}>
             <div className={cn.smallItem}>
+              <div className={cn.container}>
+                <div className={cn.label}>Job Definition</div>
+                <CustomInput
+                  label="Job Definition"
+                  value={definitionName}
+                  name="definitionName"
+                  onChange={e =>
+                    this.setState({ definitionName: e.target.value })
+                  }
+                  inputStyles={{ input: cn.inputStyles }}
+                />
+              </div>
+            </div>
+            <div className={cn.containerLast}>
+              <div className={cn.label}>Docker Image</div>
               <CustomInput
-                label="Job Definition"
-                value={definitionName}
-                name="definitionName"
-                onChange={e =>
-                  this.setState({ definitionName: e.target.value })
-                }
+                label="Docker Image"
+                value={dockerImage}
+                name="dockerImage"
+                onChange={e => this.setState({ dockerImage: e.target.value })}
                 inputStyles={{ input: cn.inputStyles }}
               />
             </div>
-            <CustomInput
-              label="Docker Image"
-              value={dockerImage}
-              name="dockerImage"
-              onChange={e => this.setState({ dockerImage: e.target.value })}
+          </div>
+          <div className={cn.containerLast}>
+            <div className={cn.label}>Startup Command</div>
+            <CustomInputTextArea
+              multiline
+              label="Startup Command"
+              value={startupCommand}
+              name="startupCommand"
+              onChange={e => this.setState({ startupCommand: e.target.value })}
               inputStyles={{ input: cn.inputStyles }}
+              className={cn.top}
             />
           </div>
-          <CustomInput
-            multiline
-            label="Startup Command"
-            value={startupCommand}
-            name="startupCommand"
-            onChange={e => this.setState({ startupCommand: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-            className={cn.top}
-          />
-          <CustomInput
-            multiline
-            label="Description"
-            value={description}
-            name="description"
-            onChange={e => this.setState({ description: e.target.value })}
-            inputStyles={{ input: cn.inputStyles }}
-            className={cn.top}
-          />
+          <div className={cn.containerLast}>
+            <div className={cn.label}>Description</div>
+            <CustomInputTextArea
+              multiline
+              label="Description"
+              value={description}
+              name="description"
+              onChange={e => this.setState({ description: e.target.value })}
+              inputStyles={{ input: cn.inputStyles }}
+              className={cn.top}
+            />
+          </div>
         </Paper>
         <Paper className={cn.contentAlignSecond}>
           <Paper square>
@@ -493,10 +534,33 @@ class DefinitionPage extends PureComponent {
               indicatorColor="primary"
               textColor="primary"
               onChange={this.handleChangeTab}
+              TabIndicatorProps={{
+                style: {
+                  backgroundColor: '#3e96ed',
+                },
+              }}
             >
-              <Tab label="Configurations" />
-              <Tab label="Inputs" />
-              <Tab label="Outputs" />
+              <Tab
+                style={{
+                  width: '200px',
+                  color: tab === 0 ? '#3e96ed' : '#62738d',
+                }}
+                label="Configurations"
+              />
+              <Tab
+                style={{
+                  width: '200px',
+                  color: tab === 1 ? '#3e96ed' : '#62738d',
+                }}
+                label="Inputs"
+              />
+              <Tab
+                style={{
+                  width: '200px',
+                  color: tab === 2 ? '#3e96ed' : '#62738d',
+                }}
+                label="Outputs"
+              />
             </Tabs>
             <div className={cn.tabValue}>{content}</div>
           </Paper>
