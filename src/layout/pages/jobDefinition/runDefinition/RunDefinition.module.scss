@@ -21,18 +21,8 @@
   width: 80px;
 }
 
-.align {
-  margin-left: 20px;
-  margin-top: 10px;
-}
-
-.top {
-  margin-top: 10px;
-}
-
 .formControl {
   width: 49%;
-  margin-top: 10px;
 }
 
 .customHeight {
@@ -45,7 +35,7 @@
   width: 35%;
 }
 .divider {
-  margin-top: 30px;
+  margin-top: 20px;
   margin-bottom: 20px;
   display: flex;
   flex: 1;
@@ -69,4 +59,18 @@
 
 .addMoreButton {
   margin-left: 5px;
+}
+
+.container {
+  flex: 1;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+.containerNoMargin {
+  flex: 1;
+  margin-top: 10px;
+}
+.containerBig {
+  width: 50%;
+  margin-top: 10px;
 }

@@ -26,6 +26,7 @@ import { TableContainer } from 'components/common/table-view/TableContainer';
 import { TableContent } from 'components/common/table-view/TableContent';
 import cn from './Definition.module.scss';
 import { configureColumns } from './columns';
+import { configureColumnsOutput } from './outputColumns';
 
 class DefinitionPage extends PureComponent {
   static propTypes = {
@@ -139,9 +140,9 @@ class DefinitionPage extends PureComponent {
 
   changeReferenceParameter = referenceParameter => {
     this.setState(prevState => {
-      const newItems = [...prevState.params];
+      const newItems = [...prevState.data];
       newItems[this.state.index].reference_parameter = referenceParameter;
-      return { params: newItems, parameter: referenceParameter };
+      return { data: newItems, parameter: referenceParameter };
     });
   };
 
@@ -222,42 +223,19 @@ class DefinitionPage extends PureComponent {
     });
   };
 
-  thirdTab = () => {
-    const { params } = this.state;
-
-    return (
-      <>
-        {params.map((param, index) => (
-          <div className={cn.containerRow}>
-            <div className={cn.container}>
-              <div className={cn.label}>{`Parameter ${index} Name`}</div>
-              <CustomInput
-                value={param.value}
-                name={`name_${index}`}
-                onChange={e => this.changeName(e.target.value, index)}
-                inputStyles={{ input: cn.inputStyles }}
-                className={cn.top}
-              />
-            </div>
-            <div className={cn.containerLast}>
-              <div className={cn.label}>{`Parameter ${index} Description`}</div>
-              <CustomInput
-                className={cn.align}
-                value={param.description}
-                name={`desc_${index}`}
-                onChange={e => this.changeDescription(e.target.value, index)}
-                inputStyles={{ input: cn.inputStyles }}
-              />
-            </div>
-          </div>
-        ))}
-        <div className={cn.addMore} onClick={this.addMoreParameters}>
-          <FontAwesomeIcon icon="plus" color="#818fa3" size={30} />
-          <span className={cn.addMoreButton}>Add More Parameters</span>
-        </div>
-      </>
-    );
-  };
+  thirdTab = () => (
+    <TableContainer style={cn.tableContainerWrapper}>
+      <TableContent
+        tableData={this.state.params}
+        tableOptions={this.options}
+        columns={this.createColumnsOutput()}
+      />
+      <div className={cn.addMore} onClick={this.addMoreParameters}>
+        <FontAwesomeIcon icon="plus" color="#818fa3" size={30} />
+        <span className={cn.addMoreButton}>Add More Parameters</span>
+      </div>
+    </TableContainer>
+  );
 
   createColumns = () =>
     configureColumns(
@@ -267,6 +245,9 @@ class DefinitionPage extends PureComponent {
       this.saveDescription,
       this.handleClickOpen,
     );
+
+  createColumnsOutput = () =>
+    configureColumnsOutput(this.changeName, this.changeDescription);
 
   firstTab = () => {
     const {

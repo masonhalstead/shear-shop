@@ -249,7 +249,7 @@ class JobDefinitionPage extends PureComponent {
         </CustomAppBar>
         {columns.length > 0 && (
           <div style={{ margin: '25px' }}>
-            <TableContainer style={{ margin: '25px' }}>
+            <TableContainer>
               <TableContent
                 tableData={
                   search.length > 0
