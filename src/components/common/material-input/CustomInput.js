@@ -18,8 +18,7 @@ export const CustomInput = withStyles(theme => ({
     padding: '5px',
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
-      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-      borderColor: theme.palette.primary.main,
+      borderColor: '#818fa3',
     },
   },
 }))(InputBase);
@@ -37,12 +36,12 @@ export const CustomInputTextArea = withStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid #cfd7e6',
     fontSize: 13,
-    height: '60px !important',
-    padding: '5px',
+    height: '58px !important',
+    width: '100%',
+    padding: '0px 5px 0px 5px',
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
-      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-      borderColor: theme.palette.primary.main,
+      borderColor: '#818fa3',
     },
   },
 }))(InputBase);

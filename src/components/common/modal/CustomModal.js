@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogActions,
 } from 'components/common/dialogs/Dialogs';
+import classNames from 'classnames';
 import cn from './Modal.module.scss';
 
 export const CustomizedDialogs = ({
@@ -25,15 +26,17 @@ export const CustomizedDialogs = ({
       <div className={cn.title}>{title}</div>
       <div className={cn.subTitle}>
         Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry. Lorem Ipsum has been the industry's standard dummy text ever
-        since the 1500s, when an unknown printer took a galley of type and
-        scrambled blishing software like Aldus PageMaker including versions of
-        Lorem Ipsum.
+        industry.
       </div>
     </DialogTitle>
     <DialogContent dividers>{children}</DialogContent>
     <DialogActions>
-      <Button onClick={runJob} color="primary" size="large">
+      <Button
+        onClick={runJob}
+        color="primary"
+        size="large"
+        className={classNames(cn.btn, cn.btnPrimary)}
+      >
         Run Job
       </Button>
     </DialogActions>

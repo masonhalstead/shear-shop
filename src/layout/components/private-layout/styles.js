@@ -41,6 +41,7 @@ export const styles = theme => ({
     padding: '0 8px',
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
+    minHeight: '50px !important',
   },
   content: {
     display: 'flex',
