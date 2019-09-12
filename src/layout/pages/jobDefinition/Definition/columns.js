@@ -1,5 +1,5 @@
 import React from 'react';
-import { CustomInput } from 'components/common/material-input/CustomInput';
+import { CustomInputNoBorders } from 'components/common/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   NativeSelect,
@@ -7,7 +7,6 @@ import {
   Select,
   ListItemIcon,
 } from '@material-ui/core';
-import BootstrapInput from 'components/common/bootsrapInput/BootstrapInput';
 import cn from './Definition.module.scss';
 
 export const configureColumns = (
@@ -16,6 +15,7 @@ export const configureColumns = (
   saveDefault,
   saveDescription,
   handleClickOpen,
+  deleteInputRow,
 ) => [
   {
     name: 'name',
@@ -25,7 +25,7 @@ export const configureColumns = (
       sort: false,
       customBodyRender: (value, tableMeta) => (
         <div style={{ cursor: 'pointer' }}>
-          <CustomInput
+          <CustomInputNoBorders
             placeholder={`Parameter ${tableMeta.rowIndex + 1}`}
             value={value}
             name="name"
@@ -44,7 +44,7 @@ export const configureColumns = (
       sort: false,
       customBodyRender: (value, tableMeta) => (
         <div
-          style={{ textAlign: 'center' }}
+          style={{ textAlign: 'center', cursor: 'pointer' }}
           onClick={() => changeRequired(tableMeta.rowIndex)}
         >
           {value ? (
@@ -73,10 +73,10 @@ export const configureColumns = (
       customBodyRender: (value, tableMeta) => (
         <div style={{ textAlign: 'center' }}>
           <Select
-            style={{ width: '200px' }}
+            style={{ width: '100%' }}
             value={1}
             // onClick={() => handleClickOpen(tableMeta.rowIndex)}
-            input={<BootstrapInput name="method" id="method" />}
+            input={<CustomInputNoBorders name="method" id="method" />}
           >
             <MenuItem value={1}>
               <ListItemIcon>
@@ -110,10 +110,12 @@ export const configureColumns = (
       customBodyRender: (value, tableMeta) => (
         <div style={{ textAlign: 'center' }}>
           <NativeSelect
-            style={{ width: '200px' }}
+            style={{ width: '100%' }}
             value={value}
             onClick={() => handleClickOpen(tableMeta.rowIndex)}
-            input={<BootstrapInput name="reference" id="reference" readOnly />}
+            input={
+              <CustomInputNoBorders name="reference" id="reference" readOnly />
+            }
           >
             <option style={{ display: 'none' }} selected value="">
               {value}
@@ -131,7 +133,7 @@ export const configureColumns = (
       sort: false,
       customBodyRender: (value, tableMeta) => (
         <div style={{ textAlign: 'center' }}>
-          <CustomInput
+          <CustomInputNoBorders
             inputStyles={{ input: cn.customHeight }}
             value={value}
             name="default"
@@ -149,7 +151,7 @@ export const configureColumns = (
       sort: false,
       customBodyRender: (value, tableMeta) => (
         <div style={{ textAlign: 'center' }}>
-          <CustomInput
+          <CustomInputNoBorders
             inputStyles={{ input: cn.customHeight }}
             value={value}
             name="description"
@@ -163,7 +165,17 @@ export const configureColumns = (
     name: 'id',
     label: ' ',
     options: {
-      display: false,
+      filter: false,
+      sort: false,
+      customBodyRender: (value, tableMeta) =>
+        tableMeta.rowIndex !== 0 && (
+          <div
+            style={{ textAlign: 'center', cursor: 'pointer' }}
+            onClick={() => deleteInputRow(tableMeta.rowIndex)}
+          >
+            <FontAwesomeIcon icon="trash" color="#818fa3" />
+          </div>
+        ),
     },
   },
 ];

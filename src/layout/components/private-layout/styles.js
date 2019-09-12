@@ -38,10 +38,9 @@ export const styles = theme => ({
   drawerHeader: {
     display: 'flex',
     alignItems: 'center',
-    padding: '0 8px',
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
-    minHeight: '50px !important',
+    justifyContent: 'center',
+    minHeight: '46px !important',
   },
   content: {
     display: 'flex',

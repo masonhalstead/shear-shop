@@ -7,6 +7,8 @@ import { TableContent } from 'components/common/table-view/TableContent';
 import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/common/appBar/AppBar';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
+import { logoutUser } from 'ducks/actions';
+
 import * as Sentry from '@sentry/browser';
 import cn from './Jobs.module.scss';
 import { columns } from './columns';
@@ -107,6 +109,13 @@ class JobsPage extends PureComponent {
     }
   }
 
+  logout = () => {
+    const { logoutUserProps, history } = this.props;
+    logoutUserProps();
+    localStorage.clear();
+    history.push('/login');
+  };
+
   render() {
     const { hamburger, projects, history } = this.props;
     const { label } = this.state;
@@ -114,7 +123,14 @@ class JobsPage extends PureComponent {
       <>
         <CustomAppBar hamburger={hamburger.open}>
           <Toolbar className={cn.toolbar}>
-            <Breadcrumbs separator="›" aria-label="breadcrumb">
+            <Breadcrumbs
+              separator={
+                <FontAwesomeIcon icon="chevron-right" color="#818fa3" />
+              }
+              aria-label="breadcrumb"
+              classes={{ separator: cn.separator, root: cn.text }}
+            >
+              {' '}
               <div
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
@@ -125,7 +141,7 @@ class JobsPage extends PureComponent {
               </div>
               <div>{label}</div>
             </Breadcrumbs>
-            <div className={cn.logout}>
+            <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>
           </Toolbar>
@@ -149,6 +165,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getProjects: getProjectsAction,
+  logoutUserProps: logoutUser,
 };
 
 export default connect(
