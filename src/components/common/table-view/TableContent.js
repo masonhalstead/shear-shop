@@ -39,7 +39,8 @@ export const TableContentWrapper = React.memo(
               padding: '5px',
               fontWeight: 400,
               color: '#62738d',
-              border: '1px solid #e7ebf3',
+              border: '1px solid #dde3ee',
+              borderBottom: 'none',
               fontSize: 13,
             },
             toolButton: {
@@ -51,19 +52,24 @@ export const TableContentWrapper = React.memo(
           },
           MuiTableCell: {
             root: {
-              border: '1px solid #e7ebf3',
+              border: '1px solid #dde3ee',
+              borderBottom: '1px solid #dde3ee',
             },
             body: {
               fontSize: '13px',
               fontWeight: 300,
-              padding: '4.5px 8px 4.5px 8px',
+              lineHeight: '1',
+              padding: '5px !important',
             },
             head: {
               fontSize: '1rem',
             },
           },
           MuiTableRow: {
-            root: { '&$hover:hover': { backgroundColor: 'none' } },
+            root: {
+              height: '32px',
+              '&$hover:hover': { backgroundColor: 'none' },
+            },
           },
           MUIDataTable: {
             paper: {

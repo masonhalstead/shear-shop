@@ -114,7 +114,7 @@ export const configureColumns = (openModal, openDefinition) => [
           style={{ textAlign: 'center', cursor: 'pointer' }}
           onClick={() => openModal(tableMeta.rowData[0], value)}
         >
-          <FontAwesomeIcon icon="play" color="#818fa3" />
+          <FontAwesomeIcon icon="play" color="#5db85b" />
         </div>
       ),
     },
