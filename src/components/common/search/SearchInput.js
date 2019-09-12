@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
 
 export const CustomizedInputBase = ({ onSearch }) => {
   const classes = useStyles();
-  console.log(classes);
   return (
     <Paper className={classes.root}>
       <SearchIcon className={classes.iconButton} aria-label="search" />
