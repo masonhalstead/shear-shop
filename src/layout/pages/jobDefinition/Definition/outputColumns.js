@@ -1,28 +1,32 @@
 import React from 'react';
-import { CustomInput } from 'components/common/material-input/CustomInput';
+import { CustomInputNoBorders } from 'components/common/material-input/CustomInput';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cn from './Definition.module.scss';
 
 export const configureColumnsOutput = (
   saveOutputName,
   saveOutputDescription,
+  deleteOutputRow,
 ) => [
   {
-    name: 'name',
+    name: 'value',
     label: 'Name',
     options: {
       filter: false,
       sort: false,
-      customBodyRender: (value, tableMeta) => (
-        <div style={{ cursor: 'pointer' }}>
-          <CustomInput
-            placeholder={`Parameter ${tableMeta.rowIndex + 1}`}
-            value={value}
-            name="name"
-            onChange={e => saveOutputName(e.target.value, tableMeta.rowIndex)}
-            inputStyles={{ input: cn.customHeight }}
-          />
-        </div>
-      ),
+      customBodyRender: (value, tableMeta) => {
+        return (
+          <div style={{ cursor: 'pointer' }}>
+            <CustomInputNoBorders
+              placeholder={`Parameter ${tableMeta.rowIndex + 1}`}
+              value={value}
+              name="paramsName"
+              onChange={e => saveOutputName(e.target.value, tableMeta.rowIndex)}
+              inputStyles={{ input: cn.customHeight }}
+            />
+          </div>
+        );
+      },
     },
   },
   {
@@ -33,7 +37,7 @@ export const configureColumnsOutput = (
       sort: false,
       customBodyRender: (value, tableMeta) => (
         <div style={{ textAlign: 'center' }}>
-          <CustomInput
+          <CustomInputNoBorders
             inputStyles={{ input: cn.customHeight }}
             value={value}
             name="description"
@@ -49,7 +53,17 @@ export const configureColumnsOutput = (
     name: 'id',
     label: ' ',
     options: {
-      display: false,
+      filter: false,
+      sort: false,
+      customBodyRender: (value, tableMeta) =>
+        tableMeta.rowIndex !== 0 && (
+          <div
+            style={{ textAlign: 'center', cursor: 'pointer' }}
+            onClick={() => deleteOutputRow(tableMeta.rowIndex)}
+          >
+            <FontAwesomeIcon icon="trash" color="#818fa3" />
+          </div>
+        ),
     },
   },
 ];

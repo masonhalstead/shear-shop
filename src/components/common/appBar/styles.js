@@ -8,11 +8,13 @@ export const styles = theme => ({
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - 240px)`,
     },
+    boxShadow: 'none',
   },
   appBarClosed: {
-    marginLeft: 74,
+    marginLeft: 70,
     [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - 74px)`,
+      width: `calc(100% - 70px)`,
     },
+    boxShadow: 'none',
   },
 });

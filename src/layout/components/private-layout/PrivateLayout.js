@@ -71,7 +71,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
           </div>
           <Divider />
           <List>
-            <ListItem button key="Projects">
+            <ListItem
+              button
+              key="Projects"
+              onClick={() => {
+                history.push(`/projects`);
+              }}
+            >
               <Tooltip title="Projects">
                 <ListItemIcon>
                   <FontAwesomeIcon
@@ -89,7 +95,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
           </List>
           <Divider />
           <List>
-            <ListItem button key="Jobs">
+            <ListItem
+              button
+              key="Jobs"
+              onClick={() => {
+                history.push(`/projects/${id}/jobs/24`);
+              }}
+            >
               <Tooltip title="Jobs">
                 <ListItemIcon>
                   <FontAwesomeIcon
@@ -107,6 +119,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             {open && (
               <div className={cn.deepMenuItems}>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/24`);
@@ -115,6 +129,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Last 24 Hours
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/7`);
@@ -123,6 +139,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Last 7 Days
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/queued`);
@@ -131,6 +149,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Queued
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/starting`);
@@ -139,6 +159,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Starting
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/running`);
@@ -147,6 +169,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Running
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/complete`);
@@ -155,6 +179,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Complete
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/stopped`);
@@ -163,6 +189,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Stopped
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/failed`);
@@ -175,7 +203,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
           </List>
           <Divider />
           <List>
-            <ListItem button key="Job Definitions">
+            <ListItem
+              button
+              key="Job Definitions"
+              onClick={() => {
+                history.push(`/projects/${id}/definitions/unarchived`);
+              }}
+            >
               <Tooltip title="Job Definitions">
                 <ListItemIcon>
                   <FontAwesomeIcon
@@ -193,6 +227,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             {open && (
               <div className={cn.deepMenuItems}>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/definitions/unarchived`);
@@ -201,6 +237,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   Unarchived
                 </ListItem>
                 <ListItem
+                  classes={{ root: cn.rootColor }}
+
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/definitions/archived`);
@@ -225,18 +263,21 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               </ListItem>
             </List>
           )}
-          <div className={cn.version}>{REACT_APP_VERSION}</div>
+          <div className={cn.versionSmall}>{REACT_APP_VERSION}</div>
           {open && (
-            <div className={cn.closeButton}>
-              <ListItem button key="Close" onClick={this.handleDrawerOpen}>
-                <ListItemIcon>
-                  <FontAwesomeIcon
-                    icon="times"
-                    color="white"
-                    className={cn.fontIconAlignChevron}
-                  />
-                </ListItemIcon>
-              </ListItem>
+            <div className={cn.version} onClick={this.handleDrawerOpen}>
+              {REACT_APP_VERSION}
+              <div className={cn.closeButton}>
+                <ListItem button key="Close">
+                  <ListItemIcon>
+                    <FontAwesomeIcon
+                      icon="times"
+                      color="white"
+                      className={cn.fontIconAlignChevron}
+                    />
+                  </ListItemIcon>
+                </ListItem>
+              </div>
             </div>
           )}
           <Divider />
@@ -251,7 +292,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
         >
           <div className={cn.cognViews}>
             {this.props.children}
-            <Footer />
           </div>
         </main>
       </div>

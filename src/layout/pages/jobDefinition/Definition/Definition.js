@@ -16,7 +16,7 @@ import {
   DialogActions,
 } from '@material-ui/core';
 import { CustomAppBar } from 'components/common/appBar/AppBar';
-import * as Sentry from '@sentry/browser';
+import { logoutUser } from 'ducks/actions';
 import {
   CustomInput,
   CustomInputTextArea,
@@ -85,18 +85,10 @@ class DefinitionPage extends PureComponent {
         value: '',
         description: '',
       },
-      {
-        value: '',
-        description: '',
-      },
-      {
-        value: '',
-        description: '',
-      },
     ],
     data: [
       {
-        name: 'Parameter 1',
+        name: '',
         reference_parameter: '',
         required: false,
         method: '',
@@ -123,6 +115,10 @@ class DefinitionPage extends PureComponent {
   };
 
   changeName = (value, index) => {
+    const { params } = this.state;
+    if (params.length === index + 1) {
+      this.addMoreParameters();
+    }
     this.setState(prevState => {
       const newItems = [...prevState.params];
       newItems[index].value = value;
@@ -136,6 +132,18 @@ class DefinitionPage extends PureComponent {
       newItems[index].description = description;
       return { params: newItems };
     });
+  };
+
+  deleteOutputRow = index => {
+    const { params } = this.state;
+    const result = params.filter((item, indexNew) => indexNew !== index);
+    this.setState({ params: result });
+  };
+
+  deleteInputRow = index => {
+    const { data } = this.state;
+    const result = data.filter((item, indexNew) => indexNew !== index);
+    this.setState({ data: result });
   };
 
   changeReferenceParameter = referenceParameter => {
@@ -184,14 +192,14 @@ class DefinitionPage extends PureComponent {
         tableOptions={this.options}
         columns={this.createColumns()}
       />
-      <div className={cn.addMore} onClick={this.addMNewRow}>
-        <FontAwesomeIcon icon="plus" color="#818fa3" size={30} />
-        <span className={cn.addMoreButton}>Add More Parameters</span>
-      </div>
     </TableContainer>
   );
 
   saveName = (name, index) => {
+    const { data } = this.state;
+    if (data.length === index + 1) {
+      this.addMNewRow();
+    }
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[index].name = name;
@@ -230,10 +238,6 @@ class DefinitionPage extends PureComponent {
         tableOptions={this.options}
         columns={this.createColumnsOutput()}
       />
-      <div className={cn.addMore} onClick={this.addMoreParameters}>
-        <FontAwesomeIcon icon="plus" color="#818fa3" size={30} />
-        <span className={cn.addMoreButton}>Add More Parameters</span>
-      </div>
     </TableContainer>
   );
 
@@ -244,10 +248,15 @@ class DefinitionPage extends PureComponent {
       this.saveDefault,
       this.saveDescription,
       this.handleClickOpen,
+      this.deleteInputRow,
     );
 
   createColumnsOutput = () =>
-    configureColumnsOutput(this.changeName, this.changeDescription);
+    configureColumnsOutput(
+      this.changeName,
+      this.changeDescription,
+      this.deleteOutputRow,
+    );
 
   firstTab = () => {
     const {
@@ -399,6 +408,13 @@ class DefinitionPage extends PureComponent {
     });
   };
 
+  logout = () => {
+    const { logoutUserProps, history } = this.props;
+    logoutUserProps();
+    localStorage.clear();
+    history.push('/login');
+  };
+
   render() {
     const { hamburger, history } = this.props;
     const {
@@ -429,9 +445,11 @@ class DefinitionPage extends PureComponent {
         <CustomAppBar hamburger={hamburger.open}>
           <Toolbar className={cn.toolbar}>
             <Breadcrumbs
-              separator="›"
+              separator={
+                <FontAwesomeIcon icon="chevron-right" color="#818fa3" />
+              }
               aria-label="breadcrumb"
-              classes={{ separator: cn.separator }}
+              classes={{ separator: cn.separator, root: cn.text }}
             >
               <div
                 style={{ cursor: 'pointer' }}
@@ -451,7 +469,7 @@ class DefinitionPage extends PureComponent {
               </div>
               <div>{label}</div>
             </Breadcrumbs>
-            <div className={cn.logout}>
+            <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>
           </Toolbar>
@@ -509,43 +527,51 @@ class DefinitionPage extends PureComponent {
           </div>
         </Paper>
         <Paper className={cn.contentAlignSecond}>
-          <Paper square>
-            <Tabs
-              value={tab}
-              indicatorColor="primary"
-              textColor="primary"
-              onChange={this.handleChangeTab}
-              TabIndicatorProps={{
-                style: {
-                  backgroundColor: '#3e96ed',
-                },
+          <Tabs
+            value={tab}
+            indicatorColor="primary"
+            textColor="primary"
+            onChange={this.handleChangeTab}
+            TabIndicatorProps={{
+              style: {
+                backgroundColor: '#3e96ed',
+              },
+            }}
+          >
+            <Tab
+              style={{
+                width: '300px',
+                fontSize: 13,
+                fontWeight: 400,
+                color: tab === 0 ? '#3e96ed' : '#62738d',
+                border: '1px solid #e7ebf3',
               }}
-            >
-              <Tab
-                style={{
-                  width: '200px',
-                  color: tab === 0 ? '#3e96ed' : '#62738d',
-                }}
-                label="Configurations"
-              />
-              <Tab
-                style={{
-                  width: '200px',
-                  color: tab === 1 ? '#3e96ed' : '#62738d',
-                }}
-                label="Inputs"
-              />
-              <Tab
-                style={{
-                  width: '200px',
-                  color: tab === 2 ? '#3e96ed' : '#62738d',
-                }}
-                label="Outputs"
-              />
-            </Tabs>
-            <div className={cn.tabValue}>{content}</div>
-          </Paper>
+              label="Configurations"
+            />
+            <Tab
+              style={{
+                width: '300px',
+                fontSize: 13,
+                fontWeight: 400,
+                color: tab === 1 ? '#3e96ed' : '#62738d',
+                border: '1px solid #e7ebf3',
+              }}
+              label="Inputs"
+            />
+            <Tab
+              style={{
+                width: '300px',
+                color: tab === 2 ? '#3e96ed' : '#62738d',
+                fontSize: 13,
+                fontWeight: 400,
+                border: '1px solid #e7ebf3',
+              }}
+              label="Outputs"
+            />
+          </Tabs>
+          {tab === 0 && <div className={cn.tabValue}>{content}</div>}
         </Paper>
+        {tab !== 0 && <div className={cn.tabValue}>{content}</div>}
         <Dialog
           disableBackdropClick
           disableEscapeKeyDown
@@ -603,6 +629,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   // getProjects: getProjectsAction,
+  logoutUserProps: logoutUser,
 };
 
 export default connect(

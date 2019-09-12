@@ -10,6 +10,8 @@ import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/jo
 import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
 import { CustomizedInputBase } from 'components/common/search/SearchInput';
+import { logoutUser } from 'ducks/actions';
+
 import Popover from 'components/common/popover/Popover';
 import TableViewCol from 'components/common/viewColumn/ViewColumn';
 import classNames from 'classnames';
@@ -97,7 +99,7 @@ class JobDefinitionPage extends PureComponent {
     filterType: 'textField',
     selectableRows: 'none',
     search: false,
-    pagination: true,
+    pagination: false,
     filter: false,
     download: false,
     viewColumns: false,
@@ -177,6 +179,13 @@ class JobDefinitionPage extends PureComponent {
     this.setState({ viewColumns: viewColumnsNew });
   };
 
+  logout = () => {
+    const { logoutUserProps, history } = this.props;
+    logoutUserProps();
+    localStorage.clear();
+    history.push('/login');
+  };
+
   createDefinition = () => {
     const { jobName } = this.state;
     const { addJobDefinition } = this.props;
@@ -201,9 +210,11 @@ class JobDefinitionPage extends PureComponent {
         <CustomAppBar hamburger={hamburger.open}>
           <Toolbar className={cn.toolbar}>
             <Breadcrumbs
-              separator="›"
+              separator={
+                <FontAwesomeIcon icon="chevron-right" color="#818fa3" />
+              }
               aria-label="breadcrumb"
-              classes={{ separator: cn.separator }}
+              classes={{ separator: cn.separator, root: cn.text }}
             >
               <div
                 style={{ cursor: 'pointer' }}
@@ -241,28 +252,26 @@ class JobDefinitionPage extends PureComponent {
                 <FontAwesomeIcon icon="plus" color="#818fa3" />
               </div>
               <div className={cn.upperLine} />
-              <div className={cn.logout}>
+              <div className={cn.logout} onClick={this.logout}>
                 <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
               </div>
             </div>
           </Toolbar>
         </CustomAppBar>
         {columns.length > 0 && (
-          <div style={{ margin: '25px' }}>
-            <TableContainer>
-              <TableContent
-                tableData={
-                  search.length > 0
-                    ? result.data.filter(item =>
-                        item.jobdefinition.toLowerCase().includes(search),
-                      )
-                    : result.data
-                }
-                tableOptions={this.options}
-                columns={viewColumns}
-              />
-            </TableContainer>
-          </div>
+          <TableContainer>
+            <TableContent
+              tableData={
+                search.length > 0
+                  ? result.data.filter(item =>
+                      item.jobdefinition.toLowerCase().includes(search),
+                    )
+                  : result.data
+              }
+              tableOptions={this.options}
+              columns={viewColumns}
+            />
+          </TableContainer>
         )}
         <RunDefinition
           opened={run}
@@ -319,6 +328,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getJobDefinitions: getJobDefinitionsAction,
   addJobDefinition: addJobDefinitionAction,
+  logoutUserProps: logoutUser,
 };
 
 export default connect(
