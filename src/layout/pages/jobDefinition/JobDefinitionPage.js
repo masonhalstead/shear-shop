@@ -226,13 +226,11 @@ class JobDefinitionPage extends PureComponent {
               </div>
               <div>{label}</div>
             </Breadcrumbs>
-            <div
-              style={{ display: 'flex', flexDirection: 'row', width: '50%' }}
-            >
-              <div className={cn.search}>
+            <div className={cn.actionWrapper}>
+              <div className={cn.searchContainer}>
                 <CustomizedInputBase onSearch={this.onSearch} />
               </div>
-              <div className={cn.logout}>
+              <div className={cn.iconContainer}>
                 <Popover
                   trigger={<FontAwesomeIcon icon="cog" color="#818fa3" />}
                   content={
@@ -246,12 +244,11 @@ class JobDefinitionPage extends PureComponent {
                 />
               </div>
               <div
-                className={cn.add}
+                className={cn.iconContainer}
                 onClick={() => this.setState({ open: true })}
               >
                 <FontAwesomeIcon icon="plus" color="#818fa3" />
               </div>
-              <div className={cn.upperLine} />
               <div className={cn.logout} onClick={this.logout}>
                 <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
               </div>

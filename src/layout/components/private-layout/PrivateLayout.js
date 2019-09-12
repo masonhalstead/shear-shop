@@ -69,7 +69,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               alt="Andromeda"
             />
           </div>
-          <Divider />
+          <Divider className={cn.dividerOpen} />
           <List>
             <ListItem
               button
@@ -93,7 +93,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               />
             </ListItem>
           </List>
-          <Divider />
+          <Divider
+            className={classNames(
+              { [cn.dividerOpen]: open },
+              { [cn.dividerClosed]: !open },
+            )}
+          />
           <List>
             <ListItem
               button
@@ -120,7 +125,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               <div className={cn.deepMenuItems}>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/24`);
@@ -130,7 +134,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/7`);
@@ -140,7 +143,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/queued`);
@@ -150,7 +152,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/starting`);
@@ -160,7 +161,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/running`);
@@ -170,7 +170,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/complete`);
@@ -180,7 +179,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/stopped`);
@@ -190,7 +188,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/jobs/failed`);
@@ -201,7 +198,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               </div>
             )}
           </List>
-          <Divider />
+          <Divider
+            className={classNames(
+              { [cn.dividerOpen]: open },
+              { [cn.dividerClosed]: !open },
+            )}
+          />
           <List>
             <ListItem
               button
@@ -228,7 +230,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               <div className={cn.deepMenuItems}>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/definitions/unarchived`);
@@ -238,7 +239,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 </ListItem>
                 <ListItem
                   classes={{ root: cn.rootColor }}
-
                   button
                   onClick={() => {
                     history.push(`/projects/${id}/definitions/archived`);
@@ -249,7 +249,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               </div>
             )}
           </List>
-          <Divider />
+          <Divider className={cn.dividerOpen} />
           {!open && (
             <List>
               <ListItem button key="Chevron" onClick={this.handleDrawerOpen}>
@@ -280,7 +280,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               </div>
             </div>
           )}
-          <Divider />
         </Drawer>
         <main
           className={classNames(
@@ -290,9 +289,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             },
           )}
         >
-          <div className={cn.cognViews}>
-            {this.props.children}
-          </div>
+          <div className={cn.cognViews}>{this.props.children}</div>
         </main>
       </div>
     );

@@ -1,5 +1,8 @@
 @import "src/scss/styles";
 
+.flex {
+  flex-grow: 1;
+}
 .toolbar {
   background-color: $color-1;
   display: flex;
@@ -7,20 +10,21 @@
   justify-content: space-between;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
   padding-left: 25px;
+  padding-right: 0px;
   min-height: 45px !important;
   height: 45px;
-  border-bottom: 1px solid $color-2;
+  border-bottom: 1px solid darken($color-2, 3%);
 }
 
 .contentAlign {
   display: flex;
   flex-direction: column;
-  margin-top: 80px;
+  margin-top: 71px;
   margin-left: 25px;
-  padding: 25px;
+  padding: 20px;
   margin-right: 25px;
   border-radius: 0;
-  border: 1px solid #e7ebf3;
+  border: 1px solid darken($color-2, 3%);
   box-shadow: none;
 }
 
@@ -31,15 +35,17 @@
   margin-left: 25px;
   margin-right: 25px;
   border-radius: 0;
-  border: 1px solid #e7ebf3;
-  box-shadow: none !important;
+  box-shadow: none;
 }
-
+.tabsWrapper {
+  border: 1px solid darken($color-2, 3%);
+  min-height: 44px;
+}
 .projectItem {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid $color-2;
+  border: 1px solid darken($color-2, 3%);
   border-radius: 15px;
   width: 200px;
   height: 150px;
@@ -57,8 +63,22 @@
   font-size: 14px;
   margin-top: 5px;
 }
-.logout {
+.iconContainer {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  width: 50px;
+}
+.logout {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 50px;
+  border-left: 1px solid darken($color-2, 3%);
 }
 
 .addNewJob {
@@ -89,6 +109,9 @@
   flex: 1;
   margin-bottom: 10px;
 }
+.containerRow:last-child {
+  margin-bottom: 0px;
+}
 
 .smallItem {
   width: 35%;
@@ -101,7 +124,13 @@
 }
 
 .tabValue {
-  padding: 25px;
+  padding: 20px;
+  border: 1px solid darken($color-2, 3%);
+  border-top: none;
+}
+
+.tabValueAlt {
+  padding: 25px 0 0 0;
 }
 
 .rowPadding {
@@ -170,4 +199,14 @@
 
 .customHeight {
   border: none !important;
+}
+
+.inputSmall {
+  max-width: 33.33%;
+}
+.inputMedium {
+  max-width: 66.66%;
+}
+.inputLarge {
+  max-width: 100%;
 }

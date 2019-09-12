@@ -2,11 +2,13 @@
 
 .title {
   color: $color-5;
+  line-height: 1;
 }
 .subTitle {
   color: $color-5;
-  font-size: 14px;
-  max-height: 50px;
+  font-size: 13px;
+  font-weight: 300;
+  margin-top: 10px;
 }
 
 .btn {

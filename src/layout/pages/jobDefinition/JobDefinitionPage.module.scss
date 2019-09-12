@@ -1,5 +1,8 @@
 @import "src/scss/styles";
 
+.flex {
+  flex-grow: 1;
+}
 .toolbar {
   background-color: $color-1;
   display: flex;
@@ -7,12 +10,18 @@
   justify-content: space-between;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
   padding-left: 25px;
+  padding-right: 0px;
   min-height: 45px !important;
   height: 45px;
-  border-bottom: 1px solid $color-2;
-  padding-right: 0;
+  border-bottom: 1px solid darken($color-2, 3%);
 }
-
+.actionWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 50%;
+  align-self: stretch;
+}
 .contentAlign {
   display: flex;
   flex-direction: row;
@@ -25,7 +34,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid $color-2;
+  border: 1px solid darken($color-2, 3%);
   border-radius: 15px;
   width: 200px;
   height: 150px;
@@ -44,10 +53,13 @@
   margin-top: 5px;
 }
 .logout {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  padding-right: 17px;
-  padding-left: 17px;
-  padding-top: 15px;
+  width: 50px;
+  border-left: 1px solid darken($color-2, 3%);
 }
 
 .add {
@@ -90,8 +102,8 @@
   color: $color-6;
 }
 
-.search {
-  padding-top: 8px;
+.searchContainer {
+  margin-right: 15px;
   flex: 1;
 }
 
@@ -129,7 +141,14 @@
   border-radius: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-
+.iconContainer {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 50px;
+}
 .btnPrimary {
   color: #fff;
   background-color: $color-5;
