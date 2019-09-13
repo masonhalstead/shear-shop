@@ -40,9 +40,11 @@ class ProjectsPage extends PureComponent {
       <>
         <CustomAppBar hamburger={hamburger.open}>
           <Toolbar className={cn.toolbar}>
-            <Typography variant="h6" noWrap classes={{ root: cn.rootColor }}>
-              Projects
-            </Typography>
+            <div className={cn.header}>Projects</div>
+            <div className={cn.flexGrow} />
+            <div className={cn.iconContainer}>
+              <FontAwesomeIcon icon="plus" color="#818fa3" />
+            </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>
@@ -58,12 +60,14 @@ class ProjectsPage extends PureComponent {
                 }}
               >
                 <div>
-                  <div className={cn.header}>{project.project_name}</div>
-                  <div className={cn.secondText}>
-                    {project.organization_name}
-                  </div>
+                  <div className={cn.projectHeader}>{project.project_name}</div>
                 </div>
-                <FontAwesomeIcon icon="bars" color="#818fa3" />
+                <div className={cn.projectFooter}>
+                <FontAwesomeIcon icon="server" color="#818fa3" />
+                <p className={cn.secondText}>
+                    {project.organization_name}
+                  </p>
+                </div>
               </div>
             ))}
         </div>

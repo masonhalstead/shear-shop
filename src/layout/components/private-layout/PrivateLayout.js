@@ -78,15 +78,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 history.push(`/projects`);
               }}
             >
-              <Tooltip title="Projects">
-                <ListItemIcon>
-                  <FontAwesomeIcon
-                    icon="folder-open"
-                    color="white"
-                    className={cn.fontIconAlign}
-                  />
-                </ListItemIcon>
-              </Tooltip>
+              <ListItemIcon>
+                <FontAwesomeIcon
+                  icon="folder-open"
+                  color="white"
+                  className={cn.fontIconAlign}
+                />
+              </ListItemIcon>
               <ListItemText
                 primary="Projects"
                 classes={{ primary: cn.rootColor, root: cn.textRoot }}
@@ -107,15 +105,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 history.push(`/projects/${id}/jobs/24`);
               }}
             >
-              <Tooltip title="Jobs">
-                <ListItemIcon>
-                  <FontAwesomeIcon
-                    icon="cog"
-                    color="white"
-                    className={cn.fontIconAlign}
-                  />
-                </ListItemIcon>
-              </Tooltip>
+              <ListItemIcon>
+                <FontAwesomeIcon
+                  icon="cog"
+                  color="white"
+                  className={cn.fontIconAlign}
+                />
+              </ListItemIcon>
               <ListItemText
                 primary="Jobs"
                 classes={{ primary: cn.rootColor, root: cn.textRoot }}
@@ -212,15 +208,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                 history.push(`/projects/${id}/definitions/unarchived`);
               }}
             >
-              <Tooltip title="Job Definitions">
-                <ListItemIcon>
-                  <FontAwesomeIcon
-                    icon="sliders-h"
-                    color="white"
-                    className={cn.fontIconAlign}
-                  />
-                </ListItemIcon>
-              </Tooltip>
+              <ListItemIcon>
+                <FontAwesomeIcon
+                  icon="sliders-h"
+                  color="white"
+                  className={cn.fontIconAlign}
+                />
+              </ListItemIcon>
               <ListItemText
                 primary="Job Definitions"
                 classes={{ primary: cn.rootColor, root: cn.textRoot }}

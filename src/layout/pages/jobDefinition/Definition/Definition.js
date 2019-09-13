@@ -348,7 +348,7 @@ class DefinitionPage extends PureComponent {
     return (
       <>
         <div className={cn.containerRow}>
-          <div className={cn.container}>
+          <div className={cn.containerLeft}>
             <div className={cn.label}>CPU</div>
             <CustomInput
               className={cn.rowPadding}
@@ -362,7 +362,7 @@ class DefinitionPage extends PureComponent {
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
-          <div className={cn.container}>
+          <div className={cn.containerMiddle}>
             <div className={cn.label}>Timeout</div>
             <CustomInput
               type="time"
@@ -376,7 +376,7 @@ class DefinitionPage extends PureComponent {
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
-          <div className={cn.containerLast}>
+          <div className={cn.containerRight}>
             <div className={cn.label}>Max Retries</div>
             <CustomInput
               className={cn.rowPadding}
@@ -392,7 +392,7 @@ class DefinitionPage extends PureComponent {
           </div>
         </div>
         <div className={cn.containerRow}>
-          <div className={cn.container}>
+          <div className={cn.containerLeft}>
             <div className={cn.label}>GPU</div>
             <CustomInput
               className={cn.rowPadding}
@@ -406,7 +406,7 @@ class DefinitionPage extends PureComponent {
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
-          <FormControl className={cn.rowPaddingSelect}>
+          <FormControl className={cn.containerMiddle}>
             <div className={cn.label}>Location</div>
             <NativeSelect
               disabled={region !== 'empty'}
@@ -430,7 +430,7 @@ class DefinitionPage extends PureComponent {
               ))}
             </NativeSelect>
           </FormControl>
-          <FormControl className={cn.rowPaddingSelectLast}>
+          <FormControl className={cn.containerRight}>
             <div className={cn.label}>Result Method</div>
             <NativeSelect
               value={method}
@@ -449,7 +449,7 @@ class DefinitionPage extends PureComponent {
           </FormControl>
         </div>
         <div className={cn.containerRow}>
-          <div className={cn.container}>
+          <div className={cn.containerLeft}>
             <div className={cn.label}>Memory GB</div>
             <CustomInput
               className={cn.rowPadding}
@@ -463,7 +463,7 @@ class DefinitionPage extends PureComponent {
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
-          <FormControl className={cn.rowPaddingSelect}>
+          <FormControl className={cn.containerMiddle}>
             <div className={cn.label}>Region Hint</div>
             <NativeSelect
               disabled={location !== 'empty'}
@@ -487,7 +487,7 @@ class DefinitionPage extends PureComponent {
               ))}
             </NativeSelect>
           </FormControl>
-          <div className={cn.containerLast}>
+          <div className={cn.containerRight}>
             <div className={cn.label}>Success Text</div>
             {Number(method) === 2 ? (
               <CustomInput
@@ -687,7 +687,7 @@ class DefinitionPage extends PureComponent {
                 color: tab === 0 ? '#3e96ed' : '#62738d',
                 textTransform: 'capitalize',
                 borderBottom: '1px solid transparent',
-                borderRight: '1px solid #e7ebf3',
+                borderRight: '1px solid #cfd7e6',
               }}
               label="Configurations"
             />
@@ -700,7 +700,7 @@ class DefinitionPage extends PureComponent {
                 color: tab === 1 ? '#3e96ed' : '#62738d',
                 textTransform: 'capitalize',
                 borderBottom: '1px solid transparent',
-                borderRight: '1px solid #e7ebf3',
+                borderRight: '1px solid #cfd7e6',
               }}
               label="Inputs"
             />
@@ -713,7 +713,7 @@ class DefinitionPage extends PureComponent {
                 minHeight: 44,
                 textTransform: 'capitalize',
                 borderBottom: '1px solid transparent',
-                borderRight: '1px solid #e7ebf3',
+                borderRight: '1px solid #cfd7e6',
               }}
               label="Outputs"
             />

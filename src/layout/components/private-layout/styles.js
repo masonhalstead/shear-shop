@@ -92,7 +92,7 @@ export const styles = theme => ({
   },
   drawerOpen: {
     backgroundColor: '#2e3440',
-    borderRight: '#3b4253',
+    borderRight: '#cfd7e6',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -105,7 +105,7 @@ export const styles = theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     backgroundColor: '#2e3440',
-    borderRight: '#3b4253',
+    borderRight: '#cfd7e6',
     overflowX: 'hidden',
     width: theme.spacing(7) + 1,
     [theme.breakpoints.up('sm')]: {

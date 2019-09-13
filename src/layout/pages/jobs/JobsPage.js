@@ -141,6 +141,10 @@ class JobsPage extends PureComponent {
               </div>
               <div>{label}</div>
             </Breadcrumbs>
+            <div className={cn.flexGrow} />
+            <div className={cn.iconContainer}>
+              <FontAwesomeIcon icon="cog" color="#818fa3" />
+            </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>
