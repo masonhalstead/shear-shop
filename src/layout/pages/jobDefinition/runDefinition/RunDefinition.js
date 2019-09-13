@@ -8,6 +8,7 @@ import {
 } from 'components/common/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BootstrapInput from 'components/common/bootsrapInput/BootstrapInput';
+import classNames from 'classnames';
 import cn from './RunDefinition.module.scss';
 
 class RunDefinition extends PureComponent {
@@ -101,7 +102,7 @@ class RunDefinition extends PureComponent {
         title={title}
       >
         <Typography gutterBottom>
-          <div className={cn.containerNoMargin}>
+          <div className={cn.container}>
             <div className={cn.label}>Docker Image</div>
             <CustomInput
               label="Docker Image"
@@ -111,7 +112,7 @@ class RunDefinition extends PureComponent {
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
-          <div className={cn.containerNoMargin}>
+          <div className={cn.container}>
             <div className={cn.label}>Startup Command</div>
             <CustomInputTextArea
               multiline
@@ -124,8 +125,8 @@ class RunDefinition extends PureComponent {
             />
           </div>
           <div className={cn.containerRow}>
-            <div className={cn.containerRowSmall}>
-              <div className={cn.container}>
+            <div className={cn.splitContainer}>
+              <div className={classNames(cn.containerInput, cn.inputSmall)}>
                 <div className={cn.label}>CPU</div>
                 <CustomInput
                   label="CPU"
@@ -136,7 +137,7 @@ class RunDefinition extends PureComponent {
                   className={cn.top}
                 />
               </div>
-              <div className={cn.container}>
+              <div className={classNames(cn.containerInput, cn.inputSmall)}>
                 <div className={cn.label}>GPU</div>
                 <CustomInput
                   className={cn.align}
@@ -147,7 +148,7 @@ class RunDefinition extends PureComponent {
                   inputStyles={{ input: cn.inputStylesSmall }}
                 />
               </div>
-              <div className={cn.container}>
+              <div className={classNames(cn.containerInputLast, cn.inputSmall)}>
                 <div className={cn.label}>Memory GB</div>
                 <CustomInput
                   className={cn.align}
@@ -158,26 +159,27 @@ class RunDefinition extends PureComponent {
                   inputStyles={{ input: cn.inputStylesSmall }}
                 />
               </div>
-              <div className={cn.containerBig}>
-                <div className={cn.label}>Timeout</div>
-                <CustomInput
-                  type="time"
-                  label="Timeout"
-                  value={timeout}
-                  name="timeout"
-                  onChange={e => this.setState({ timeout: e.target.value })}
-                  inputStyles={{ input: cn.inputStylesSmall }}
-                  className={cn.align}
-                />
-              </div>
+            </div>
+            <div className={cn.containerInputLast}>
+              <div className={cn.label}>Timeout</div>
+              <CustomInput
+                type="time"
+                label="Timeout"
+                value={timeout}
+                name="timeout"
+                onChange={e => this.setState({ timeout: e.target.value })}
+                inputStyles={{ input: cn.inputStylesSmall }}
+                className={cn.align}
+              />
             </div>
           </div>
           <div className={cn.containerRow}>
-            <FormControl className={cn.formControl}>
+            <div className={classNames(cn.containerInputLast, cn.inputMedium)}>
               <div className={cn.label}>Location</div>
               <NativeSelect
                 disabled={region !== 'empty'}
                 value={location}
+                style={{ width: '100%' }}
                 onChange={e => this.setState({ location: e.target.value })}
                 input={<BootstrapInput name="location" id="location" />}
               >
@@ -188,12 +190,13 @@ class RunDefinition extends PureComponent {
                   </option>
                 ))}
               </NativeSelect>
-            </FormControl>
-            <FormControl className={cn.formControl}>
+            </div>
+            <div className={classNames(cn.containerInputLast)}>
               <div className={cn.label}>Region Hint</div>
               <NativeSelect
                 disabled={location !== 'empty'}
                 value={region}
+                style={{ width: '100%' }}
                 onChange={e => this.setState({ region: e.target.value })}
                 input={<BootstrapInput name="region" id="region" />}
               >
@@ -204,34 +207,30 @@ class RunDefinition extends PureComponent {
                   </option>
                 ))}
               </NativeSelect>
-            </FormControl>
+            </div>
           </div>
           <div className={cn.containerRow}>
-            <div className={cn.longInput}>
-              <div className={cn.container}>
-                <div className={cn.label}>Batch Descriptor</div>
-                <CustomInput
-                  label="Batch Descriptor"
-                  value={batchDesc}
-                  name="batchDesc"
-                  onChange={e => this.setState({ batchDesc: e.target.value })}
-                  inputStyles={{ input: cn.customHeight }}
-                  className={cn.top}
-                />
-              </div>
+            <div className={classNames(cn.containerInputLast, cn.inputLarge)}>
+              <div className={cn.label}>Batch Descriptor</div>
+              <CustomInput
+                label="Batch Descriptor"
+                value={batchDesc}
+                name="batchDesc"
+                onChange={e => this.setState({ batchDesc: e.target.value })}
+                inputStyles={{ input: cn.customHeight }}
+                className={cn.top}
+              />
             </div>
-            <div className={cn.shortInput}>
-              <div className={cn.containerNoMargin}>
-                <div className={cn.label}>Batch ID</div>
-                <CustomInput
-                  className={cn.align}
-                  label="Batch ID"
-                  value={batchID}
-                  name="batchID"
-                  onChange={e => this.setState({ batchID: e.target.value })}
-                  inputStyles={{ input: cn.customHeight }}
-                />
-              </div>
+            <div className={cn.containerInputLast}>
+              <div className={cn.label}>Batch ID</div>
+              <CustomInput
+                className={cn.align}
+                label="Batch ID"
+                value={batchID}
+                name="batchID"
+                onChange={e => this.setState({ batchID: e.target.value })}
+                inputStyles={{ input: cn.customHeight }}
+              />
             </div>
           </div>
           <div className={cn.divider} />
@@ -255,7 +254,9 @@ class RunDefinition extends PureComponent {
               </div>
               <div className={cn.formControl}>
                 <div className={cn.container}>
-                  <div className={cn.label}>{`Parameter ${index} Description`}</div>
+                  <div
+                    className={cn.label}
+                  >{`Parameter ${index} Description`}</div>
                   <CustomInput
                     className={cn.align}
                     label={`Parameter ${index} Description`}

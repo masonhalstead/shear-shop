@@ -50,8 +50,9 @@
   color: white;
   width: 240px;
   text-align: center;
-  background-color: #39404c;
-  padding-bottom: 6px;
+  background-color: #2e3440;
+  border-top: 1px solid #3b4253;
+  padding: 6px 0px;
   cursor: pointer;
 }
 .versionSmall {
@@ -62,8 +63,9 @@
   color: white;
   width: 70px;
   text-align: center;
-  background-color: #39404c;
-  padding-bottom: 6px;
+  background-color: #2e3440;
+  border-top: 1px solid #3b4253;
+  padding: 6px 0px;
 }
 .rootColor {
   color: white;
@@ -72,9 +74,20 @@
   padding-bottom: 5px !important;
 }
 .deepMenuItems {
-  margin-left: 56px;
   color: white;
+  .rootColor {
+    padding-left: 73px;
+  }
 }
 .textRoot {
   margin-left: 1px;
+}
+.dividerOpen {
+  background-color: #3b4253 !important;
+}
+.dividerClosed {
+  background-color: transparent !important;
+}
+.tooltip {
+  background: pink;
 }

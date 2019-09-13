@@ -24,6 +24,7 @@ import {
 import BootstrapInput from 'components/common/bootsrapInput/BootstrapInput';
 import { TableContainer } from 'components/common/table-view/TableContainer';
 import { TableContent } from 'components/common/table-view/TableContent';
+import classNames from 'classnames';
 import cn from './Definition.module.scss';
 import { configureColumns } from './columns';
 import { configureColumnsOutput } from './outputColumns';
@@ -469,6 +470,10 @@ class DefinitionPage extends PureComponent {
               </div>
               <div>{label}</div>
             </Breadcrumbs>
+            <div className={cn.flex} />
+            <div className={cn.iconContainer}>
+              <FontAwesomeIcon icon={['far', 'save']} color="#818fa3" />
+            </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>
@@ -476,21 +481,19 @@ class DefinitionPage extends PureComponent {
         </CustomAppBar>
         <Paper className={cn.contentAlign}>
           <div className={cn.containerRow}>
-            <div className={cn.smallItem}>
-              <div className={cn.container}>
-                <div className={cn.label}>Job Definition</div>
-                <CustomInput
-                  label="Job Definition"
-                  value={definitionName}
-                  name="definitionName"
-                  onChange={e =>
-                    this.setState({ definitionName: e.target.value })
-                  }
-                  inputStyles={{ input: cn.inputStyles }}
-                />
-              </div>
+            <div className={classNames(cn.container, cn.inputSmall)}>
+              <div className={cn.label}>Job Definition</div>
+              <CustomInput
+                label="Job Definition"
+                value={definitionName}
+                name="definitionName"
+                onChange={e =>
+                  this.setState({ definitionName: e.target.value })
+                }
+                inputStyles={{ input: cn.inputStyles }}
+              />
             </div>
-            <div className={cn.containerLast}>
+            <div className={classNames(cn.containerLast, cn.inputMedium)}>
               <div className={cn.label}>Docker Image</div>
               <CustomInput
                 label="Docker Image"
@@ -531,6 +534,9 @@ class DefinitionPage extends PureComponent {
             value={tab}
             indicatorColor="primary"
             textColor="primary"
+            classes={{
+              root: cn.tabsWrapper,
+            }}
             onChange={this.handleChangeTab}
             TabIndicatorProps={{
               style: {
@@ -541,20 +547,26 @@ class DefinitionPage extends PureComponent {
             <Tab
               style={{
                 width: '300px',
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: 400,
+                minHeight: 44,
                 color: tab === 0 ? '#3e96ed' : '#62738d',
-                border: '1px solid #e7ebf3',
+                textTransform: 'capitalize',
+                borderBottom: '1px solid transparent',
+                borderRight: '1px solid #e7ebf3',
               }}
               label="Configurations"
             />
             <Tab
               style={{
                 width: '300px',
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: 400,
+                minHeight: 44,
                 color: tab === 1 ? '#3e96ed' : '#62738d',
-                border: '1px solid #e7ebf3',
+                textTransform: 'capitalize',
+                borderBottom: '1px solid transparent',
+                borderRight: '1px solid #e7ebf3',
               }}
               label="Inputs"
             />
@@ -562,16 +574,19 @@ class DefinitionPage extends PureComponent {
               style={{
                 width: '300px',
                 color: tab === 2 ? '#3e96ed' : '#62738d',
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: 400,
-                border: '1px solid #e7ebf3',
+                minHeight: 44,
+                textTransform: 'capitalize',
+                borderBottom: '1px solid transparent',
+                borderRight: '1px solid #e7ebf3',
               }}
               label="Outputs"
             />
           </Tabs>
           {tab === 0 && <div className={cn.tabValue}>{content}</div>}
+          {tab !== 0 && <div className={cn.tabValueAlt}>{content}</div>}
         </Paper>
-        {tab !== 0 && <div className={cn.tabValue}>{content}</div>}
         <Dialog
           disableBackdropClick
           disableEscapeKeyDown
