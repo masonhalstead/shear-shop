@@ -1,4 +1,4 @@
-import { Loading } from 'components/common/loading/Loading';
+import { Loading } from 'components/loading/Loading';
 import React from 'react';
 
 export const loadingColumn = [

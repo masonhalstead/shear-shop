@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import Footer from 'components/common/footer/Footer';
+import Footer from 'components/footer/Footer';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { Drawer, List, Divider, Tooltip } from '@material-ui/core';

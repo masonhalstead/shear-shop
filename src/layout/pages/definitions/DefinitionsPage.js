@@ -2,28 +2,27 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TableContainer } from 'components/common/table-view/TableContainer';
-import { TableContent } from 'components/common/table-view/TableContent';
+import { TableContainer } from 'components/table-view/TableContainer';
+import { TableContent } from 'components/table-view/TableContent';
 import { Toolbar, Breadcrumbs, Dialog, Button } from '@material-ui/core';
-import { CustomAppBar } from 'components/common/appBar/AppBar';
+import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
 import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
-import { CustomizedInputBase } from 'components/common/search/SearchInput';
+import { CustomizedInputBase } from 'components/search/SearchInput';
 import { logoutUser } from 'ducks/actions';
-
-import Popover from 'components/common/popover/Popover';
-import TableViewCol from 'components/common/viewColumn/ViewColumn';
+import Popover from 'components/popover/Popover';
+import TableViewCol from 'components/view-column/ViewColumn';
 import classNames from 'classnames';
 import {
   DialogActions,
   DialogContent,
   DialogTitle,
-} from 'components/common/dialogs/Dialogs';
-import { CustomInput } from 'components/common/material-input/CustomInput';
-import cn from './JobDefinitionPage.module.scss';
+} from 'components/dialogs/Dialogs';
+import { CustomInput } from 'components/material-input/CustomInput';
+import cn from './Definitions.module.scss';
 import { configureColumns } from './columns';
-import RunDefinition from './runDefinition/RunDefinition';
+import RunDefinition from '../../components/modals/run-definition/RunDefinition';
 
 const result = {
   client: 'Edelman',
@@ -74,7 +73,7 @@ const result = {
   ],
 };
 
-class JobDefinitionPage extends PureComponent {
+class DefinitionsPage extends PureComponent {
   static propTypes = {
     getJobDefinitions: PropTypes.func,
     hamburger: PropTypes.object,
@@ -331,4 +330,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(JobDefinitionPage);
+)(DefinitionsPage);

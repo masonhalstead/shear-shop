@@ -15,19 +15,19 @@ import {
   Button,
   DialogActions,
 } from '@material-ui/core';
-import { CustomAppBar } from 'components/common/appBar/AppBar';
+import { CustomAppBar } from 'components/app-bar/AppBar';
 import { logoutUser } from 'ducks/actions';
 import {
   CustomInput,
   CustomInputTextArea,
   CustomInputBack,
-} from 'components/common/material-input/CustomInput';
+} from 'components/material-input/CustomInput';
 import {
   BootstrapInput,
   BootstrapInputDisabled,
-} from 'components/common/bootsrapInput/BootstrapInput';
-import { TableContainer } from 'components/common/table-view/TableContainer';
-import { TableContent } from 'components/common/table-view/TableContent';
+} from 'components/bootsrap-input/BootstrapInput';
+import { TableContainer } from 'components/table-view/TableContainer';
+import { TableContent } from 'components/table-view/TableContent';
 import classNames from 'classnames';
 import cn from './Definition.module.scss';
 import { configureColumns } from './columns';

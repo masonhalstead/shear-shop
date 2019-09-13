@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { CustomInput } from 'components/common/material-input/CustomInput';
+import { CustomInput } from 'components/material-input/CustomInput';
 import { login as loginUserAction } from 'ducks/operators/user';
 import { selectIsAuthenticated } from 'ducks/selectors';
 import { routes } from 'layout/routes';

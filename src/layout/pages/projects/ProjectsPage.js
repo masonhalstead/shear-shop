@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Toolbar, Typography } from '@material-ui/core';
+import { Toolbar } from '@material-ui/core';
 import { logoutUser } from 'ducks/actions';
-import { CustomAppBar } from 'components/common/appBar/AppBar';
+import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import * as Sentry from '@sentry/browser';
 import cn from './Project.module.scss';
@@ -63,10 +63,8 @@ class ProjectsPage extends PureComponent {
                   <div className={cn.projectHeader}>{project.project_name}</div>
                 </div>
                 <div className={cn.projectFooter}>
-                <FontAwesomeIcon icon="server" color="#818fa3" />
-                <p className={cn.secondText}>
-                    {project.organization_name}
-                  </p>
+                  <FontAwesomeIcon icon="server" color="#818fa3" />
+                  <p className={cn.secondText}>{project.organization_name}</p>
                 </div>
               </div>
             ))}

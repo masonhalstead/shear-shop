@@ -1,16 +1,16 @@
 import React, { PureComponent } from 'react';
 import * as PropTypes from 'prop-types';
-import { CustomizedDialogs } from 'components/common/modal/CustomModal';
+import { CustomizedDialogs } from 'components/modal/CustomModal';
 import { Typography, NativeSelect, FormControl } from '@material-ui/core';
 import {
   CustomInput,
   CustomInputTextArea,
-} from 'components/common/material-input/CustomInput';
+} from 'components/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   BootstrapInput,
   BootstrapInputDisabled,
-} from 'components/common/bootsrapInput/BootstrapInput';
+} from 'components/bootsrap-input/BootstrapInput';
 import classNames from 'classnames';
 import cn from './RunDefinition.module.scss';
 

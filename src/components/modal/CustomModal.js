@@ -4,7 +4,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from 'components/common/dialogs/Dialogs';
+} from 'components/dialogs/Dialogs';
 import classNames from 'classnames';
 import cn from './Modal.module.scss';
 

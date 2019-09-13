@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Loading } from 'components/common/loading/Loading';
-import Footer from 'components/common/footer/Footer';
+import { Loading } from 'components/loading/Loading';
+import Footer from 'components/footer/Footer';
 
 export class ConnectedPublicLayout extends PureComponent {
   static propTypes = {

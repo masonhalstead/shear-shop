@@ -1,5 +1,5 @@
 import React from 'react';
-import { CustomInputNoBorders } from 'components/common/material-input/CustomInput';
+import { CustomInputNoBorders } from 'components/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cn from './Definition.module.scss';
 
