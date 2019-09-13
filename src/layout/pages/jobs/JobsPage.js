@@ -88,7 +88,7 @@ class JobsPage extends PureComponent {
     filterType: 'textField',
     selectableRows: 'none',
     search: true,
-    pagination: true,
+    pagination: false,
     filter: true,
     download: false,
     viewColumns: true,
