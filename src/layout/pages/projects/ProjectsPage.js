@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Toolbar, Typography } from '@material-ui/core';
+import { Toolbar } from '@material-ui/core';
 import { logoutUser } from 'ducks/actions';
-import { CustomAppBar } from 'components/common/appBar/AppBar';
+import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import * as Sentry from '@sentry/browser';
 import cn from './Project.module.scss';
@@ -40,9 +40,11 @@ class ProjectsPage extends PureComponent {
       <>
         <CustomAppBar hamburger={hamburger.open}>
           <Toolbar className={cn.toolbar}>
-            <Typography variant="h6" noWrap classes={{ root: cn.rootColor }}>
-              Projects
-            </Typography>
+            <div className={cn.header}>Projects</div>
+            <div className={cn.flexGrow} />
+            <div className={cn.iconContainer}>
+              <FontAwesomeIcon icon="plus" color="#818fa3" />
+            </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>
@@ -58,12 +60,12 @@ class ProjectsPage extends PureComponent {
                 }}
               >
                 <div>
-                  <div className={cn.header}>{project.project_name}</div>
-                  <div className={cn.secondText}>
-                    {project.organization_name}
-                  </div>
+                  <div className={cn.projectHeader}>{project.project_name}</div>
                 </div>
-                <FontAwesomeIcon icon="bars" color="#818fa3" />
+                <div className={cn.projectFooter}>
+                  <FontAwesomeIcon icon="server" color="#818fa3" />
+                  <p className={cn.secondText}>{project.organization_name}</p>
+                </div>
               </div>
             ))}
         </div>

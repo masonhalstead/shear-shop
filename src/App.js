@@ -8,7 +8,7 @@ import * as Sentry from '@sentry/browser';
 import { routes } from 'layout/routes';
 import { PublicRoute } from 'layout/components/public-route/PublicRoute';
 import { PrivateRoute } from 'layout/components/private-route/PrivateRoute';
-import { Loading } from './components/common/loading/Loading';
+import { Loading } from './components/loading/Loading';
 import * as pages from './layout/async';
 
 library.add(fab, far, fas);
@@ -53,12 +53,12 @@ export class App extends PureComponent {
             <PrivateRoute exact path={routes.JOBS} component={pages.JobsPage} />
             <PrivateRoute
               exact
-              path={routes.JOB_DEFINITIONS}
-              component={pages.JobDefinitionPage}
+              path={routes.DEFINITIONS}
+              component={pages.DefinitionsPage}
             />
             <PrivateRoute
               exact
-              path={routes.JOB_DEFINITION}
+              path={routes.DEFINITION}
               component={pages.DefinitionPage}
             />
           </Switch>

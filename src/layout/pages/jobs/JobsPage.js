@@ -2,10 +2,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TableContainer } from 'components/common/table-view/TableContainer';
-import { TableContent } from 'components/common/table-view/TableContent';
+import { TableContainer } from 'components/table-view/TableContainer';
+import { TableContent } from 'components/table-view/TableContent';
 import { Toolbar, Breadcrumbs } from '@material-ui/core';
-import { CustomAppBar } from 'components/common/appBar/AppBar';
+import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import { logoutUser } from 'ducks/actions';
 
@@ -141,6 +141,10 @@ class JobsPage extends PureComponent {
               </div>
               <div>{label}</div>
             </Breadcrumbs>
+            <div className={cn.flexGrow} />
+            <div className={cn.iconContainer}>
+              <FontAwesomeIcon icon="cog" color="#818fa3" />
+            </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>

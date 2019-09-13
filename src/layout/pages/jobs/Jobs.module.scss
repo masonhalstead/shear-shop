@@ -1,15 +1,19 @@
 @import "src/scss/styles";
 
+.flexGrow {
+  flex-grow: 1;
+}
 .toolbar {
-  background-color: $color-1;
+  background-color: #fff;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
   padding-left: 25px;
+  padding-right: 0px;
   min-height: 45px !important;
   height: 45px;
-  border-bottom: 1px solid $color-2;
+  border-bottom: 1px solid #cfd7e6;
 }
 
 .contentAlign {
@@ -24,7 +28,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid $color-2;
+  border: 1px solid #cfd7e6;
   border-radius: 15px;
   width: 200px;
   height: 150px;
@@ -42,37 +46,57 @@
   font-size: 14px;
   margin-top: 5px;
 }
-.logout {
+.iconContainer {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  width: 50px;
+}
+.logout {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 50px;
+  border-left: 1px solid #cfd7e6;
 }
 
 .stateRed {
   background-color: $color-13;
   padding: 5px;
-  width: 100px;
+  width: 90px;
   margin: 0 auto;
   border-radius: 3px;
   color: white;
+  font-weight: 400;
+  font-size: 12px;
 }
 .stateGreen {
   background-color: $color-12;
   padding: 5px;
-  width: 100px;
+  width: 90px;
   margin: 0 auto;
   border-radius: 3px;
   color: white;
+  font-weight: 400;
+  font-size: 12px;
 }
 .stateGrey {
   background-color: $color-11;
   padding: 5px;
-  width: 100px;
+  width: 90px;
   margin: 0 auto;
   border-radius: 3px;
   color: white;
+  font-weight: 400;
+  font-size: 12px;
 }
 
 .textColor {
-  color: $color-5;
+  color: #3b4253;
 }
 
 .mainColumnText {
@@ -89,3 +113,6 @@
   color: $color-6;
 }
 
+.logout:hover svg, .iconContainer:hover svg {
+  color: #3e96ed;
+}

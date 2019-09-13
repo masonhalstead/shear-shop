@@ -1,48 +1,99 @@
 @import "src/scss/styles";
 
+.flexGrow {
+  flex-grow: 1;
+}
 .toolbar {
-  background-color: $color-2;
+  background-color: #fff;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
   padding-left: 25px;
-  min-height: 50px !important;
+  padding-right: 0px;
+  min-height: 45px !important;
+  height: 45px;
+  border-bottom: 1px solid #cfd7e6;
 }
 
 .contentAlign {
   display: flex;
-  flex-direction: row;
-  margin-top: 60px;
-  margin-left: 10px;
-  cursor: pointer;
-  flex-flow: wrap;
+  flex-wrap: wrap;
+  margin-top: 71px;
+  margin-left: 25px;
+  margin-right: 25px;
+  border-radius: 0;
 }
 
 .projectItem {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid $color-2;
+  border: 1px solid #cfd7e6;
+  cursor: pointer;
   border-radius: 15px;
   width: 200px;
   height: 150px;
-  margin: 15px;
+  margin-right: 30px;
+  margin-bottom: 30px;
   padding: 15px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+}
+.projectItem:hover {
+  border: 1px solid #3e96ed;
+  .projectHeader, .secondText, svg {
+    color: #3e96ed;
+  }
 }
 .rootColor {
   color: $color-5;
 }
 .header {
-  color: $color-5;
+  font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
+  color: #62738d;
+}
+.header:hover {
+  color: #3e96ed;
+}
+.projectHeader {
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #62738d;
   overflow-wrap: break-word;
+}
+.projectFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .secondText {
-  color: $color-4;
   font-size: 14px;
-  margin-top: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #62738d;
   overflow-wrap: break-word;
+  margin: 0px;
+}
+.iconContainer {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 50px;
 }
 .logout {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  width: 50px;
+  border-left: 1px solid #cfd7e6;
+}
+.logout:hover svg, .iconContainer:hover svg {
+  color: #3e96ed;
 }

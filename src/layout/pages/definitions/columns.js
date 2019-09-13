@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import cn from './JobDefinitionPage.module.scss';
+import cn from './Definitions.module.scss';
 
 export const configureColumns = (openModal, openDefinition) => [
   {

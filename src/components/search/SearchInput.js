@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     height: '24px',
     boxShadow: 'none',
     flex: 1,
-    border: '1px solid #dde3ee',
+    border: '1px solid #cfd7e6',
   },
   input: {
     fontSize: '13px',

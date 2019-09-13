@@ -4,7 +4,7 @@
   flex-grow: 1;
 }
 .toolbar {
-  background-color: $color-1;
+  background-color: #fff;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -13,7 +13,7 @@
   padding-right: 0px;
   min-height: 45px !important;
   height: 45px;
-  border-bottom: 1px solid darken($color-2, 3%);
+  border-bottom: 1px solid #cfd7e6;
 }
 
 .contentAlign {
@@ -24,8 +24,8 @@
   padding: 20px;
   margin-right: 25px;
   border-radius: 0;
-  border: 1px solid darken($color-2, 3%);
-  box-shadow: none;
+  border: 1px solid #cfd7e6;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
 
 .contentAlignSecond {
@@ -38,14 +38,15 @@
   box-shadow: none;
 }
 .tabsWrapper {
-  border: 1px solid darken($color-2, 3%);
+  border: 1px solid #cfd7e6;
   min-height: 44px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
 .projectItem {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid darken($color-2, 3%);
+  border: 1px solid #cfd7e6;
   border-radius: 15px;
   width: 200px;
   height: 150px;
@@ -78,7 +79,7 @@
   align-items: center;
   cursor: pointer;
   width: 50px;
-  border-left: 1px solid darken($color-2, 3%);
+  border-left: 1px solid #cfd7e6;
 }
 
 .addNewJob {
@@ -87,7 +88,7 @@
 }
 
 .textColor {
-  color: $color-5;
+  color: #3b4253;
 }
 
 .mainColumnText {
@@ -121,8 +122,10 @@
 
 .tabValue {
   padding: 20px;
-  border: 1px solid darken($color-2, 3%);
+  border: 1px solid #cfd7e6;
   border-top: none;
+  background: #fff;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
 
 .tabValueAlt {
@@ -198,9 +201,11 @@
 }
 
 .inputSmall {
+  width: 33.33%;
   max-width: 33.33%;
 }
 .inputMedium {
+  width: 66.66%;
   max-width: 66.66%;
 }
 .inputLarge {
@@ -212,4 +217,20 @@
 
 input[type=time]::-webkit-datetime-edit-ampm-field {
   display: none;
+}
+.containerLeft {
+  width: 33.33%;
+  padding-right: 15px;
+}
+.containerMiddle {
+  width: 33.33%;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.containerRight {
+  width: 33.33%;
+  padding-left: 15px;
+}
+.logout:hover svg, .iconContainer:hover svg {
+  color: #3e96ed;
 }
