@@ -26,19 +26,20 @@ export const defaultViewColStyles = theme => ({
   formControl: {},
   checkbox: {
     padding: '0px',
-    width: '32px',
-    height: '32px',
+    width: '20px',
+    height: '20px',
   },
   checkboxRoot: {
     '&$checked': {
-      color: theme.palette.primary.main,
+      color: '#62738d',
     },
   },
   checked: {},
   label: {
-    fontSize: '15px',
+    fontSize: '13px',
     marginLeft: '8px',
-    color: theme.palette.text.primary,
+    color: '#62738d',
+    fontWeight: 300,
   },
 });
 

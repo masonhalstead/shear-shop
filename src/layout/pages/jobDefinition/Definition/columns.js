@@ -49,7 +49,7 @@ export const configureColumns = (
         >
           {value ? (
             <FontAwesomeIcon
-              style={{ width: '25px', height: '25px' }}
+              style={{ width: '20px', height: '20px' }}
               icon="check"
               color="#5db85b"
             />

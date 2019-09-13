@@ -99,3 +99,7 @@
   max-width: 66.66%;
   margin-right: 20px;
 }
+
+input[type=time]::-webkit-datetime-edit-ampm-field {
+  display: none;
+}
