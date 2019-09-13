@@ -65,4 +65,29 @@ export const CustomInputTextArea = withStyles(theme => ({
       borderColor: '#818fa3',
     },
   },
+  multiline: {
+    padding: 0,
+  }
+}))(InputBase);
+
+export const CustomInputBack = withStyles(theme => ({
+  root: {
+    width: '100%',
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    backgroundColor: '#e9f2ff',
+    border: '1px solid #cfd7e6',
+    fontSize: 13,
+    height: '18px !important',
+    padding: '5px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    '&:focus': {
+      borderColor: '#818fa3',
+    },
+  },
 }))(InputBase);

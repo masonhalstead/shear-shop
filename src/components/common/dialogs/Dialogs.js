@@ -19,6 +19,8 @@ const styles = theme => ({
     right: 0,
     top: 0,
     color: theme.palette.grey[500],
+    width: '50px !important',
+    height: '50px !important',
   },
 });
 

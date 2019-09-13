@@ -7,7 +7,10 @@ import {
   CustomInputTextArea,
 } from 'components/common/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import BootstrapInput from 'components/common/bootsrapInput/BootstrapInput';
+import {
+  BootstrapInput,
+  BootstrapInputDisabled,
+} from 'components/common/bootsrapInput/BootstrapInput';
 import classNames from 'classnames';
 import cn from './RunDefinition.module.scss';
 
@@ -130,6 +133,7 @@ class RunDefinition extends PureComponent {
                 <div className={cn.label}>CPU</div>
                 <CustomInput
                   label="CPU"
+                  type="number"
                   value={cpu}
                   name="cpu"
                   onChange={e => this.setState({ cpu: e.target.value })}
@@ -143,6 +147,7 @@ class RunDefinition extends PureComponent {
                   className={cn.align}
                   label="GPU"
                   value={gpu}
+                  type="number"
                   name="gru"
                   onChange={e => this.setState({ gpu: e.target.value })}
                   inputStyles={{ input: cn.inputStylesSmall }}
@@ -153,6 +158,7 @@ class RunDefinition extends PureComponent {
                 <CustomInput
                   className={cn.align}
                   label="Memory GB"
+                  type="number"
                   value={memory}
                   name="memory"
                   onChange={e => this.setState({ memory: e.target.value })}
@@ -181,7 +187,13 @@ class RunDefinition extends PureComponent {
                 value={location}
                 style={{ width: '100%' }}
                 onChange={e => this.setState({ location: e.target.value })}
-                input={<BootstrapInput name="location" id="location" />}
+                input={
+                  region !== 'empty' ? (
+                    <BootstrapInputDisabled name="location" id="location" />
+                  ) : (
+                    <BootstrapInput name="location" id="location" />
+                  )
+                }
               >
                 <option key="empty" value="empty" />
                 {locations.map(item => (
@@ -198,7 +210,13 @@ class RunDefinition extends PureComponent {
                 value={region}
                 style={{ width: '100%' }}
                 onChange={e => this.setState({ region: e.target.value })}
-                input={<BootstrapInput name="region" id="region" />}
+                input={
+                  location !== 'empty' ? (
+                    <BootstrapInputDisabled name="region" id="region" />
+                  ) : (
+                    <BootstrapInput name="region" id="region" />
+                  )
+                }
               >
                 <option key="empty" value="empty" />
                 {locations.map(item => (

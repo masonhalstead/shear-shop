@@ -20,8 +20,12 @@ import { logoutUser } from 'ducks/actions';
 import {
   CustomInput,
   CustomInputTextArea,
+  CustomInputBack,
 } from 'components/common/material-input/CustomInput';
-import BootstrapInput from 'components/common/bootsrapInput/BootstrapInput';
+import {
+  BootstrapInput,
+  BootstrapInputDisabled,
+} from 'components/common/bootsrapInput/BootstrapInput';
 import { TableContainer } from 'components/common/table-view/TableContainer';
 import { TableContent } from 'components/common/table-view/TableContent';
 import classNames from 'classnames';
@@ -99,6 +103,7 @@ class DefinitionPage extends PureComponent {
         id: 1,
       },
     ],
+    changes: false,
   };
 
   componentDidMount() {
@@ -109,6 +114,10 @@ class DefinitionPage extends PureComponent {
     //   // Only fires if the server is off line or the body isnt set correctly
     //   Sentry.captureException(err);
     // }
+  }
+
+  componentWillUnmount() {
+    this.setState({ changes: false });
   }
 
   handleChangeTab = (event, newValue) => {
@@ -123,7 +132,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.params];
       newItems[index].value = value;
-      return { params: newItems };
+      return { params: newItems, changes: true };
     });
   };
 
@@ -131,27 +140,27 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.params];
       newItems[index].description = description;
-      return { params: newItems };
+      return { params: newItems, changes: true };
     });
   };
 
   deleteOutputRow = index => {
     const { params } = this.state;
     const result = params.filter((item, indexNew) => indexNew !== index);
-    this.setState({ params: result });
+    this.setState({ params: result, changes: true });
   };
 
   deleteInputRow = index => {
     const { data } = this.state;
     const result = data.filter((item, indexNew) => indexNew !== index);
-    this.setState({ data: result });
+    this.setState({ data: result, changes: true });
   };
 
   changeReferenceParameter = referenceParameter => {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[this.state.index].reference_parameter = referenceParameter;
-      return { data: newItems, parameter: referenceParameter };
+      return { data: newItems, parameter: referenceParameter, changes: true };
     });
   };
 
@@ -166,7 +175,7 @@ class DefinitionPage extends PureComponent {
         value: '',
         description: '',
       });
-      return { params: newItems };
+      return { params: newItems, changes: true };
     });
   };
 
@@ -182,7 +191,7 @@ class DefinitionPage extends PureComponent {
         description: '',
         id: newItems.length + 1,
       });
-      return { data: newItems };
+      return { data: newItems, changes: true };
     });
   };
 
@@ -192,6 +201,41 @@ class DefinitionPage extends PureComponent {
         tableData={this.state.data}
         tableOptions={this.options}
         columns={this.createColumns()}
+        styles={{
+          MuiTableCell: {
+            root: {
+              border: '1px solid #dde3ee',
+              borderBottom: '1px solid #dde3ee',
+            },
+            body: {
+              fontSize: '13px',
+              fontWeight: 300,
+              lineHeight: '1',
+              padding: '5px !important',
+              '&:nth-child(2)': {
+                width: 139,
+              },
+              '&:nth-child(4)': {
+                width: 79,
+              },
+              '&:nth-child(6)': {
+                width: 79,
+              },
+              '&:nth-child(8)': {
+                width: 139,
+              },
+              '&:nth-child(10)': {
+                width: 139,
+              },
+              '&:nth-child(14)': {
+                width: 29,
+              },
+            },
+            head: {
+              fontSize: '1rem',
+            },
+          },
+        }}
       />
     </TableContainer>
   );
@@ -204,7 +248,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[index].name = name;
-      return { data: newItems };
+      return { data: newItems, changes: true };
     });
   };
 
@@ -212,7 +256,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[index].default = defaultValue;
-      return { data: newItems };
+      return { data: newItems, changes: true };
     });
   };
 
@@ -220,7 +264,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[index].description = description;
-      return { data: newItems };
+      return { data: newItems, changes: true };
     });
   };
 
@@ -228,7 +272,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[index].required = !newItems[index].required;
-      return { data: newItems };
+      return { data: newItems, changes: true };
     });
   };
 
@@ -238,6 +282,30 @@ class DefinitionPage extends PureComponent {
         tableData={this.state.params}
         tableOptions={this.options}
         columns={this.createColumnsOutput()}
+
+        styles={{
+          MuiTableCell: {
+            root: {
+              border: '1px solid #dde3ee',
+              borderBottom: '1px solid #dde3ee',
+            },
+            body: {
+              fontSize: '13px',
+              fontWeight: 300,
+              lineHeight: '1',
+              padding: '5px !important',
+              '&:nth-child(2)': {
+                width: 189,
+              },
+              '&:nth-child(6)': {
+                width: 29,
+              },
+            },
+            head: {
+              fontSize: '1rem',
+            },
+          },
+        }}
       />
     </TableContainer>
   );
@@ -275,6 +343,8 @@ class DefinitionPage extends PureComponent {
       lookups: { locations, result_methods },
     } = this.props;
 
+    console.log(method);
+
     return (
       <>
         <div className={cn.containerRow}>
@@ -282,10 +352,13 @@ class DefinitionPage extends PureComponent {
             <div className={cn.label}>CPU</div>
             <CustomInput
               className={cn.rowPadding}
+              type="number"
               label="CPU"
               value={cpu}
               name="cpu"
-              onChange={e => this.setState({ cpu: e.target.value })}
+              onChange={e =>
+                this.setState({ cpu: e.target.value, changes: true })
+              }
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
@@ -297,7 +370,9 @@ class DefinitionPage extends PureComponent {
               label="Timeout"
               value={timeout}
               name="dockerImage"
-              onChange={e => this.setState({ timeout: e.target.value })}
+              onChange={e =>
+                this.setState({ timeout: e.target.value, changes: true })
+              }
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
@@ -305,10 +380,13 @@ class DefinitionPage extends PureComponent {
             <div className={cn.label}>Max Retries</div>
             <CustomInput
               className={cn.rowPadding}
+              type="number"
               label="Max Retries"
               value={retries}
               name="retries"
-              onChange={e => this.setState({ retries: e.target.value })}
+              onChange={e =>
+                this.setState({ retries: e.target.value, changes: true })
+              }
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
@@ -319,9 +397,12 @@ class DefinitionPage extends PureComponent {
             <CustomInput
               className={cn.rowPadding}
               label="GPU"
+              type="number"
               value={gpu}
               name="gpu"
-              onChange={e => this.setState({ gpu: e.target.value })}
+              onChange={e =>
+                this.setState({ gpu: e.target.value, changes: true })
+              }
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
@@ -330,8 +411,16 @@ class DefinitionPage extends PureComponent {
             <NativeSelect
               disabled={region !== 'empty'}
               value={location}
-              onChange={e => this.setState({ location: e.target.value })}
-              input={<BootstrapInput name="location" id="location" />}
+              onChange={e =>
+                this.setState({ location: e.target.value, changes: true })
+              }
+              input={
+                region !== 'empty' ? (
+                  <BootstrapInputDisabled name="location" id="location" />
+                ) : (
+                  <BootstrapInput name="location" id="location" />
+                )
+              }
             >
               <option key="empty" value="empty" />
               {locations.map(item => (
@@ -345,7 +434,9 @@ class DefinitionPage extends PureComponent {
             <div className={cn.label}>Result Method</div>
             <NativeSelect
               value={method}
-              onChange={e => this.setState({ method: e.target.value })}
+              onChange={e =>
+                this.setState({ method: e.target.value, changes: true })
+              }
               input={<BootstrapInput name="method" id="method" />}
             >
               <option key="empty" value="empty" />
@@ -363,9 +454,12 @@ class DefinitionPage extends PureComponent {
             <CustomInput
               className={cn.rowPadding}
               label="Memory GB"
+              type="number"
               value={memory}
               name="memory"
-              onChange={e => this.setState({ memory: e.target.value })}
+              onChange={e =>
+                this.setState({ memory: e.target.value, changes: true })
+              }
               inputStyles={{ input: cn.inputStyles }}
             />
           </div>
@@ -374,8 +468,16 @@ class DefinitionPage extends PureComponent {
             <NativeSelect
               disabled={location !== 'empty'}
               value={region}
-              onChange={e => this.setState({ region: e.target.value })}
-              input={<BootstrapInput name="region" id="region" />}
+              onChange={e =>
+                this.setState({ region: e.target.value, changes: true })
+              }
+              input={
+                location !== 'empty' ? (
+                  <BootstrapInputDisabled name="region" id="region" />
+                ) : (
+                  <BootstrapInput name="region" id="region" />
+                )
+              }
             >
               <option key="empty" value="empty" />
               {locations.map(item => (
@@ -387,14 +489,33 @@ class DefinitionPage extends PureComponent {
           </FormControl>
           <div className={cn.containerLast}>
             <div className={cn.label}>Success Text</div>
-            <CustomInput
-              className={cn.rowPadding}
-              label="Success Text"
-              value={success}
-              name="success"
-              onChange={e => this.setState({ success: e.target.value })}
-              inputStyles={{ input: cn.inputStyles }}
-            />
+            {Number(method) === 2 ? (
+              <CustomInput
+                className={cn.rowPadding}
+                label="Success Text"
+                value={success}
+                name="success"
+                onChange={e =>
+                  this.setState({ success: e.target.value, changes: true })
+                }
+                inputStyles={{
+                  input: cn.inputStyles,
+                }}
+              />
+            ) : (
+              <CustomInputBack
+                className={cn.rowPadding}
+                label="Success Text"
+                value={success}
+                name="success"
+                onChange={e =>
+                  this.setState({ success: e.target.value, changes: true })
+                }
+                inputStyles={{
+                  input: cn.inputStyles,
+                }}
+              />
+            )}
           </div>
         </div>
       </>
@@ -405,7 +526,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[this.state.index].reference = 'Reference Added';
-      return { data: newItems, project: reference };
+      return { data: newItems, project: reference, changes: true };
     });
   };
 
@@ -428,6 +549,7 @@ class DefinitionPage extends PureComponent {
       open,
       project,
       parameter,
+      changes,
     } = this.state;
     const id = 1;
     let content = '';
@@ -472,7 +594,10 @@ class DefinitionPage extends PureComponent {
             </Breadcrumbs>
             <div className={cn.flex} />
             <div className={cn.iconContainer}>
-              <FontAwesomeIcon icon={['far', 'save']} color="#818fa3" />
+              <FontAwesomeIcon
+                icon={['far', 'save']}
+                color={changes ? 'orange' : '#818fa3'}
+              />
             </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
@@ -488,7 +613,10 @@ class DefinitionPage extends PureComponent {
                 value={definitionName}
                 name="definitionName"
                 onChange={e =>
-                  this.setState({ definitionName: e.target.value })
+                  this.setState({
+                    definitionName: e.target.value,
+                    changes: true,
+                  })
                 }
                 inputStyles={{ input: cn.inputStyles }}
               />
@@ -499,7 +627,9 @@ class DefinitionPage extends PureComponent {
                 label="Docker Image"
                 value={dockerImage}
                 name="dockerImage"
-                onChange={e => this.setState({ dockerImage: e.target.value })}
+                onChange={e =>
+                  this.setState({ dockerImage: e.target.value, changes: true })
+                }
                 inputStyles={{ input: cn.inputStyles }}
               />
             </div>
@@ -511,19 +641,23 @@ class DefinitionPage extends PureComponent {
               label="Startup Command"
               value={startupCommand}
               name="startupCommand"
-              onChange={e => this.setState({ startupCommand: e.target.value })}
+              onChange={e =>
+                this.setState({ startupCommand: e.target.value, changes: true })
+              }
               inputStyles={{ input: cn.inputStyles }}
               className={cn.top}
             />
           </div>
-          <div className={cn.containerLast}>
+          <div className={classNames(cn.containerLast, cn.topItem)}>
             <div className={cn.label}>Description</div>
             <CustomInputTextArea
               multiline
               label="Description"
               value={description}
               name="description"
-              onChange={e => this.setState({ description: e.target.value })}
+              onChange={e =>
+                this.setState({ description: e.target.value, changes: true })
+              }
               inputStyles={{ input: cn.inputStyles }}
               className={cn.top}
             />

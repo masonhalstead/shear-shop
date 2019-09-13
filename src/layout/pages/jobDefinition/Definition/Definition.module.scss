@@ -102,6 +102,7 @@
 .inputStyles {
   height: 30px;
 }
+
 .containerRow {
   display: flex;
   flex-direction: row;
@@ -116,11 +117,6 @@
 .smallItem {
   width: 35%;
   margin-right: 15px;
-}
-
-.top {
-  margin-top: 0;
-  padding: 0 0 10px 0;
 }
 
 .tabValue {
@@ -150,7 +146,7 @@
 }
 
 .rowPaddingSelectLast {
-  width: 32.3%;
+  width: 32.6%;
 }
 
 .addMore {
@@ -209,4 +205,11 @@
 }
 .inputLarge {
   max-width: 100%;
+}
+.topItem {
+  margin-top: 10px;
+}
+
+input[type=time]::-webkit-datetime-edit-ampm-field {
+  display: none;
 }

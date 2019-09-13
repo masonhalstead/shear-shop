@@ -28,7 +28,7 @@
 }
 
 .imageMdBig {
-  width: 220px;
+  width: 190px;
   position: fixed;
 }
 .fontIconAlign {
@@ -39,20 +39,24 @@
 }
 .closeButton {
   position: absolute;
-  margin-left: 150px;
+  margin-left: 125px;
   bottom: 0;
+}
+.closeButton:hover {
+  background-color: transparent;
+
 }
 .version {
   position: fixed;
   bottom: 0;
-  align-self: center;
+  align-self: flex-start;
   font-size: 12px;
   color: white;
-  width: 240px;
-  text-align: center;
+  width: 195px;
+  text-align: left;
   background-color: #2e3440;
   border-top: 1px solid #3b4253;
-  padding: 6px 0px;
+  padding: 6px 0px 5px 25px;
   cursor: pointer;
 }
 .versionSmall {
@@ -68,13 +72,13 @@
   padding: 6px 0px;
 }
 .rootColor {
-  color: white;
+  color: white !important;
   font-size: 14px !important;
   padding-top: 5px !important;
   padding-bottom: 5px !important;
 }
 .deepMenuItems {
-  color: white;
+  color: white !important;
   .rootColor {
     padding-left: 73px;
   }
@@ -90,4 +94,8 @@
 }
 .tooltip {
   background: pink;
+}
+
+.root {
+  height: 34px !important;
 }

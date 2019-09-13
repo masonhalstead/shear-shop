@@ -23,7 +23,11 @@ export const TableContentWrapper = React.memo(
           MuiPaper: {
             elevation4: {
               boxShadow: 'none',
+              borderRadius: 'unset',
             },
+            elevation2: {
+              marginTop: '18px !important'
+            }
           },
           // MuiToolbar: {
           //   root: {
@@ -31,6 +35,11 @@ export const TableContentWrapper = React.memo(
           //     marginLeft: 'auto',
           //   },
           // },
+          MuiFormControlLabel: {
+            label: {
+              color: 'red !important'
+            }
+          },
           MUIDataTableHeadCell: {
             root: {
               textAlign: 'center',
@@ -46,9 +55,25 @@ export const TableContentWrapper = React.memo(
             toolButton: {
               display: 'block',
             },
+            mypopper: {
+              display: 'none',
+            },
             sortAction: {
               display: 'inline',
             },
+          },
+          // MuiButtonBase: {
+          //   root: {
+          //     color: '#62738d !important',
+          //     width: '20px !important',
+          //     height: '20px !important',
+          //   }
+          // },
+          MuiIconButton: {
+            root: {
+              width: '10px !important',
+              height: '10px !important',
+            }
           },
           MuiTableCell: {
             root: {
@@ -76,6 +101,13 @@ export const TableContentWrapper = React.memo(
               overflowX: 'auto',
             },
           },
+          // MuiTypography: {
+          //   root: {
+          //     color: '#62738d !important',
+          //     fontSize: 13,
+          //     fontWeight: 300,
+          //   }
+          // },
           MUIDataTableToolbar: {
             root: {
               display: 'none',

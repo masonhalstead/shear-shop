@@ -4,9 +4,9 @@ export const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: 240,
+    marginLeft: 220,
     [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - 240px)`,
+      width: `calc(100% - 220px)`,
     },
     boxShadow: 'none',
   },
