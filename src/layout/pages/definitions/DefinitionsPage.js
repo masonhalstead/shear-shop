@@ -22,7 +22,7 @@ import {
 import { CustomInput } from 'components/material-input/CustomInput';
 import cn from './Definitions.module.scss';
 import { configureColumns } from './columns';
-import RunDefinition from '../../components/modals/run-definition/RunDefinition';
+import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 
 const result = {
   client: 'Edelman',

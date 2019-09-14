@@ -1,12 +1,7 @@
 import React from 'react';
 import { CustomInputNoBorders } from 'components/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  NativeSelect,
-  MenuItem,
-  Select,
-  ListItemIcon,
-} from '@material-ui/core';
+import { NativeSelect, Select, MenuItem, ListItemIcon} from '@material-ui/core';
 import cn from './Definition.module.scss';
 
 export const configureColumns = (
@@ -16,6 +11,7 @@ export const configureColumns = (
   saveDescription,
   handleClickOpen,
   deleteInputRow,
+  handleClickOpenMethod,
 ) => [
   {
     name: 'name',
@@ -57,7 +53,7 @@ export const configureColumns = (
             <FontAwesomeIcon
               icon="times"
               color="#d9534f"
-              style={{ width: '25px', height: '25px' }}
+              style={{ width: '20px', height: '20px' }}
             />
           )}
         </div>
@@ -74,20 +70,20 @@ export const configureColumns = (
         <div style={{ textAlign: 'center' }}>
           <Select
             style={{ width: '100%' }}
-            value={1}
-            // onClick={() => handleClickOpen(tableMeta.rowIndex)}
-            input={<CustomInputNoBorders name="method" id="method" />}
+            value={value}
+            onClick={e => handleClickOpenMethod(e, tableMeta.rowIndex)}
+            input={<CustomInputNoBorders name="method" id="method" readOnly />}
           >
-            <MenuItem value={1}>
+            <MenuItem style={{ display: 'none' }} value={1}>
               <ListItemIcon>
-                <FontAwesomeIcon
-                  icon="terminal"
-                  color="#818fa3"
-                  style={{ width: '25px', height: '15px' }}
-                />
+              <FontAwesomeIcon
+                icon="terminal"
+                color="#818fa3"
+                style={{ width: '25px', height: '15px' }}
+              />
               </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={2}>
+              </MenuItem>
+            <MenuItem style={{ display: 'none' }} value={2}>
               <ListItemIcon>
                 <FontAwesomeIcon
                   icon="code"
@@ -112,7 +108,7 @@ export const configureColumns = (
           <NativeSelect
             style={{ width: '100%' }}
             value={value}
-            onClick={() => handleClickOpen(tableMeta.rowIndex)}
+            onClick={e => handleClickOpen(e, tableMeta.rowIndex)}
             input={
               <CustomInputNoBorders name="reference" id="reference" readOnly />
             }

@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getProjects as getProjectsAction } from 'ducks/operators/projects';
+import * as Sentry from '@sentry/browser';
 import {
   Toolbar,
   Breadcrumbs,
@@ -10,13 +12,11 @@ import {
   Tab,
   FormControl,
   NativeSelect,
-  Dialog,
-  DialogContent,
-  Button,
-  DialogActions,
 } from '@material-ui/core';
+import { Poper } from 'components/poper/Poper';
 import { CustomAppBar } from 'components/app-bar/AppBar';
 import { logoutUser } from 'ducks/actions';
+import CustomCheckbox from 'components/checkbox/Checkbox';
 import {
   CustomInput,
   CustomInputTextArea,
@@ -32,6 +32,16 @@ import classNames from 'classnames';
 import cn from './Definition.module.scss';
 import { configureColumns } from './columns';
 import { configureColumnsOutput } from './outputColumns';
+
+const tabStyle = {
+  width: '300px',
+  fontSize: 14,
+  fontWeight: 400,
+  minHeight: 44,
+  textTransform: 'capitalize',
+  borderBottom: '1px solid transparent',
+  borderRight: '1px solid #cfd7e6',
+};
 
 class DefinitionPage extends PureComponent {
   static propTypes = {
@@ -77,14 +87,20 @@ class DefinitionPage extends PureComponent {
     retries: '',
     gpu: '',
     memory: '',
-    method: '',
     region: 'empty',
     success: '',
     tab: 0,
     open: false,
+    openEnv: false,
     index: '',
     project: '',
     parameter: '',
+    method: '',
+    encrypted: '',
+    prefix: '',
+    assignment: '',
+    ignore: '',
+    escaped: '',
     params: [
       {
         value: '',
@@ -100,20 +116,27 @@ class DefinitionPage extends PureComponent {
         reference: '',
         default: '',
         description: '',
+        prefix: '',
+        encrypted: '',
+        assignment: '',
+        escaped: '',
+        ignore: '',
         id: 1,
       },
     ],
     changes: false,
+    anchorEl: null,
+    anchorElEnv: null,
   };
 
   componentDidMount() {
-    // const { getProjects } = this.props;
-    // try {
-    //   getProjects();
-    // } catch (err) {
-    //   // Only fires if the server is off line or the body isnt set correctly
-    //   Sentry.captureException(err);
-    // }
+    const { getProjects } = this.props;
+    try {
+      getProjects();
+    } catch (err) {
+      // Only fires if the server is off line or the body isnt set correctly
+      Sentry.captureException(err);
+    }
   }
 
   componentWillUnmount() {
@@ -164,8 +187,20 @@ class DefinitionPage extends PureComponent {
     });
   };
 
-  handleClickOpen = index => {
-    this.setState({ open: true, index });
+  handleClickOpen = (event, index) => {
+    this.setState({
+      open: true,
+      index,
+      anchorEl: this.state.anchorEl ? null : event.currentTarget,
+    });
+  };
+
+  handleClickOpenMethod = (event, index) => {
+    this.setState({
+      openEnv: true,
+      index,
+      anchorElEnv: this.state.anchorElEnv ? null : event.currentTarget,
+    });
   };
 
   addMoreParameters = () => {
@@ -184,11 +219,15 @@ class DefinitionPage extends PureComponent {
       const newItems = [...prevState.data];
       newItems.push({
         name: '',
+        reference_parameter: '',
         required: false,
         method: '',
         reference: '',
         default: '',
         description: '',
+        prefix: '',
+        encrypted: '',
+        assignment: '',
         id: newItems.length + 1,
       });
       return { data: newItems, changes: true };
@@ -213,7 +252,7 @@ class DefinitionPage extends PureComponent {
               lineHeight: '1',
               padding: '5px !important',
               '&:nth-child(2)': {
-                width: 139,
+                width: 189,
               },
               '&:nth-child(4)': {
                 width: 79,
@@ -260,6 +299,14 @@ class DefinitionPage extends PureComponent {
     });
   };
 
+  handleChangeMethod = defaultValue => {
+    this.setState(prevState => {
+      const newItems = [...prevState.data];
+      newItems[this.state.index].method = defaultValue;
+      return { data: newItems, changes: true, method: defaultValue };
+    });
+  };
+
   saveDescription = (description, index) => {
     this.setState(prevState => {
       const newItems = [...prevState.data];
@@ -276,13 +323,20 @@ class DefinitionPage extends PureComponent {
     });
   };
 
+  changeEnv = (name, value) => {
+    this.setState(prevState => {
+      const newItems = [...prevState.data];
+      newItems[this.state.index][name] = value;
+      return { data: newItems, changes: true, [name]: value };
+    });
+  };
+
   thirdTab = () => (
     <TableContainer style={cn.tableContainerWrapper}>
       <TableContent
         tableData={this.state.params}
         tableOptions={this.options}
         columns={this.createColumnsOutput()}
-
         styles={{
           MuiTableCell: {
             root: {
@@ -318,6 +372,7 @@ class DefinitionPage extends PureComponent {
       this.saveDescription,
       this.handleClickOpen,
       this.deleteInputRow,
+      this.handleClickOpenMethod,
     );
 
   createColumnsOutput = () =>
@@ -342,8 +397,6 @@ class DefinitionPage extends PureComponent {
     const {
       lookups: { locations, result_methods },
     } = this.props;
-
-    console.log(method);
 
     return (
       <>
@@ -537,8 +590,17 @@ class DefinitionPage extends PureComponent {
     history.push('/login');
   };
 
+  getWidth = () => {
+    const { method } = this.state;
+    if (Number(method) === 2) {
+      return { width: 300 };
+    }
+
+    return { width: 200 };
+  };
+
   render() {
-    const { hamburger, history } = this.props;
+    const { hamburger, history, projects } = this.props;
     const {
       label,
       definitionName,
@@ -550,6 +612,15 @@ class DefinitionPage extends PureComponent {
       project,
       parameter,
       changes,
+      anchorEl,
+      anchorElEnv,
+      openEnv,
+      method,
+      encrypted,
+      prefix,
+      assignment,
+      ignore,
+      escaped,
     } = this.state;
     const id = 1;
     let content = '';
@@ -680,40 +751,22 @@ class DefinitionPage extends PureComponent {
           >
             <Tab
               style={{
-                width: '300px',
-                fontSize: 14,
-                fontWeight: 400,
-                minHeight: 44,
+                ...tabStyle,
                 color: tab === 0 ? '#3e96ed' : '#62738d',
-                textTransform: 'capitalize',
-                borderBottom: '1px solid transparent',
-                borderRight: '1px solid #cfd7e6',
               }}
               label="Configurations"
             />
             <Tab
               style={{
-                width: '300px',
-                fontSize: 14,
-                fontWeight: 400,
-                minHeight: 44,
+                ...tabStyle,
                 color: tab === 1 ? '#3e96ed' : '#62738d',
-                textTransform: 'capitalize',
-                borderBottom: '1px solid transparent',
-                borderRight: '1px solid #cfd7e6',
               }}
               label="Inputs"
             />
             <Tab
               style={{
-                width: '300px',
+                ...tabStyle,
                 color: tab === 2 ? '#3e96ed' : '#62738d',
-                fontSize: 14,
-                fontWeight: 400,
-                minHeight: 44,
-                textTransform: 'capitalize',
-                borderBottom: '1px solid transparent',
-                borderRight: '1px solid #cfd7e6',
               }}
               label="Outputs"
             />
@@ -721,50 +774,118 @@ class DefinitionPage extends PureComponent {
           {tab === 0 && <div className={cn.tabValue}>{content}</div>}
           {tab !== 0 && <div className={cn.tabValueAlt}>{content}</div>}
         </Paper>
-        <Dialog
-          disableBackdropClick
-          disableEscapeKeyDown
+        <Poper
           open={open}
-          onClose={() => this.setState({ open: false })}
+          anchorEl={anchorEl}
+          clickAway={() => this.setState({ open: false, anchorEl: null })}
         >
-          <DialogContent style={{ padding: '20px' }}>
-            <form>
-              <div className={cn.label}>Region Hint</div>
+          <Paper>
+            <div className={cn.formWrapper}>
+              <div className={cn.label}>Project</div>
               <NativeSelect
-                style={{ width: '250px', marginBottom: '10px' }}
+                style={{ width: '200px', marginBottom: '10px' }}
                 value={project}
                 onChange={e => this.handleChangeProject(e.target.value)}
                 input={<BootstrapInput name="project" id="project" />}
               >
                 <option value="" />
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
+                {projects.map(project => (
+                  <option value={project.project_id}>{project.project_name}</option>
+                ))}
               </NativeSelect>
               <CustomInput
-                label="Parameter"
+                placeholder="Parameter Name"
                 value={parameter}
                 name="referenceParameter"
                 onChange={e => this.changeReferenceParameter(e.target.value)}
                 inputStyles={{ input: cn.inputStyles }}
               />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => this.setState({ open: false })}
-              color="primary"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => this.setState({ open: false })}
-              color="primary"
-            >
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
+            </div>
+          </Paper>
+        </Poper>
+        <Poper
+          open={openEnv}
+          anchorEl={anchorElEnv}
+          clickAway={() => this.setState({ openEnv: false, anchorElEnv: null })}
+        >
+          <Paper>
+            <div className={cn.formWrapper} style={this.getWidth()}>
+              <div className={cn.label}>Environment Variable</div>
+              <NativeSelect
+                style={{ ...this.getWidth(), marginBottom: '10px' }}
+                value={method}
+                onChange={e => this.handleChangeMethod(e.target.value)}
+                input={<BootstrapInput name="method" id="method" />}
+              >
+                <option value="" />
+                <option value={1}>Command Line</option>
+                <option value={2}>Environment Variable</option>
+              </NativeSelect>
+              {Number(method) === 1 && (
+                <CustomCheckbox
+                  onChange={e => this.changeEnv('encrypted', e)}
+                  checked={encrypted}
+                  label="Encrypted"
+                />
+              )}
+              {Number(method) === 2 && (
+                <>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      <CustomInput
+                        placeholder="Prefix"
+                        value={prefix}
+                        name="prefix"
+                        onChange={e => this.changeEnv('prefix', e.target.value)}
+                        inputStyles={{ input: cn.inputStyles }}
+                      />
+                    </div>
+                    <div>
+                      <CustomInput
+                        placeholder="Assignment"
+                        value={assignment}
+                        name="assignment"
+                        onChange={e =>
+                          this.changeEnv('assignment', e.target.value)
+                        }
+                        inputStyles={{ input: cn.inputStyles }}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 10,
+                    }}
+                  >
+                    <div>
+                      <CustomCheckbox
+                        onChange={value => this.changeEnv('escaped', value)}
+                        checked={escaped}
+                        label="Escaped"
+                      />
+                    </div>
+                    <div style={{ width: '46%' }}>
+                      <CustomCheckbox
+                        onChange={value => this.changeEnv('ignore', value)}
+                        checked={ignore}
+                        label="Ignore Name"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Paper>
+        </Poper>
       </>
     );
   }
@@ -773,11 +894,11 @@ class DefinitionPage extends PureComponent {
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
   lookups: state.lookups,
-  // projects: state.projects,
+  projects: state.projects,
 });
 
 const mapDispatchToProps = {
-  // getProjects: getProjectsAction,
+  getProjects: getProjectsAction,
   logoutUserProps: logoutUser,
 };
 

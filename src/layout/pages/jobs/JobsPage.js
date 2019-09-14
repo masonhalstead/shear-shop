@@ -11,13 +11,12 @@ import { logoutUser } from 'ducks/actions';
 
 import * as Sentry from '@sentry/browser';
 import cn from './Jobs.module.scss';
-import { columns } from './columns';
+import { configureColumns } from './columns';
+import { CustomizedInputBase } from 'components/search/SearchInput';
+import Popover from 'components/popover/Popover';
+import TableViewCol from 'components/view-column/ViewColumn';
 
 const result = {
-  client: 'Edelman',
-  statement: 'April 2019',
-  startdate: '2019-04-01T00:00:00',
-  enddate: '2019-04-30T00:00:00',
   data: [
     {
       jobname: 'Run Python',
@@ -97,10 +96,14 @@ class JobsPage extends PureComponent {
 
   state = {
     label: 'Last 24 Hours',
+    search: '',
+    viewColumns: [],
+    columns: [],
   };
 
   componentDidMount() {
     const { getProjects } = this.props;
+    this.createColumns();
     try {
       getProjects();
     } catch (err) {
@@ -108,6 +111,31 @@ class JobsPage extends PureComponent {
       Sentry.captureException(err);
     }
   }
+
+  onSearch = e => {
+    this.setState({ search: e.target.value });
+  };
+
+  handleColChange = (value, index, checked) => {
+    const { viewColumns } = this.state;
+    const filtered = [];
+    const viewColumnsNew = [];
+    viewColumns.forEach(column => {
+      if (value !== column.name) {
+        viewColumnsNew.push(column);
+      } else {
+        column.options.display = checked;
+        viewColumnsNew.push(column);
+      }
+    });
+
+    this.setState({ viewColumns: viewColumnsNew });
+  };
+
+  createColumns = () => {
+    const columns = configureColumns(this.openModal, this.openDefinition);
+    this.setState({ columns, viewColumns: columns });
+  };
 
   logout = () => {
     const { logoutUserProps, history } = this.props;
@@ -118,7 +146,7 @@ class JobsPage extends PureComponent {
 
   render() {
     const { hamburger, projects, history } = this.props;
-    const { label } = this.state;
+    const { label, search, viewColumns, columns } = this.state;
     return (
       <>
         <CustomAppBar hamburger={hamburger.open}>
@@ -142,21 +170,82 @@ class JobsPage extends PureComponent {
               <div>{label}</div>
             </Breadcrumbs>
             <div className={cn.flexGrow} />
-            <div className={cn.iconContainer}>
-              <FontAwesomeIcon icon="cog" color="#818fa3" />
-            </div>
-            <div className={cn.logout} onClick={this.logout}>
-              <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
+            <div className={cn.actionWrapper}>
+              <div className={cn.searchContainer}>
+                <CustomizedInputBase onSearch={this.onSearch} />
+              </div>
+              <div className={cn.iconContainer}>
+                <Popover
+                  trigger={<FontAwesomeIcon icon="cog" color="#818fa3" />}
+                  content={
+                    <TableViewCol
+                      data={result.data}
+                      columns={viewColumns}
+                      options={this.options}
+                      handleColChange={this.handleColChange}
+                    />
+                  }
+                />
+              </div>
+              <div className={cn.logout} onClick={this.logout}>
+                <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
+              </div>
             </div>
           </Toolbar>
         </CustomAppBar>
-        <TableContainer>
-          <TableContent
-            tableData={result.data}
-            tableOptions={this.options}
-            columns={columns}
-          />
-        </TableContainer>
+        {columns.length > 0 && (
+          <TableContainer>
+            <TableContent
+              tableData={
+                search.length > 0
+                  ? result.data.filter(item =>
+                    item.jobname.toLowerCase().includes(search),
+                  )
+                  : result.data
+              }
+              tableOptions={this.options}
+              columns={viewColumns}
+              styles={{
+                MuiTableCell: {
+                  root: {
+                    border: '1px solid #dde3ee',
+                    borderBottom: '1px solid #dde3ee',
+                  },
+                  body: {
+                    fontSize: '13px',
+                    fontWeight: 300,
+                    lineHeight: '1',
+                    padding: '5px !important',
+                    '&:nth-child(4)': {
+                      width: 99,
+                    },
+                    '&:nth-child(6)': {
+                      width: 114,
+                    },
+                    '&:nth-child(8)': {
+                      width: 114,
+                    },
+                    '&:nth-child(10)': {
+                      width: 114,
+                    },
+                    '&:nth-child(12)': {
+                      width: 124,
+                    },
+                    '&:nth-child(14)': {
+                      width: 39,
+                    },
+                    '&:nth-child(16)': {
+                      width: 39,
+                    },
+                  },
+                  head: {
+                    fontSize: '1rem',
+                  },
+                },
+              }}
+            />
+          </TableContainer>
+        )}
       </>
     );
   }
