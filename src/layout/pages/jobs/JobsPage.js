@@ -217,7 +217,7 @@ class JobsPage extends PureComponent {
                     lineHeight: '1',
                     padding: '5px !important',
                     '&:nth-child(4)': {
-                      width: 99,
+                      width: 114,
                     },
                     '&:nth-child(6)': {
                       width: 114,

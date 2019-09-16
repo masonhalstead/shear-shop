@@ -783,7 +783,7 @@ class DefinitionPage extends PureComponent {
             <div className={cn.formWrapper}>
               <div className={cn.label}>Project</div>
               <NativeSelect
-                style={{ width: '200px', marginBottom: '10px' }}
+                style={{ width: '225px', marginBottom: '10px' }}
                 value={project}
                 onChange={e => this.handleChangeProject(e.target.value)}
                 input={<BootstrapInput name="project" id="project" />}

@@ -7,43 +7,65 @@ import {
   FormControlLabel,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 
 export const defaultViewColStyles = theme => ({
   root: {
-    padding: '16px 24px 16px 24px',
-    fontFamily: 'Roboto',
-  },
-  title: {
-    marginLeft: '-7px',
-    fontSize: '14px',
-    color: theme.palette.text.secondary,
-    textAlign: 'left',
-    fontWeight: 500,
-  },
-  formGroup: {
-    marginTop: '8px',
-  },
-  formControl: {},
-  checkbox: {
-    padding: '0px',
-    width: '20px',
-    height: '20px',
-  },
-  checkboxRoot: {
-    '&$checked': {
-      color: '#62738d',
+    '&:hover': {
+      backgroundColor: 'transparent',
     },
   },
-  checked: {},
+  icon: {
+    borderRadius: 3,
+    width: 14,
+    height: 14,
+    boxShadow:
+      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+    backgroundColor: '#f5f8fa',
+    backgroundImage:
+      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
+    '$root.Mui-focusVisible &': {
+      outline: '2px auto rgba(19,124,189,.6)',
+      outlineOffset: 2,
+    },
+    'input:hover ~ &': {
+      backgroundColor: '#ebf1f5',
+    },
+    'input:disabled ~ &': {
+      boxShadow: 'none',
+      background: 'rgba(206,217,224,.5)',
+    },
+  },
+  checkedIcon: {
+    backgroundColor: '#2e3440',
+    backgroundImage:
+      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+    '&:before': {
+      display: 'block',
+      width: 14,
+      height: 14,
+      backgroundImage:
+        "url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath" +
+        " fill-rule='evenodd' clip-rule='evenodd' d='M12 5c-.28 0-.53.11-.71.29L7 9.59l-2.29-2.3a1.003 " +
+        "1.003 0 00-1.42 1.42l3 3c.18.18.43.29.71.29s.53-.11.71-.29l5-5A1.003 1.003 0 0012 5z' fill='%23fff'/%3E%3C/svg%3E\")",
+      content: '""',
+    },
+    'input:hover ~ &': {
+      backgroundColor: '#106ba3',
+    },
+  },
+  formGroup: {
+    margin: '2px 12px',
+  },
   label: {
     fontSize: '13px',
-    marginLeft: '8px',
-    color: '#62738d',
+    marginLeft: '5px',
+    color: '#3b4253',
     fontWeight: 300,
   },
 });
 
-class TableViewCol extends React.Component {
+class TableViewCol extends React.PureComponent {
   static propTypes = {
     /** Columns used to describe table */
     columns: PropTypes.array.isRequired,
@@ -57,7 +79,7 @@ class TableViewCol extends React.Component {
     const { classes, columns, handleColChange } = this.props;
 
     return (
-      <FormControl component="fieldset" className={classes.root}>
+      <FormControl component="fieldset">
         <FormGroup className={classes.formGroup}>
           {columns.map(
             (column, index) =>
@@ -66,16 +88,19 @@ class TableViewCol extends React.Component {
                 <FormControlLabel
                   key={index}
                   classes={{
-                    root: classes.formControl,
                     label: classes.label,
                   }}
                   control={
                     <Checkbox
-                      className={classes.checkbox}
-                      classes={{
-                        root: classes.checkboxRoot,
-                        checked: classes.checked,
-                      }}
+                      className={classes.root}
+                      disableRipple
+                      color="default"
+                      checkedIcon={
+                        <span
+                          className={clsx(classes.icon, classes.checkedIcon)}
+                        />
+                      }
+                      icon={<span className={classes.icon} />}
                       onChange={e =>
                         handleColChange(e.target.value, index, e.target.checked)
                       }
