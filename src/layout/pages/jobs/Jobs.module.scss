@@ -116,3 +116,16 @@
 .logout:hover svg, .iconContainer:hover svg {
   color: #3e96ed;
 }
+
+.actionWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 50%;
+  align-self: stretch;
+}
+
+.searchContainer {
+  margin-right: 15px;
+  flex: 1;
+}

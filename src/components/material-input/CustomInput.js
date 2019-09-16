@@ -80,7 +80,7 @@ export const CustomInputBack = withStyles(theme => ({
   input: {
     borderRadius: 4,
     position: 'relative',
-    backgroundColor: '#e9f2ff',
+    backgroundColor: '#cfd7e6',
     border: '1px solid #cfd7e6',
     fontSize: 13,
     height: '18px !important',

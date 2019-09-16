@@ -13,13 +13,14 @@ const getClassForState = state => {
   return cn.stateGreen;
 };
 
-export const columns = [
+export const configureColumns = (openModal, openDefinition) => [
   {
     name: 'jobname',
     label: 'Job',
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ cursor: 'pointer' }}>
           <span className={cn.mainColumnText}>{value}</span>
@@ -33,6 +34,7 @@ export const columns = [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <div className={getClassForState(value)}>
@@ -48,6 +50,7 @@ export const columns = [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'right' }}>
           <span className={cn.textColor}>{value}</span>
@@ -61,6 +64,7 @@ export const columns = [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <span className={cn.textColor}>{value}</span>
@@ -74,6 +78,7 @@ export const columns = [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <span className={cn.textColor}>{value}</span>
@@ -87,6 +92,7 @@ export const columns = [
     options: {
       filter: true,
       sort: true,
+      display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
           <span className={cn.textColor}>{value}</span>
@@ -115,7 +121,7 @@ export const columns = [
         <div style={{ textAlign: 'center', cursor: 'pointer' }}>
           {tableMeta.rowData[1] === 'running' ||
           tableMeta.rowData[1] === 'queued' ? (
-            <FontAwesomeIcon icon="stop" color="#818fa3" />
+            <FontAwesomeIcon icon="stop" color="#d9534f" />
           ) : (
             <FontAwesomeIcon icon="sync" color="#818fa3" />
           )}
