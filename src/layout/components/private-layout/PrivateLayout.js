@@ -9,12 +9,15 @@ import { setHamburger as setHamburgerAction } from 'ducks/actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { routes } from 'layout/routes';
+import { getProjects as getProjectsAction } from 'ducks/operators/projects';
+
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styles } from './styles';
 import cn from './PrivateLayout.module.scss';
+import * as Sentry from '@sentry/browser';
 
 const { PUBLIC_URL, REACT_APP_VERSION } = process.env;
 
@@ -25,6 +28,15 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     children: PropTypes.any,
     setHamburger: PropTypes.func,
   };
+
+  componentDidMount() {
+    const { getProjects } = this.props;
+    try {
+      getProjects();
+    } catch (err) {
+      Sentry.captureException(err);
+    }
+  }
 
   state = {
     open: false,
@@ -40,8 +52,14 @@ export class PrivateLayoutWrapper extends React.PureComponent {
 
   render() {
     const { open } = this.state;
-    const { classes, history } = this.props;
-    const id = 1;
+    const {
+      classes,
+      history,
+      settings: { project },
+    } = this.props;
+    const id = Object(project).hasOwnProperty('project_id')
+      ? project.project_id
+      : 1;
 
     return (
       <div className={cn.cognBody}>
@@ -292,10 +310,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
 
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = {
   setHamburger: setHamburgerAction,
+  getProjects: getProjectsAction,
 };
 
 export const StyledPrivateLayout = withStyles(styles, { withTheme: true })(

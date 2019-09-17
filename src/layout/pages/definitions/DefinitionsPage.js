@@ -193,7 +193,16 @@ class DefinitionsPage extends PureComponent {
   };
 
   render() {
-    const { hamburger, jobDefinitions, history, lookups } = this.props;
+    const {
+      hamburger,
+      jobDefinitions,
+      history,
+      lookups,
+      settings,
+      settings: { project },
+      projects,
+      location,
+    } = this.props;
     const {
       label,
       run,
@@ -204,6 +213,18 @@ class DefinitionsPage extends PureComponent {
       open,
       jobName,
     } = this.state;
+
+    let projectName = '';
+    if (projects.length > 0) {
+      if (!Object(project).hasOwnProperty('project_id')) {
+        const projectId = location.pathname.split('/')[2];
+        projectName = projects.filter(
+          project => project.project_id === Number(projectId),
+        )[0].project_name;
+      } else {
+        projectName = project.project_name;
+      }
+    }
     return (
       <>
         <CustomAppBar hamburger={hamburger.open}>
@@ -221,7 +242,7 @@ class DefinitionsPage extends PureComponent {
                   history.push(`/projects`);
                 }}
               >
-                Lynx (Prod)
+                {projectName}
               </div>
               <div>{label}</div>
             </Breadcrumbs>
@@ -319,6 +340,8 @@ const mapStateToProps = state => ({
   hamburger: state.hamburger,
   jobDefinitions: state.jobDefinitions,
   lookups: state.lookups,
+  settings: state.settings,
+  projects: state.projects,
 });
 
 const mapDispatchToProps = {

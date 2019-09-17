@@ -113,3 +113,8 @@ export const setProjects = projects => ({
   type: constants.SET_PROJECTS,
   payload: projects,
 });
+
+export const setProject = project => ({
+  type: constants.SET_PROJECT,
+  payload: project,
+});
