@@ -557,6 +557,7 @@ class DefinitionPage extends PureComponent {
               />
             ) : (
               <CustomInputBack
+                disabled
                 className={cn.rowPadding}
                 label="Success Text"
                 value={success}

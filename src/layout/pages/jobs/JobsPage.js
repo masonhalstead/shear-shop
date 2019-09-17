@@ -52,7 +52,7 @@ const result = {
       requirements: '1CPU, 16GM RAM',
       createdBy: 'Linyx User',
       created: '8/13/19 13:00:00',
-      id: 3,
+      id: 4,
     },
   ],
 };
@@ -145,8 +145,17 @@ class JobsPage extends PureComponent {
   };
 
   render() {
-    const { hamburger, projects, history } = this.props;
+    const { hamburger, projects, history , location, settings : {project}} = this.props;
     const { label, search, viewColumns, columns } = this.state;
+    let projectName = '';
+    if (projects.length > 0) {
+      if (!Object(project).hasOwnProperty('project_id')) {
+        const projectId = location.pathname.split('/')[2];
+        projectName = projects.filter(project => project.project_id === Number(projectId))[0].project_name;
+      } else {
+        projectName = project.project_name;
+      }
+    }
     return (
       <>
         <CustomAppBar hamburger={hamburger.open}>
@@ -165,7 +174,7 @@ class JobsPage extends PureComponent {
                   history.push(`/projects`);
                 }}
               >
-                Lynx (Prod)
+                {projectName}
               </div>
               <div>{label}</div>
             </Breadcrumbs>
@@ -254,6 +263,7 @@ class JobsPage extends PureComponent {
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
   projects: state.projects,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = {

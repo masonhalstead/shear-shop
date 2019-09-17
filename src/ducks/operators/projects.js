@@ -1,6 +1,6 @@
-import { setLoading, setProjects } from 'ducks/actions';
+import { loginUser, setLoading, setProjects } from 'ducks/actions';
 import { normalizeWithUUID } from 'utils/normalizers';
-import { getData } from 'utils/axios';
+import { getData, postData } from 'utils/axios';
 import * as Sentry from '@sentry/browser';
 
 export const getProjects = () => async dispatch => {
@@ -19,3 +19,17 @@ export const getProjects = () => async dispatch => {
     throw err;
   }
 };
+
+export const addProject = params => async dispatch => {
+  try {
+    await dispatch(setLoading(true));
+    const res = await postData('/projects/create', params);
+  } catch (err) {
+    Sentry.captureException(err);
+    await dispatch(setLoading(false));
+
+    dispatch(loginUser({}));
+    throw err;
+  }
+};
+
