@@ -39,9 +39,30 @@
   padding: 15px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
-.projectItem:hover {
+.projectItemAdd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid #cfd7e6;
+  cursor: pointer;
+  border-radius: 15px;
+  width: 200px;
+  height: 150px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  padding: 15px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  p {
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #62738d;
+  }
+}
+.projectItem:hover, .projectItemAdd:hover {
   border: 1px solid #3e96ed;
-  .projectHeader, .secondText, svg {
+  .projectHeader, .secondText, svg, p {
     color: #3e96ed;
   }
 }
@@ -97,24 +118,6 @@
 .logout:hover svg, .iconContainer:hover svg {
   color: #3e96ed;
 }
-
-.btnPrimary {
-  color: #fff !important;
-  background-color: $color-5 !important;
-  border-radius: 3px;
-  padding: 5;
-  height: 35px !important;
-  width: 100% !important;
-  font-weight: 300;
-  font-size: 13px;
-  cursor: pointer;
-  margin-left: 8px;
-  margin-right: 8px;
-}
-.btnPrimary:hover {
-  background-color: $color-5;
-}
-
 .btn {
   display: inline-block;
   font-weight: 300;
@@ -129,6 +132,21 @@
   line-height: 1.5;
   border-radius: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.btnPrimary {
+  color: #fff !important;
+  background-color: $color-5;
+  text-transform: capitalize;
+  border-radius: 3px;
+  padding: 5;
+  height: 35px !important;
+  width: 100% !important;
+  font-weight: 300;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btnPrimary:hover {
+  background-color: $color-5;
 }
 
 .actions {
@@ -146,8 +164,10 @@
 .container {
   flex: 1;
 }
+
 .label {
-  font-size: 16px;
-  color: $color-5;
+  font-size: 13px;
+  color: $color-6;
   margin-bottom: 3px;
+  font-weight: 400;
 }
