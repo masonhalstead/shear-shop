@@ -31,7 +31,7 @@ export const BootstrapInputDisabled = withStyles(theme => ({
   input: {
     borderRadius: 4,
     position: 'relative',
-    backgroundColor: '#e9f2ff',
+    backgroundColor: '#F0F0F0',
     border: '1px solid #cfd7e6',
     fontSize: 13,
     padding: '5px',

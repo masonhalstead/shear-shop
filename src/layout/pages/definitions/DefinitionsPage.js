@@ -20,9 +20,9 @@ import {
   DialogTitle,
 } from 'components/dialogs/Dialogs';
 import { CustomInput } from 'components/material-input/CustomInput';
+import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 import cn from './Definitions.module.scss';
 import { configureColumns } from './columns';
-import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 
 const result = {
   client: 'Edelman',
@@ -188,7 +188,18 @@ class DefinitionsPage extends PureComponent {
   createDefinition = () => {
     const { jobName } = this.state;
     const { addJobDefinition } = this.props;
-    addJobDefinition({ job_definition_name: jobName });
+    addJobDefinition({
+      job_definition_name: jobName,
+      project_id: 1,
+      description: 'Testing Project Description',
+      docker_image: '/dockerimage',
+      result_method_id: 1,
+      startup_command: 'nothing',
+      timeout_seconds: 10000,
+      stdout_success_text: 'winning',
+      region_endpoint_hint: 'us-east-1e',
+      parameters: [],
+    });
     this.setState({ open: false });
   };
 
@@ -237,7 +248,7 @@ class DefinitionsPage extends PureComponent {
               classes={{ separator: cn.separator, root: cn.text }}
             >
               <div
-                style={{ cursor: 'pointer' }}
+                className={cn.text}
                 onClick={() => {
                   history.push(`/projects`);
                 }}
@@ -310,7 +321,7 @@ class DefinitionsPage extends PureComponent {
           >
             <div className={cn.title}>Create Job Definition</div>
           </DialogTitle>
-          <DialogContent dividers>
+          <DialogContent>
             <div className={cn.container}>
               <div className={cn.label}>Job Definition Name</div>
               <CustomInput

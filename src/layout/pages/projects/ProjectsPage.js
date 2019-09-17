@@ -1,17 +1,18 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { setProject as setProjectAction } from 'ducks/actions';
+import { setProject as setProjectAction, logoutUser } from 'ducks/actions';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Dialog, Toolbar } from '@material-ui/core';
-import { logoutUser } from 'ducks/actions';
+
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import { getProjects as getProjectsAction } from 'ducks/operators/projects';
-import { addProject as addProjectAction } from 'ducks/operators/projects';
+import {
+  getProjects as getProjectsAction,
+  addProject as addProjectAction,
+} from 'ducks/operators/projects';
 
 import * as Sentry from '@sentry/browser';
-import cn from './Project.module.scss';
 import {
   DialogActions,
   DialogContent,
@@ -19,6 +20,7 @@ import {
 } from 'components/dialogs/Dialogs';
 import { CustomInput } from 'components/material-input/CustomInput';
 import classNames from 'classnames';
+import cn from './Project.module.scss';
 
 class ProjectsPage extends PureComponent {
   static propTypes = {
@@ -94,21 +96,13 @@ class ProjectsPage extends PureComponent {
         </CustomAppBar>
         <div className={cn.contentAlign}>
           <div
-            className={cn.projectItem}
+            className={cn.projectItemAdd}
             onClick={() => {
               this.setState({ open: true });
             }}
           >
-            <div style={{ margin: '0 auto', height: '100%' }}>
-              <div style={{ marginLeft: 20, marginTop: '55%' }}>
-                <FontAwesomeIcon
-                  style={{ width: 35 }}
-                  icon="plus"
-                  color="#818fa3"
-                />
-              </div>
-              <div className={cn.projectHeader}>Add project</div>
-            </div>
+            <FontAwesomeIcon icon="plus" color="#818fa3" />
+            <p>Add project</p>
           </div>
           {projects.length > 0 &&
             projects.map(project => (
@@ -140,7 +134,7 @@ class ProjectsPage extends PureComponent {
           >
             <div className={cn.title}>Create Project</div>
           </DialogTitle>
-          <DialogContent dividers>
+          <DialogContent>
             <div className={cn.container}>
               <div className={cn.label}>Project Name</div>
               <CustomInput
