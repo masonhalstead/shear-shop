@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Footer from 'components/footer/Footer';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
+import { Loading } from 'components/loading/Loading';
 import { Drawer, List, Divider, Tooltip } from '@material-ui/core';
 import { setHamburger as setHamburgerAction } from 'ducks/actions';
 import { connect } from 'react-redux';
@@ -56,6 +57,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     const {
       classes,
       history,
+      loading,
       settings: { project },
     } = this.props;
     const id = Object(project).hasOwnProperty('project_id')
@@ -305,6 +307,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
           <div className={cn.cognViews}>{this.props.children}</div>
         </main>
         <Alert />
+        {loading && <Loading variant="dark" />}
       </div>
     );
   }
@@ -313,6 +316,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
   settings: state.settings,
+  loading: state.settings.loading,
 });
 
 const mapDispatchToProps = {

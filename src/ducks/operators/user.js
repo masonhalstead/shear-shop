@@ -1,6 +1,6 @@
-import { setLoading, loginUser, handleError } from 'ducks/actions';
+import { setLoading, loginUser } from 'ducks/actions';
+import { handleError } from  'ducks/operators/settings';
 import { publicPost } from 'utils/axios';
-import * as Sentry from '@sentry/browser';
 import uuid from 'uuid';
 
 export const login = params => async dispatch => {
@@ -17,10 +17,7 @@ export const login = params => async dispatch => {
     await dispatch(setLoading(false));
     return res.data;
   } catch (err) {
-    Sentry.captureException(err);
-    await dispatch(setLoading(false));
     dispatch(handleError(err));
-
     dispatch(loginUser({}));
     throw err;
   }

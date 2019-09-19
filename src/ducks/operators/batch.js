@@ -5,7 +5,7 @@ import { normalizeWithUUID } from 'utils/normalizers';
 const batch_data = [];
 
 export const getBatch = batch_id => async dispatch => {
-  await dispatch(setLoading(true));
+  // await dispatch(setLoading(true));
   // const res = await getData(`/batches/${batch_id}`);
   const batch = await normalizeWithUUID(batch_data);
   await dispatch(setBatch(batch));

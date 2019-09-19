@@ -262,6 +262,7 @@ class JobPage extends PureComponent {
   );
 
   createColumnsInputs = () => configureColumnsInput();
+
   createColumnsHistory = () => configureHistoryColums();
 
   createColumnsOutput = () =>
@@ -271,19 +272,19 @@ class JobPage extends PureComponent {
       this.deleteOutputRow,
     );
 
-  firstTab = () => {
-    return (
-      <div className={cn.containerRow}>
-        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
-        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
-        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
-        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
-        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
-        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
-        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
-      </div>
-    );
-  };
+  firstTab = () => (
+    <div className={cn.stdoutContainer}>
+      <p className={cn.stdoutText}>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
+      </p>
+    </div>
+  );
 
   logout = () => {
     const { logoutUserProps, history } = this.props;
@@ -293,41 +294,43 @@ class JobPage extends PureComponent {
   };
 
   insideContent = () => (
-    <div className={cn.containerRow}>
-      <div className={cn.padding}>
-        <div className={cn.label}>Docker Image</div>
-        <div className={cn.text}>cognitiv/umbro</div>
-      </div>
-      <div className={cn.padding}>
-        <div className={cn.label}>Description</div>
-        <div className={cn.text}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
+    <>
+      <div className={cn.containerTabRow}>
+        <div className={cn.padding}>
+          <div className={cn.label}>Docker Image</div>
+          <div className={cn.text}>cognitiv/umbro</div>
+        </div>
+        <div className={cn.padding}>
+          <div className={cn.label}>Description</div>
+          <div className={cn.text}>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book. It has survived not
+            only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s
+            with the release of Letraset sheets containing Lorem Ipsum passages,
+            and more recently with desktop publishing software like Aldus
+            PageMaker including versions of Lorem Ipsum.
+          </div>
+        </div>
+        <div className={cn.padding}>
+          <div className={cn.label}>Startup command</div>
+          <div className={cn.text}>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book. It has survived not
+            only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s
+            with the release of Letraset sheets containing Lorem Ipsum passages,
+            and more recently with desktop publishing software like Aldus
+            PageMaker including versions of Lorem Ipsum.
+          </div>
         </div>
       </div>
-      <div className={cn.padding}>
-        <div className={cn.label}>Startup command</div>
-        <div className={cn.text}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </div>
-      </div>
-      <div className={cn.row}>
-        <div className={cn.rowFirst}>
+      <div className={cn.containerConfigRow}>
+        <div className={cn.rowConfig}>
           <div className={cn.textAlign}>
             <div className={cn.label}>CPU</div>
             <div className={cn.text}>12</div>
@@ -341,7 +344,7 @@ class JobPage extends PureComponent {
             <div className={cn.text}>20</div>
           </div>
         </div>
-        <div className={cn.rowSecond}>
+        <div className={cn.rowConfig}>
           <div className={cn.textAlign}>
             <div className={cn.label}>Max Retries</div>
             <div className={cn.text}>0</div>
@@ -351,20 +354,18 @@ class JobPage extends PureComponent {
             <div className={cn.text}>1 day</div>
           </div>
         </div>
-        <div className={cn.elseRows}>
+        <div className={cn.rowConfig}>
           <div className={cn.textAlign}>
             <div className={cn.label}>Location</div>
             <div className={cn.text}>us-east-1</div>
           </div>
-        </div>
-        <div className={cn.elseRows}>
           <div className={cn.textAlign}>
             <div className={cn.label}>Method</div>
             <div className={cn.text}>Auto</div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 
   render() {
@@ -436,18 +437,12 @@ class JobPage extends PureComponent {
               <div>{label}</div>
             </Breadcrumbs>
             <div className={cn.flex} />
-            <div className={cn.iconContainer}>
-              <FontAwesomeIcon
-                icon={['far', 'save']}
-                color={changes ? 'orange' : '#818fa3'}
-              />
-            </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
             </div>
           </Toolbar>
         </CustomAppBar>
-        <Paper className={cn.contentAlign}>
+        <Paper className={cn.contentAlignHeader}>
           <div className={cn.firstRow}>
             <div className={cn.textMarginBig}>
               <div className={cn.circle} />
@@ -508,12 +503,10 @@ class JobPage extends PureComponent {
               label="History"
             />
           </Tabs>
-          {(tab === 0 ||
-            tab === 1) && (
-              <div className={tab === 1 ? cn.tabValue : cn.tabValueFirst}>
-                {tab === 1 ? contentInside : content}
-              </div>
-            )}
+          {tab === 0 && <div className={cn.tabValueFirst}>{content}</div>}
+          {tab === 1 && (
+            <div className={cn.tabValueSecond}>{contentInside}</div>
+          )}
           {tab !== 0 && <div className={cn.tabValueAlt}>{content}</div>}
         </Paper>
       </>

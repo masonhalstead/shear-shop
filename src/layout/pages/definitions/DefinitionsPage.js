@@ -10,7 +10,7 @@ import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/jo
 import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
 import { CustomizedInputBase } from 'components/search/SearchInput';
-import { logoutUser } from 'ducks/actions';
+import { logoutUser, setLoading } from 'ducks/actions';
 import Popover from 'components/popover/Popover';
 import TableViewCol from 'components/view-column/ViewColumn';
 import classNames from 'classnames';
@@ -76,6 +76,7 @@ const result = {
 class DefinitionsPage extends PureComponent {
   static propTypes = {
     getJobDefinitions: PropTypes.func,
+    setLoadingAction: PropTypes.func,
     hamburger: PropTypes.object,
     jobDefinitions: PropTypes.array,
     history: PropTypes.object,
@@ -117,15 +118,23 @@ class DefinitionsPage extends PureComponent {
   };
 
   componentDidMount() {
-    const { getJobDefinitions } = this.props;
-    this.createColumns();
+    this.setInitialData();
+  }
+
+  setInitialData = async () => {
+    const { getJobDefinitions, setLoadingAction, location } = this.props;
+    const [, , project_id] = location.pathname.split('/');
+
     try {
-      getJobDefinitions();
+      await setLoadingAction(true);
+      await getJobDefinitions(project_id);
+      await this.createColumns();
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
     }
-  }
+    setLoadingAction(false);
+  };
 
   runJob = () => {
     this.setState({ run: false });
@@ -198,7 +207,24 @@ class DefinitionsPage extends PureComponent {
       timeout_seconds: 10000,
       stdout_success_text: 'winning',
       region_endpoint_hint: 'us-east-1e',
-      parameters: [],
+      parameters: [
+        {
+          parameter_name: 'Parameter 1',
+          parameter_direction_id: 1,
+          parameter_method_id: 1,
+          is_required: true,
+          is_encrypted: true,
+          parameter_value: 'Default Value',
+          description: 'Parameter description',
+          command_line_prefix: null,
+          command_line_assignment_char: null,
+          command_line_escaped: null,
+          command_line_ignore_name: null,
+          reference_type_id: null,
+          reference_id: null,
+          reference_parameter_name: null,
+        },
+      ],
     });
     this.setState({ open: false });
   };
@@ -358,6 +384,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getJobDefinitions: getJobDefinitionsAction,
   addJobDefinition: addJobDefinitionAction,
+  setLoadingAction: setLoading,
   logoutUserProps: logoutUser,
 };
 
