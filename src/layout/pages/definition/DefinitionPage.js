@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getProjects as getProjectsAction } from 'ducks/operators/projects';
+import { getJobDefinition as getJobDefinitionAction } from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
 import {
   Toolbar,
@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import { Poper } from 'components/poper/Poper';
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import { logoutUser } from 'ducks/actions';
+import { logoutUser, setLoading } from 'ducks/actions';
 import CustomCheckbox from 'components/checkbox/Checkbox';
 import {
   CustomInput,
@@ -45,7 +45,8 @@ const tabStyle = {
 
 class DefinitionPage extends PureComponent {
   static propTypes = {
-    getProjects: PropTypes.func,
+    getJobDefinition: PropTypes.func,
+    setLoadingAction: PropTypes.func,
     hamburger: PropTypes.object,
     projects: PropTypes.array,
     lookups: PropTypes.object,
@@ -130,18 +131,27 @@ class DefinitionPage extends PureComponent {
   };
 
   componentDidMount() {
-    const { getProjects } = this.props;
-    try {
-      getProjects();
-    } catch (err) {
-      // Only fires if the server is off line or the body isnt set correctly
-      Sentry.captureException(err);
-    }
+    this.setInitialData();
   }
 
   componentWillUnmount() {
     this.setState({ changes: false });
   }
+
+  setInitialData = async () => {
+    const { getJobDefinition, setLoadingAction, location } = this.props;
+    const [, , , , definition_id] = location.pathname.split('/');
+
+    try {
+      await setLoadingAction(true);
+      await getJobDefinition(definition_id);
+      await this.createColumns();
+    } catch (err) {
+      // Only fires if the server is off line or the body isnt set correctly
+      Sentry.captureException(err);
+    }
+    setLoadingAction(false);
+  };
 
   handleChangeTab = (event, newValue) => {
     this.setState({ tab: newValue });
@@ -791,7 +801,9 @@ class DefinitionPage extends PureComponent {
               >
                 <option value="" />
                 {projects.map(project => (
-                  <option value={project.project_id}>{project.project_name}</option>
+                  <option value={project.project_id}>
+                    {project.project_name}
+                  </option>
                 ))}
               </NativeSelect>
               <CustomInput
@@ -899,8 +911,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getProjects: getProjectsAction,
+  getJobDefinition: getJobDefinitionAction,
   logoutUserProps: logoutUser,
+  setLoadingAction: setLoading,
 };
 
 export default connect(

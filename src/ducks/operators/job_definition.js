@@ -1,26 +1,31 @@
-import { setLoading, setJobDefinition, loginUser, handleError } from 'ducks/actions';
-import { normalizeWithUUID } from 'utils/normalizers';
-import { postData } from 'utils/axios';
-import * as Sentry from '@sentry/browser';
+import { setLoading, setJobDefinition } from 'ducks/actions';
+import { getParameters } from 'ducks/operators/parameters';
+import { handleError } from 'ducks/operators/settings';
+import { getData, postData } from 'utils/axios';
 
-const job_data = {};
-
-export const getJobDefinition = def_id => async dispatch => {
-  await dispatch(setLoading(true));
-  // const res = await getData(`/jobs/${job_id}`);
-  const job = await normalizeWithUUID(job_data);
-  await dispatch(setJobDefinition(job));
-  return job;
+export const getJobDefinition = definition_id => async dispatch => {
+  const definition_route = `/job_definitions/${definition_id}`;
+  const [definition] = await Promise.all([
+    dispatch(getDefinition(definition_id)),
+    dispatch(getParameters(definition_route)),
+  ]);
+  return definition;
 };
 
-export const addJobDefinition = params => async dispatch => {
+export const getDefinition = definition_id => async dispatch => {
+  const res = await getData(`/job_definitions/${definition_id}`);
+  await dispatch(setJobDefinition(res.data));
+  return res.data;
+};
+
+export const addJobDefinition = data => async dispatch => {
   try {
     await dispatch(setLoading(true));
-    const res = await postData('/job_definitions/create', params);
+    const res = await postData('/job_definitions/create', data);
+    // TODO Redirect to definition after it has been created
+    return res.data;
   } catch (err) {
-    Sentry.captureException(err);
-    await dispatch(setLoading(false));
-    dispatch(handleError(err));
+    dispatch(handleError(err, data));
 
     throw err;
   }
