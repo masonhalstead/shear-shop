@@ -13,7 +13,7 @@ const getClassForState = state => {
   return cn.stateGreen;
 };
 
-export const configureColumns = (openModal, openDefinition) => [
+export const configureColumns = (openDetailPage, openDefinition) => [
   {
     name: 'jobname',
     label: 'Job',
@@ -21,8 +21,8 @@ export const configureColumns = (openModal, openDefinition) => [
       filter: true,
       sort: true,
       display: true,
-      customBodyRender: value => (
-        <div style={{ cursor: 'pointer' }}>
+      customBodyRender: (value, tableMeta) => (
+        <div style={{ cursor: 'pointer' }} onClick={() => openDetailPage(tableMeta.rowData[6])}>
           <span className={cn.mainColumnText}>{value}</span>
         </div>
       ),

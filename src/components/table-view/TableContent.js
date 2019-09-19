@@ -92,7 +92,7 @@ export const TableContentWrapper = React.memo(
           },
           MuiTableRow: {
             root: {
-              height: '32px',
+              height: '33px',
               '&$hover:hover': { backgroundColor: 'none' },
             },
           },

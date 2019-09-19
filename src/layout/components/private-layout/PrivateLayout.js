@@ -9,6 +9,7 @@ import { setHamburger as setHamburgerAction } from 'ducks/actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { routes } from 'layout/routes';
+import { Alert } from 'components/Alert';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 
 import ListItem from '@material-ui/core/ListItem';
@@ -303,6 +304,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
         >
           <div className={cn.cognViews}>{this.props.children}</div>
         </main>
+        <Alert />
       </div>
     );
   }

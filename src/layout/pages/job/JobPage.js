@@ -4,30 +4,15 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import * as Sentry from '@sentry/browser';
-import {
-  Toolbar,
-  Breadcrumbs,
-  Paper,
-  Tabs,
-  Tab,
-  FormControl,
-  NativeSelect,
-} from '@material-ui/core';
+import { Toolbar, Breadcrumbs, Paper, Tabs, Tab } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
 import { logoutUser } from 'ducks/actions';
-import {
-  CustomInput,
-  CustomInputBack,
-} from 'components/material-input/CustomInput';
-import {
-  BootstrapInput,
-  BootstrapInputDisabled,
-} from 'components/bootsrap-input/BootstrapInput';
 import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
 import cn from './Job.module.scss';
 import { configureColumnsOutput } from './outputColumns';
 import { configureColumnsInput, data } from './columnsInput';
+import { configureHistoryColums, data as dataHistory } from './historyColumns';
 
 const tabStyle = {
   width: '300px',
@@ -246,7 +231,38 @@ class JobPage extends PureComponent {
     </TableContainer>
   );
 
+  fourthTab = () => (
+    <TableContainer style={cn.tableContainerWrapper}>
+      <TableContent
+        tableData={dataHistory}
+        tableOptions={this.options}
+        columns={this.createColumnsHistory()}
+        styles={{
+          MuiTableCell: {
+            root: {
+              border: '1px solid #dde3ee',
+              borderBottom: '1px solid #dde3ee',
+            },
+            body: {
+              fontSize: '13px',
+              fontWeight: 300,
+              lineHeight: '1',
+              padding: '5px !important',
+              '&:nth-child(2)': {
+                width: 489,
+              },
+            },
+            head: {
+              fontSize: '1rem',
+            },
+          },
+        }}
+      />
+    </TableContainer>
+  );
+
   createColumnsInputs = () => configureColumnsInput();
+  createColumnsHistory = () => configureHistoryColums();
 
   createColumnsOutput = () =>
     configureColumnsOutput(
@@ -255,199 +271,19 @@ class JobPage extends PureComponent {
       this.deleteOutputRow,
     );
 
-  // firstTab = () => {
-  //   const {
-  //     cpu,
-  //     timeout,
-  //     retries,
-  //     location,
-  //     gpu,
-  //     method,
-  //     region,
-  //     memory,
-  //     success,
-  //   } = this.state;
-  //   const {
-  //     lookups: { locations, result_methods },
-  //   } = this.props;
-  //
-  //   return (
-  //     <>
-  //       <div className={cn.containerRow}>
-  //         <div className={cn.containerLeft}>
-  //           <div className={cn.label}>CPU</div>
-  //           <CustomInput
-  //             className={cn.rowPadding}
-  //             type="number"
-  //             label="CPU"
-  //             value={cpu}
-  //             name="cpu"
-  //             onChange={e =>
-  //               this.setState({ cpu: e.target.value, changes: true })
-  //             }
-  //             inputStyles={{ input: cn.inputStyles }}
-  //           />
-  //         </div>
-  //         <div className={cn.containerMiddle}>
-  //           <div className={cn.label}>Timeout</div>
-  //           <CustomInput
-  //             type="time"
-  //             className={cn.rowPadding}
-  //             label="Timeout"
-  //             value={timeout}
-  //             name="dockerImage"
-  //             onChange={e =>
-  //               this.setState({ timeout: e.target.value, changes: true })
-  //             }
-  //             inputStyles={{ input: cn.inputStyles }}
-  //           />
-  //         </div>
-  //         <div className={cn.containerRight}>
-  //           <div className={cn.label}>Max Retries</div>
-  //           <CustomInput
-  //             className={cn.rowPadding}
-  //             type="number"
-  //             label="Max Retries"
-  //             value={retries}
-  //             name="retries"
-  //             onChange={e =>
-  //               this.setState({ retries: e.target.value, changes: true })
-  //             }
-  //             inputStyles={{ input: cn.inputStyles }}
-  //           />
-  //         </div>
-  //       </div>
-  //       <div className={cn.containerRow}>
-  //         <div className={cn.containerLeft}>
-  //           <div className={cn.label}>GPU</div>
-  //           <CustomInput
-  //             className={cn.rowPadding}
-  //             label="GPU"
-  //             type="number"
-  //             value={gpu}
-  //             name="gpu"
-  //             onChange={e =>
-  //               this.setState({ gpu: e.target.value, changes: true })
-  //             }
-  //             inputStyles={{ input: cn.inputStyles }}
-  //           />
-  //         </div>
-  //         <FormControl className={cn.containerMiddle}>
-  //           <div className={cn.label}>Location</div>
-  //           <NativeSelect
-  //             disabled={region !== 'empty'}
-  //             value={location}
-  //             onChange={e =>
-  //               this.setState({ location: e.target.value, changes: true })
-  //             }
-  //             input={
-  //               region !== 'empty' ? (
-  //                 <BootstrapInputDisabled name="location" id="location" />
-  //               ) : (
-  //                 <BootstrapInput name="location" id="location" />
-  //               )
-  //             }
-  //           >
-  //             <option key="empty" value="empty" />
-  //             {locations.map(item => (
-  //               <option key={item.uuid} value={item.location_id}>
-  //                 {item.location_name}
-  //               </option>
-  //             ))}
-  //           </NativeSelect>
-  //         </FormControl>
-  //         <FormControl className={cn.containerRight}>
-  //           <div className={cn.label}>Result Method</div>
-  //           <NativeSelect
-  //             value={method}
-  //             onChange={e =>
-  //               this.setState({ method: e.target.value, changes: true })
-  //             }
-  //             input={<BootstrapInput name="method" id="method" />}
-  //           >
-  //             <option key="empty" value="empty" />
-  //             {result_methods.map(item => (
-  //               <option key={item.uuid} value={item.result_method_id}>
-  //                 {item.result_method_name}
-  //               </option>
-  //             ))}
-  //           </NativeSelect>
-  //         </FormControl>
-  //       </div>
-  //       <div className={cn.containerRow}>
-  //         <div className={cn.containerLeft}>
-  //           <div className={cn.label}>Memory GB</div>
-  //           <CustomInput
-  //             className={cn.rowPadding}
-  //             label="Memory GB"
-  //             type="number"
-  //             value={memory}
-  //             name="memory"
-  //             onChange={e =>
-  //               this.setState({ memory: e.target.value, changes: true })
-  //             }
-  //             inputStyles={{ input: cn.inputStyles }}
-  //           />
-  //         </div>
-  //         <FormControl className={cn.containerMiddle}>
-  //           <div className={cn.label}>Region Hint</div>
-  //           <NativeSelect
-  //             disabled={location !== 'empty'}
-  //             value={region}
-  //             onChange={e =>
-  //               this.setState({ region: e.target.value, changes: true })
-  //             }
-  //             input={
-  //               location !== 'empty' ? (
-  //                 <BootstrapInputDisabled name="region" id="region" />
-  //               ) : (
-  //                 <BootstrapInput name="region" id="region" />
-  //               )
-  //             }
-  //           >
-  //             <option key="empty" value="empty" />
-  //             {locations.map(item => (
-  //               <option key={item.uuid} value={item.location_id}>
-  //                 {item.location_name}
-  //               </option>
-  //             ))}
-  //           </NativeSelect>
-  //         </FormControl>
-  //         <div className={cn.containerRight}>
-  //           <div className={cn.label}>Success Text</div>
-  //           {Number(method) === 2 ? (
-  //             <CustomInput
-  //               className={cn.rowPadding}
-  //               label="Success Text"
-  //               value={success}
-  //               name="success"
-  //               onChange={e =>
-  //                 this.setState({ success: e.target.value, changes: true })
-  //               }
-  //               inputStyles={{
-  //                 input: cn.inputStyles,
-  //               }}
-  //             />
-  //           ) : (
-  //             <CustomInputBack
-  //               disabled
-  //               className={cn.rowPadding}
-  //               label="Success Text"
-  //               value={success}
-  //               name="success"
-  //               onChange={e =>
-  //                 this.setState({ success: e.target.value, changes: true })
-  //               }
-  //               inputStyles={{
-  //                 input: cn.inputStyles,
-  //               }}
-  //             />
-  //           )}
-  //         </div>
-  //       </div>
-  //     </>
-  //   );
-  // };
+  firstTab = () => {
+    return (
+      <div className={cn.containerRow}>
+        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
+        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
+        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
+        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
+        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
+        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
+        <div style={{color: '#FFF'}}>Will be generated content from sockets</div>
+      </div>
+    );
+  };
 
   logout = () => {
     const { logoutUserProps, history } = this.props;
@@ -532,13 +368,19 @@ class JobPage extends PureComponent {
   );
 
   render() {
-    const { hamburger, history, projects } = this.props;
+    const {
+      hamburger,
+      history,
+      projects,
+      settings: { project },
+      location,
+    } = this.props;
     const { label, tab, changes, ignore } = this.state;
     const id = 1;
     let content = '';
     let contentInside = '';
     if (tab === 0) {
-      // content = this.firstTab();
+      content = this.firstTab();
     }
     if (tab === 1) {
       content = this.secondTab();
@@ -546,6 +388,22 @@ class JobPage extends PureComponent {
     }
     if (tab === 2) {
       content = this.thirdTab();
+    }
+
+    if (tab === 3) {
+      content = this.fourthTab();
+    }
+
+    let projectName = '';
+    if (projects.length > 0) {
+      if (!Object(project).hasOwnProperty('project_id')) {
+        const projectId = location.pathname.split('/')[2];
+        projectName = projects.filter(
+          project => project.project_id === Number(projectId),
+        )[0].project_name;
+      } else {
+        projectName = project.project_name;
+      }
     }
 
     return (
@@ -565,7 +423,7 @@ class JobPage extends PureComponent {
                   history.push(`/projects`);
                 }}
               >
-                Lynx (Prod)
+                {projectName}
               </div>
               <div
                 style={{ cursor: 'pointer' }}
@@ -589,7 +447,23 @@ class JobPage extends PureComponent {
             </div>
           </Toolbar>
         </CustomAppBar>
-        <Paper className={cn.contentAlign}></Paper>
+        <Paper className={cn.contentAlign}>
+          <div className={cn.firstRow}>
+            <div className={cn.textMarginBig}>
+              <div className={cn.circle} />
+              <div>Job: 543433</div>
+            </div>
+            <div className={cn.textColor}>Running</div>
+          </div>
+          <div className={cn.firstRow}>
+            <div className={cn.textMargin}>Parse Logs: 2019-02-01</div>
+            <div className={cn.textMargin}>16h 32m 12s</div>
+          </div>
+          <div className={cn.firstRow}>
+            <div className={cn.textMargin}>LogPredict</div>
+            <div className={cn.textMargin}>460MB / 900MB</div>
+          </div>
+        </Paper>
         <Paper className={cn.contentAlignSecond}>
           <Tabs
             value={tab}
@@ -634,12 +508,12 @@ class JobPage extends PureComponent {
               label="History"
             />
           </Tabs>
-          {tab === 0 ||
-            (tab === 1 && (
-              <div className={cn.tabValue}>
+          {(tab === 0 ||
+            tab === 1) && (
+              <div className={tab === 1 ? cn.tabValue : cn.tabValueFirst}>
                 {tab === 1 ? contentInside : content}
               </div>
-            ))}
+            )}
           {tab !== 0 && <div className={cn.tabValueAlt}>{content}</div>}
         </Paper>
       </>
@@ -651,6 +525,7 @@ const mapStateToProps = state => ({
   hamburger: state.hamburger,
   lookups: state.lookups,
   projects: state.projects,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = {

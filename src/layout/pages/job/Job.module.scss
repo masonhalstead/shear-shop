@@ -160,6 +160,14 @@
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
 
+.tabValueFirst {
+  padding: 20px;
+  border: 1px solid #cfd7e6;
+  border-top: none;
+  background: $color-8;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+}
+
 .tabValueAlt {
   padding: 25px 0 0 0;
 }
@@ -228,6 +236,31 @@
   color: $color-6;
 }
 
+.textMargin {
+  font-size: 13px;
+  color: $color-6;
+  margin-top: 5px;
+}
+
+.textMarginBig {
+  font-size: 16px;
+  color: $color-6;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.columnMargin {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.textColor {
+  font-size: 16px;
+  margin-top: 5px;
+  color: $color-12
+}
+
 .customHeight {
   border: none !important;
 }
@@ -282,4 +315,28 @@ input[type=time]::-webkit-datetime-edit-ampm-field {
   padding-left: 30px;
   padding-right: 30px;
   margin-top: 15px;
+}
+
+.firstRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.circle {
+  background: $color-12;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 4px;
+  margin-right: 10px;
+}
+
+.circleTable {
+  background: $color-12;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
