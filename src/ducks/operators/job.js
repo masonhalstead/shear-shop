@@ -1,13 +1,18 @@
-import { setLoading, setJob } from 'ducks/actions';
-import { normalizeWithUUID } from 'utils/normalizers';
-// import { getData } from 'utils/axios';
+import { setJob } from 'ducks/actions';
+import { getParameters } from 'ducks/operators/parameters';
+import { getData } from 'utils/axios';
 
-const job_data = {};
+export const getJobConfig = job_id => async dispatch => {
+  const job_route = `/jobs/${job_id}/parameters`;
+  const [job] = await Promise.all([
+    dispatch(getJob(job_id)),
+    dispatch(getParameters(job_route)),
+  ]);
+  return job;
+};
 
 export const getJob = job_id => async dispatch => {
-  await dispatch(setLoading(true));
-  // const res = await getData(`/jobs/${job_id}`);
-  const job = await normalizeWithUUID(job_data);
-  await dispatch(setJob(job));
-  return job;
+  const res = await getData(`/jobs/${job_id}`);
+  await dispatch(setJob(res.data));
+  return res.data;
 };

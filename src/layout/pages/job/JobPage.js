@@ -2,11 +2,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getProjects as getProjectsAction } from 'ducks/operators/projects';
+import { getJobConfig as getJobConfigAction } from 'ducks/operators/job';
 import * as Sentry from '@sentry/browser';
 import { Toolbar, Breadcrumbs, Paper, Tabs, Tab } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import { logoutUser } from 'ducks/actions';
+import { logoutUser, setLoading } from 'ducks/actions';
 import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
 import cn from './Job.module.scss';
@@ -111,18 +111,26 @@ class JobPage extends PureComponent {
   };
 
   componentDidMount() {
-    const { getProjects } = this.props;
-    try {
-      getProjects();
-    } catch (err) {
-      // Only fires if the server is off line or the body isnt set correctly
-      Sentry.captureException(err);
-    }
+    this.setInitialData();
   }
 
   componentWillUnmount() {
     this.setState({ changes: false });
   }
+
+  setInitialData = async () => {
+    const { getJobConfig, setLoadingAction, location } = this.props;
+    const [, , , , job_id] = location.pathname.split('/');
+
+    try {
+      await setLoadingAction(true);
+      await getJobConfig(job_id);
+    } catch (err) {
+      // Only fires if the server is off line or the body isnt set correctly
+      Sentry.captureException(err);
+    }
+    setLoadingAction(false);
+  };
 
   handleChangeTab = (event, newValue) => {
     this.setState({ tab: newValue });
@@ -522,8 +530,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getProjects: getProjectsAction,
+  getJobConfig: getJobConfigAction,
   logoutUserProps: logoutUser,
+  setLoadingAction: setLoading,
 };
 
 export default connect(
