@@ -51,3 +51,4 @@ export const SET_HAMBURGER = 'SET_HAMBURGER';
 export const SET_PROJECTS = 'SET_PROJECTS';
 export const CLEAR_PROJECTS = 'CLEAR_PROJECTS';
 export const SET_PROJECT = 'SET_PROJECT';
+export const SHOW_ALERT = 'SHOW_ALERT';

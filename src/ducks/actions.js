@@ -118,3 +118,16 @@ export const setProject = project => ({
   type: constants.SET_PROJECT,
   payload: project,
 });
+
+export const handleError = error => dispatch => {
+  if (error.response && error.response.status === 401) {
+    dispatch(logoutUser());
+  } else {
+    dispatch(toggleAlertAction(true));
+  }
+};
+
+export const toggleAlertAction = open => ({
+  type: constants.SHOW_ALERT,
+  payload: open,
+});

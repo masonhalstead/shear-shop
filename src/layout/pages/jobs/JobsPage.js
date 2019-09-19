@@ -132,8 +132,13 @@ class JobsPage extends PureComponent {
     this.setState({ viewColumns: viewColumnsNew });
   };
 
+  openDetailPage = (id) => {
+    const {history, settings : {project}} = this.props;
+    history.push(`/projects/${project.project_id}/jobs/${id}/job`);
+  };
+
   createColumns = () => {
-    const columns = configureColumns(this.openModal, this.openDefinition);
+    const columns = configureColumns(this.openDetailPage);
     this.setState({ columns, viewColumns: columns });
   };
 

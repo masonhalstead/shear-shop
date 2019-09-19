@@ -11,3 +11,7 @@ export function selectUser(state) {
 export function selectLoading(state) {
   return state.loading;
 }
+
+export function selectAlert(state) {
+  return state.settings.alert;
+}
