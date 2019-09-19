@@ -647,7 +647,7 @@ class DefinitionPage extends PureComponent {
               classes={{ separator: cn.separator, root: cn.text }}
             >
               <div
-                style={{ cursor: 'pointer' }}
+                className={cn.text}
                 onClick={() => {
                   history.push(`/projects`);
                 }}
@@ -655,7 +655,7 @@ class DefinitionPage extends PureComponent {
                 Lynx (Prod)
               </div>
               <div
-                style={{ cursor: 'pointer' }}
+                className={cn.text}
                 onClick={() => {
                   history.push(`/projects/${id}/definitions/unarchived`);
                 }}

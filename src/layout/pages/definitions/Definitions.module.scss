@@ -99,6 +99,7 @@
 
 .text {
   font-size: 14px;
+  cursor: pointer;
   color: $color-6;
 }
 
@@ -108,7 +109,7 @@
 }
 
 .paper {
-  width: 400px;
+  width: 350px;
   position: absolute;
   top: 15px;
 }
@@ -121,12 +122,14 @@
   flex: 1;
 }
 .label {
-  font-size: 16px;
-  color: $color-5;
+  font-size: 13px;
+  color: $color-6;
   margin-bottom: 3px;
+  font-weight: 400;
 }
+
 .actions {
-  justify-content: center;
+  justify-content: flex-end;
 }
 .btn {
   display: inline-block;
@@ -154,6 +157,7 @@
 .btnPrimary {
   color: #fff !important;
   background-color: $color-5;
+  text-transform: capitalize;
   border-radius: 3px;
   padding: 5;
   height: 35px !important;
@@ -161,8 +165,6 @@
   font-weight: 300;
   font-size: 13px;
   cursor: pointer;
-  margin-left: 8px;
-  margin-right: 8px;
 }
 .btnPrimary:hover {
   background-color: $color-5;
