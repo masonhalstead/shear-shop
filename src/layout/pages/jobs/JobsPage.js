@@ -6,15 +6,14 @@ import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
 import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import { getProjects as getProjectsAction } from 'ducks/operators/projects';
-import { logoutUser } from 'ducks/actions';
-
+import { getJobs as getJobsAction } from 'ducks/operators/jobs';
+import { logoutUser, setLoading } from 'ducks/actions';
 import * as Sentry from '@sentry/browser';
-import cn from './Jobs.module.scss';
-import { configureColumns } from './columns';
 import { CustomizedInputBase } from 'components/search/SearchInput';
 import Popover from 'components/popover/Popover';
 import TableViewCol from 'components/view-column/ViewColumn';
+import { configureColumns } from './columns';
+import cn from './Jobs.module.scss';
 
 const result = {
   data: [
@@ -102,15 +101,23 @@ class JobsPage extends PureComponent {
   };
 
   componentDidMount() {
-    const { getProjects } = this.props;
-    this.createColumns();
+    this.setInitialData();
+  }
+
+  setInitialData = async () => {
+    const { getJobs, setLoadingAction, location } = this.props;
+    const [, , project_id] = location.pathname.split('/');
+
     try {
-      getProjects();
+      await setLoadingAction(true);
+      await getJobs({ project_id }); // TODO: integrate days & state
+      await this.createColumns();
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
     }
-  }
+    setLoadingAction(false);
+  };
 
   onSearch = e => {
     this.setState({ search: e.target.value });
@@ -132,8 +139,11 @@ class JobsPage extends PureComponent {
     this.setState({ viewColumns: viewColumnsNew });
   };
 
-  openDetailPage = (id) => {
-    const {history, settings : {project}} = this.props;
+  openDetailPage = id => {
+    const {
+      history,
+      settings: { project },
+    } = this.props;
     history.push(`/projects/${project.project_id}/jobs/${id}/job`);
   };
 
@@ -150,13 +160,21 @@ class JobsPage extends PureComponent {
   };
 
   render() {
-    const { hamburger, projects, history , location, settings : {project}} = this.props;
+    const {
+      hamburger,
+      projects,
+      history,
+      location,
+      settings: { project },
+    } = this.props;
     const { label, search, viewColumns, columns } = this.state;
     let projectName = '';
     if (projects.length > 0) {
       if (!Object(project).hasOwnProperty('project_id')) {
         const projectId = location.pathname.split('/')[2];
-        projectName = projects.filter(project => project.project_id === Number(projectId))[0].project_name;
+        projectName = projects.filter(
+          project => project.project_id === Number(projectId),
+        )[0].project_name;
       } else {
         projectName = project.project_name;
       }
@@ -213,8 +231,8 @@ class JobsPage extends PureComponent {
               tableData={
                 search.length > 0
                   ? result.data.filter(item =>
-                    item.jobname.toLowerCase().includes(search),
-                  )
+                      item.jobname.toLowerCase().includes(search),
+                    )
                   : result.data
               }
               tableOptions={this.options}
@@ -272,8 +290,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getProjects: getProjectsAction,
+  getJobs: getJobsAction,
   logoutUserProps: logoutUser,
+  setLoadingAction: setLoading,
 };
 
 export default connect(
