@@ -13,7 +13,7 @@ const getClassForState = state => {
   return cn.stateGreen;
 };
 
-export const configureColumns = (openDetailPage, openDefinition) => [
+export const configureColumns = (openDetailPage, openBatch) => [
   {
     name: 'jobname',
     label: 'Job',
@@ -106,7 +106,7 @@ export const configureColumns = (openDetailPage, openDefinition) => [
     options: {
       viewColumns: false,
       customBodyRender: value => (
-        <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+        <div style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => openBatch(value)}>
           <FontAwesomeIcon icon="edit" color="#818fa3" />
         </div>
       ),

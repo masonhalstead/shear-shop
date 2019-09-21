@@ -4,9 +4,12 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
-import { Toolbar, Breadcrumbs } from '@material-ui/core';
+import { Toolbar, Breadcrumbs, Dialog, Button } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import { getJobs as getJobsAction } from 'ducks/operators/jobs';
+import {
+  getJobs as getJobsAction,
+  addJobBatch as addJobBatchAction,
+} from 'ducks/operators/jobs';
 import { logoutUser, setLoading } from 'ducks/actions';
 import * as Sentry from '@sentry/browser';
 import { CustomizedInputBase } from 'components/search/SearchInput';
@@ -14,6 +17,13 @@ import Popover from 'components/popover/Popover';
 import TableViewCol from 'components/view-column/ViewColumn';
 import { configureColumns } from './columns';
 import cn from './Jobs.module.scss';
+import {
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from 'components/dialogs/Dialogs';
+import { CustomInput } from 'components/material-input/CustomInput';
+import classNames from 'classnames';
 
 const result = {
   data: [
@@ -98,6 +108,9 @@ class JobsPage extends PureComponent {
     search: '',
     viewColumns: [],
     columns: [],
+    open: false,
+    jobId: '',
+    batchName: '',
   };
 
   componentDidMount() {
@@ -106,7 +119,7 @@ class JobsPage extends PureComponent {
 
   setInitialData = async () => {
     const { getJobs, setLoadingAction, location } = this.props;
-    const [, , project_id] = location.pathname.split('/');
+    const [, , project_id, , filter] = location.pathname.split('/');
 
     try {
       await setLoadingAction(true);
@@ -139,6 +152,25 @@ class JobsPage extends PureComponent {
     this.setState({ viewColumns: viewColumnsNew });
   };
 
+  handleCloseBatch = () => {
+    this.setState({ open: false });
+  };
+
+  changeBatchName = name => {
+    this.setState({ batchName: name });
+  };
+
+  createBatch = async () => {
+    const { batchName, jobId } = this.state;
+    const { addJobBatch, getJobs, location } = this.props;
+    const [, , project_id, , filter] = location.pathname.split('/');
+    await addJobBatch({ batch_name: batchName, job_id: jobId, project_id });
+
+    await getJobs({ project_id });
+
+    this.setState({ open: false, batchName: '', jobId: '' });
+  };
+
   openDetailPage = id => {
     const {
       history,
@@ -147,8 +179,17 @@ class JobsPage extends PureComponent {
     history.push(`/projects/${project.project_id}/jobs/${id}/job`);
   };
 
+  openBatch = id => {
+    const { jobs } = this.props;
+    let batch = '';
+    if (jobs.length > 0) {
+      batch = jobs.filter(filter => filter.job_id === Number(id))[0].batch_name;
+    }
+    this.setState({ jobId: id, open: true, batchName: batch });
+  };
+
   createColumns = () => {
-    const columns = configureColumns(this.openDetailPage);
+    const columns = configureColumns(this.openDetailPage, this.openBatch);
     this.setState({ columns, viewColumns: columns });
   };
 
@@ -167,7 +208,7 @@ class JobsPage extends PureComponent {
       location,
       settings: { project },
     } = this.props;
-    const { label, search, viewColumns, columns } = this.state;
+    const { label, search, viewColumns, columns, open, batchName } = this.state;
     let projectName = '';
     if (projects.length > 0) {
       if (!Object(project).hasOwnProperty('project_id')) {
@@ -278,6 +319,39 @@ class JobsPage extends PureComponent {
             />
           </TableContainer>
         )}
+        <Dialog
+          onClose={this.handleCloseBatch}
+          aria-labelledby="customized-dialog-title"
+          open={open}
+          classes={{ paper: cn.paper }}
+        >
+          <DialogTitle
+            id="customized-dialog-title"
+            onClose={this.handleCloseProject}
+          >
+            <div className={cn.title}>Edit Batch</div>
+          </DialogTitle>
+          <DialogContent>
+            <div className={cn.container}>
+              <div className={cn.label}>Batch Name</div>
+              <CustomInput
+                value={batchName}
+                name="batchName"
+                onChange={e => this.changeBatchName(e.target.value)}
+              />
+            </div>
+          </DialogContent>
+          <DialogActions className={cn.actions}>
+            <Button
+              onClick={this.createBatch}
+              color="primary"
+              size="large"
+              className={classNames(cn.btn, cn.btnPrimary)}
+            >
+              Edit Batch
+            </Button>
+          </DialogActions>
+        </Dialog>
       </>
     );
   }
@@ -287,12 +361,14 @@ const mapStateToProps = state => ({
   hamburger: state.hamburger,
   projects: state.projects,
   settings: state.settings,
+  jobs: state.jobs,
 });
 
 const mapDispatchToProps = {
   getJobs: getJobsAction,
   logoutUserProps: logoutUser,
   setLoadingAction: setLoading,
+  addJobBatch: addJobBatchAction,
 };
 
 export default connect(

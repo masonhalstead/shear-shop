@@ -9,24 +9,22 @@ export const configureColumnsOutput = (
   deleteOutputRow,
 ) => [
   {
-    name: 'value',
+    name: 'parameter_name',
     label: 'Name',
     options: {
       filter: false,
       sort: false,
-      customBodyRender: (value, tableMeta) => {
-        return (
-          <div style={{ cursor: 'pointer' }}>
-            <CustomInputNoBorders
-              placeholder={`Parameter ${tableMeta.rowIndex + 1}`}
-              value={value}
-              name="paramsName"
-              onChange={e => saveOutputName(e.target.value, tableMeta.rowIndex)}
-              inputStyles={{ input: cn.customHeight }}
-            />
-          </div>
-        );
-      },
+      customBodyRender: (value, tableMeta) => (
+        <div style={{ cursor: 'pointer' }}>
+          <CustomInputNoBorders
+            placeholder="Parameter"
+            value={value}
+            name="paramsName"
+            onChange={e => saveOutputName(e.target.value, tableMeta.rowIndex)}
+            inputStyles={{ input: cn.customHeight }}
+          />
+        </div>
+      ),
     },
   },
   {

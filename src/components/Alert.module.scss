@@ -1,14 +1,28 @@
 @import "src/scss/styles";
 
-.title {
-  color: $color-5;
-  line-height: 1;
+.paper {
+  width: 400px;
+  position: absolute;
+  top: 15px;
 }
-.subTitle {
-  color: $color-5;
+
+.title {
+  color: $color-13;
+}
+
+.container {
+  flex: 1;
+}
+
+.label {
   font-size: 13px;
-  font-weight: 300;
-  margin-top: 10px;
+  color: $color-6;
+  margin-bottom: 3px;
+  font-weight: 400;
+}
+
+.actions {
+  justify-content: center;
 }
 
 .btn {
@@ -24,22 +38,19 @@
   font-size: 1rem;
   line-height: 1.5;
   border-radius: 0.25rem;
-  text-transform: none !important;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-
 .btnPrimary {
   color: #fff !important;
-  background-color: $color-5;
+  background-color: $color-5 !important;
+  text-transform: none !important;
   border-radius: 3px;
-  padding: 5px;
+  padding: 5px !important;
   height: 35px !important;
-  width: 33% !important;
-  font-weight: 300;
-  font-size: 13px;
+  width: 100% !important;
+  font-weight: 300 !important;
+  font-size: 13px !important;
   cursor: pointer;
-  margin-left: 8px;
-  margin-right: 8px;
 }
 .btnPrimary:hover {
   background-color: $color-5;

@@ -4,7 +4,7 @@ import cn from './Definitions.module.scss';
 
 export const configureColumns = (openModal, openDefinition) => [
   {
-    name: 'jobdefinition',
+    name: 'job_definition_name',
     label: 'Job',
     options: {
       filter: true,
@@ -21,7 +21,7 @@ export const configureColumns = (openModal, openDefinition) => [
     },
   },
   {
-    name: 'requirements',
+    name: 'max_retries',
     label: 'Requirements',
     options: {
       filter: true,
@@ -35,7 +35,7 @@ export const configureColumns = (openModal, openDefinition) => [
     },
   },
   {
-    name: 'location',
+    name: 'location_name',
     label: 'Location',
     options: {
       filter: true,
@@ -49,7 +49,7 @@ export const configureColumns = (openModal, openDefinition) => [
     },
   },
   {
-    name: 'timeout',
+    name: 'timeout_seconds',
     label: 'Timeout',
     options: {
       filter: true,
@@ -63,7 +63,7 @@ export const configureColumns = (openModal, openDefinition) => [
     },
   },
   {
-    name: 'method',
+    name: 'result_method_name',
     label: 'Method',
     options: {
       filter: true,
@@ -77,7 +77,7 @@ export const configureColumns = (openModal, openDefinition) => [
     },
   },
   {
-    name: 'createdBy',
+    name: 'created_by',
     label: 'Created By',
     options: {
       filter: true,
@@ -91,7 +91,7 @@ export const configureColumns = (openModal, openDefinition) => [
     },
   },
   {
-    name: 'created',
+    name: 'created_datetime_utc',
     label: 'Created',
     options: {
       filter: true,
@@ -105,7 +105,7 @@ export const configureColumns = (openModal, openDefinition) => [
     },
   },
   {
-    name: 'id',
+    name: 'job_definition_id',
     label: ' ',
     options: {
       viewColumns: false,
