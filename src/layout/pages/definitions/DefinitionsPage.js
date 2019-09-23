@@ -24,54 +24,54 @@ import RunDefinition from 'layout/components/modals/run-definition/RunDefinition
 import cn from './Definitions.module.scss';
 import { configureColumns } from './columns';
 
-const result = {
-  client: 'Edelman',
-  statement: 'April 2019',
-  startdate: '2019-04-01T00:00:00',
-  enddate: '2019-04-30T00:00:00',
-  data: [
-    {
-      jobdefinition: 'Run Python',
-      requirements: '1CPU, 16GM RAM',
-      location: 'us east-1',
-      timeout: '32min',
-      method: 'STDOUT JSON',
-      createdBy: 'Linyx User',
-      created: '8/13/19 13:00:00',
-      id: 1,
-    },
-    {
-      jobdefinition: 'QScopeUpdate',
-      requirements: '1CPU, 16GM RAM',
-      location: 'us east-14',
-      timeout: '12h 32min',
-      method: 'STDOUT',
-      createdBy: 'Linyx User',
-      created: '8/13/19 13:00:00',
-      id: 2,
-    },
-    {
-      jobdefinition: 'QScopeUpdate Strategy2',
-      requirements: '1CPU, 16GM RAM',
-      location: 'us east-14',
-      timeout: '1h 32min',
-      method: 'STDOUT("done")',
-      createdBy: 'Linyx User',
-      created: '8/13/19 13:00:00',
-      id: 3,
-    },
-    {
-      jobdefinition: 'QScopeUpdate Strategy1',
-      requirements: '1CPU, 16GM RAM',
-      location: 'us east-2',
-      timeout: '2min',
-      method: 'Auto',
-      createdBy: 'Linyx User',
-      created: '8/13/19 13:00:00',
-      id: 3,
-    },
-  ],
-};
+// const result = {
+//   client: 'Edelman',
+//   statement: 'April 2019',
+//   startdate: '2019-04-01T00:00:00',
+//   enddate: '2019-04-30T00:00:00',
+//   data: [
+//     {
+//       jobdefinition: 'Run Python',
+//       requirements: '1CPU, 16GM RAM',
+//       location: 'us east-1',
+//       timeout: '32min',
+//       method: 'STDOUT JSON',
+//       createdBy: 'Linyx User',
+//       created: '8/13/19 13:00:00',
+//       id: 1,
+//     },
+//     {
+//       jobdefinition: 'QScopeUpdate',
+//       requirements: '1CPU, 16GM RAM',
+//       location: 'us east-14',
+//       timeout: '12h 32min',
+//       method: 'STDOUT',
+//       createdBy: 'Linyx User',
+//       created: '8/13/19 13:00:00',
+//       id: 2,
+//     },
+//     {
+//       jobdefinition: 'QScopeUpdate Strategy2',
+//       requirements: '1CPU, 16GM RAM',
+//       location: 'us east-14',
+//       timeout: '1h 32min',
+//       method: 'STDOUT("done")',
+//       createdBy: 'Linyx User',
+//       created: '8/13/19 13:00:00',
+//       id: 3,
+//     },
+//     {
+//       jobdefinition: 'QScopeUpdate Strategy1',
+//       requirements: '1CPU, 16GM RAM',
+//       location: 'us east-2',
+//       timeout: '2min',
+//       method: 'Auto',
+//       createdBy: 'Linyx User',
+//       created: '8/13/19 13:00:00',
+//       id: 3,
+//     },
+//   ],
+// };
 
 class DefinitionsPage extends PureComponent {
   static propTypes = {
@@ -129,11 +129,13 @@ class DefinitionsPage extends PureComponent {
       await setLoadingAction(true);
       await getJobDefinitions(project_id);
       await this.createColumns();
+      setLoadingAction(false);
+
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
+      setLoadingAction(false);
     }
-    setLoadingAction(false);
   };
 
   runJob = () => {
@@ -194,12 +196,17 @@ class DefinitionsPage extends PureComponent {
     history.push('/login');
   };
 
-  createDefinition = () => {
+  createDefinition = async () => {
     const { jobName } = this.state;
-    const { addJobDefinition } = this.props;
-    addJobDefinition({
+
+    const { addJobDefinition, getJobDefinitions, location, setLoadingAction } = this.props;
+    const [, , project_id] = location.pathname.split('/');
+
+    await setLoadingAction(true);
+
+    const id = await addJobDefinition({
       job_definition_name: jobName,
-      project_id: 1,
+      project_id,
       description: 'Testing Project Description',
       docker_image: '/dockerimage',
       result_method_id: 1,
@@ -209,8 +216,24 @@ class DefinitionsPage extends PureComponent {
       region_endpoint_hint: 'us-east-1e',
       parameters: [
         {
-          parameter_name: 'Parameter 1',
+          parameter_name: 'Parameter 2',
           parameter_direction_id: 1,
+          parameter_method_id: 1,
+          is_required: true,
+          is_encrypted: true,
+          parameter_value: 'Default Value',
+          description: 'Parameter description',
+          command_line_prefix: null,
+          command_line_assignment_char: null,
+          command_line_escaped: null,
+          command_line_ignore_name: null,
+          reference_type_id: null,
+          reference_id: null,
+          reference_parameter_name: null,
+        },
+        {
+          parameter_name: 'Parameter 3',
+          parameter_direction_id: 2,
           parameter_method_id: 1,
           is_required: true,
           is_encrypted: true,
@@ -226,7 +249,13 @@ class DefinitionsPage extends PureComponent {
         },
       ],
     });
+
+    await getJobDefinitions(project_id);
+    await setLoadingAction(false);
+
     this.setState({ open: false });
+
+    this.openDefinition(id);
   };
 
   render() {
@@ -235,7 +264,6 @@ class DefinitionsPage extends PureComponent {
       jobDefinitions,
       history,
       lookups,
-      settings,
       settings: { project },
       projects,
       location,
@@ -292,7 +320,7 @@ class DefinitionsPage extends PureComponent {
                   trigger={<FontAwesomeIcon icon="cog" color="#818fa3" />}
                   content={
                     <TableViewCol
-                      data={result.data}
+                      data={jobDefinitions}
                       columns={viewColumns}
                       options={this.options}
                       handleColChange={this.handleColChange}
@@ -317,10 +345,10 @@ class DefinitionsPage extends PureComponent {
             <TableContent
               tableData={
                 search.length > 0
-                  ? result.data.filter(item =>
-                      item.jobdefinition.toLowerCase().includes(search),
+                  ? jobDefinitions.filter(item =>
+                      item.job_definition_name.toLowerCase().includes(search),
                     )
-                  : result.data
+                  : jobDefinitions
               }
               tableOptions={this.options}
               columns={viewColumns}

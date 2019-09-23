@@ -2,19 +2,9 @@ import {
   setLoading,
   setErrorMessage,
   logoutUser,
-  openModal,
   toggleAlertAction,
 } from 'ducks/actions';
 import * as Sentry from '@sentry/browser';
-
-// export const handleError = err => dispatch => {
-//   Sentry.captureException(err);
-//   if (err.response && err.response.status === 401) {
-//     dispatch(logoutUser());
-//   } else {
-//     dispatch(toggleAlertAction(true));
-//   }
-// };
 
 export const handleError = (err, payload = 'empty') => async (
   dispatch,
@@ -51,8 +41,7 @@ export const handleError = (err, payload = 'empty') => async (
   }
 
   await dispatch(setErrorMessage({ error_message }));
-  // TODO: BUILD A MODAL THAT WILL DISPLAY ERROR
-  // await dispatch(openModal({ admin_message: true }));
+  dispatch(toggleAlertAction(true));
 
   const state = getState();
   Sentry.withScope(scope => {

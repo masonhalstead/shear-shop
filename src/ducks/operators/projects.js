@@ -19,7 +19,6 @@ export const getProjects = () => async dispatch => {
 export const addProject = data => async dispatch => {
   try {
     const res = await postData('/projects/create', data);
-    // TODO Redirect to project after it has been created
     return res.data;
   } catch (err) {
     dispatch(handleError(err, data));

@@ -14,7 +14,7 @@ export const configureColumns = (
   handleClickOpenMethod,
 ) => [
   {
-    name: 'name',
+    name: 'parameter_name',
     label: 'Name',
     options: {
       filter: false,
@@ -22,7 +22,7 @@ export const configureColumns = (
       customBodyRender: (value, tableMeta) => (
         <div style={{ cursor: 'pointer' }}>
           <CustomInputNoBorders
-            placeholder={`Parameter ${tableMeta.rowIndex + 1}`}
+            placeholder="Parameter"
             value={value}
             name="name"
             onChange={e => saveName(e.target.value, tableMeta.rowIndex)}
@@ -33,7 +33,7 @@ export const configureColumns = (
     },
   },
   {
-    name: 'required',
+    name: 'is_required',
     label: 'Required',
     options: {
       filter: false,
@@ -61,7 +61,7 @@ export const configureColumns = (
     },
   },
   {
-    name: 'method',
+    name: 'parameter_method_id',
     label: 'Method',
     options: {
       filter: false,
@@ -122,7 +122,7 @@ export const configureColumns = (
     },
   },
   {
-    name: 'default',
+    name: 'parameter_value',
     label: 'Default',
     options: {
       filter: false,

@@ -63,9 +63,10 @@ class ProjectsPage extends PureComponent {
   createProject = async () => {
     const { projectName } = this.state;
     const { addProject, getProjects } = this.props;
-    await addProject({ project_name: projectName });
+    const projectId = await addProject({ project_name: projectName });
     await getProjects();
-    this.setState({ open: false });
+    this.setState({ open: false, project_name: '' });
+    this.goToJobsPage({ project_id: projectId, project_name: projectName });
   };
 
   goToJobsPage = project => {

@@ -2,7 +2,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getJobDefinition as getJobDefinitionAction } from 'ducks/operators/job_definition';
+import {
+  getJobDefinition as getJobDefinitionAction,
+  editJobDefinition as editJobDefinitionAction,
+  editDefinitionParams as editDefinitionParamsAction,
+} from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
 import {
   Toolbar,
@@ -54,17 +58,6 @@ class DefinitionPage extends PureComponent {
     location: PropTypes.object,
   };
 
-  static getDerivedStateFromProps(props, state) {
-    const filter = props.location.pathname.split('/');
-    const label = filter[4].charAt(0).toUpperCase() + filter[4].slice(1);
-
-    if (state.label !== label) {
-      return { label };
-    }
-
-    return state;
-  }
-
   options = {
     filterType: 'textField',
     selectableRows: 'none',
@@ -77,7 +70,6 @@ class DefinitionPage extends PureComponent {
   };
 
   state = {
-    label: 'Unarchived',
     definitionName: '',
     dockerImage: '',
     startupCommand: '',
@@ -93,35 +85,31 @@ class DefinitionPage extends PureComponent {
     tab: 0,
     open: false,
     openEnv: false,
-    index: '',
+    index: 0,
     project: '',
-    parameter: '',
     method: '',
-    encrypted: '',
-    prefix: '',
-    assignment: '',
     ignore: '',
-    escaped: '',
     params: [
       {
-        value: '',
+        parameter_name: '',
         description: '',
       },
     ],
     data: [
       {
-        name: '',
-        reference_parameter: '',
-        required: false,
-        method: '',
+        parameter_name: '',
+        parameter_direction_id: 1,
+        reference_parameter_name: '',
+        is_required: false,
+        parameter_method_id: 1,
         reference: '',
-        default: '',
+        parameter_value: '',
         description: '',
-        prefix: '',
-        encrypted: '',
-        assignment: '',
-        escaped: '',
-        ignore: '',
+        command_line_prefix: '',
+        is_encrypted: false,
+        command_line_assignment_char: '',
+        command_line_escaped: '',
+        command_line_ignore_name: '',
         id: 1,
       },
     ],
@@ -139,12 +127,87 @@ class DefinitionPage extends PureComponent {
   }
 
   setInitialData = async () => {
-    const { getJobDefinition, setLoadingAction, location } = this.props;
+    const {
+      getJobDefinition,
+      setLoadingAction,
+      location,
+      lookups,
+    } = this.props;
     const [, , , , definition_id] = location.pathname.split('/');
 
     try {
       await setLoadingAction(true);
-      await getJobDefinition(definition_id);
+      const result = await getJobDefinition(definition_id);
+      const definition = result[0];
+      const parameters = result[1];
+      if (parameters.length > 0) {
+        const input = parameters.filter(
+          filter => filter.parameter_direction_id === 1,
+        );
+        const output = parameters.filter(
+          filter => filter.parameter_direction_id === 2,
+        );
+
+        const params = input.map(parameter => ({
+          ...parameter,
+          // TODO clarification about reference_id and reference_type_id
+          reference: parameter.reference_type_id,
+        }));
+
+        if (params.length > 0) {
+          params.push({
+            parameter_name: '',
+            reference_parameter_name: '',
+            parameter_direction_id: 1,
+            is_required: false,
+            parameter_method_id: 1,
+            reference: '',
+            parameter_value: '',
+            description: '',
+            command_line_prefix: '',
+            is_encrypted: false,
+            command_line_assignment_char: '',
+            command_line_escaped: '',
+            command_line_ignore_name: '',
+          });
+        }
+
+        if (output.length > 0) {
+          output.push({
+            parameter_name: '',
+            description: '',
+          });
+        }
+
+        if (params.length > 0 && output.length > 0) {
+          this.setState({ data: params, params: output });
+        }
+        if (params.length > 0 && output.length === 0) {
+          this.setState({ data: params });
+        }
+        if (params.length === 0 && output.length > 0) {
+          this.setState({ params: output });
+        }
+      }
+
+      this.setState({
+        definitionName: definition.job_definition_name,
+        description: definition.description,
+        dockerImage: definition.docker_image,
+        method: definition.result_method_id,
+        startupCommand: definition.startup_command,
+        timeout: new Date(definition.timeout_seconds * 1000)
+          .toUTCString()
+          .match(/(\d\d:\d\d)/)[0],
+        success: definition.stdout_success_text,
+        region: lookups.locations.filter(
+          filter => filter.location_name === definition.region_endpoint_hint,
+        )[0].location_id,
+        cpu: definition.cpu,
+        gpu: definition.gpu,
+        retries: definition.max_retries,
+        memory: definition.memory_gb,
+      });
       await this.createColumns();
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
@@ -164,7 +227,7 @@ class DefinitionPage extends PureComponent {
     }
     this.setState(prevState => {
       const newItems = [...prevState.params];
-      newItems[index].value = value;
+      newItems[index].parameter_name = value;
       return { params: newItems, changes: true };
     });
   };
@@ -180,19 +243,19 @@ class DefinitionPage extends PureComponent {
   deleteOutputRow = index => {
     const { params } = this.state;
     const result = params.filter((item, indexNew) => indexNew !== index);
-    this.setState({ params: result, changes: true });
+    this.setState({ params: result, changes: true, index: 0 });
   };
 
   deleteInputRow = index => {
     const { data } = this.state;
     const result = data.filter((item, indexNew) => indexNew !== index);
-    this.setState({ data: result, changes: true });
+    this.setState({ data: result, changes: true, index: 0 });
   };
 
   changeReferenceParameter = referenceParameter => {
     this.setState(prevState => {
       const newItems = [...prevState.data];
-      newItems[this.state.index].reference_parameter = referenceParameter;
+      newItems[this.state.index].reference_parameter_name = referenceParameter;
       return { data: newItems, parameter: referenceParameter, changes: true };
     });
   };
@@ -217,7 +280,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.params];
       newItems.push({
-        value: '',
+        parameter_name: '',
         description: '',
       });
       return { params: newItems, changes: true };
@@ -228,16 +291,17 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems.push({
-        name: '',
-        reference_parameter: '',
-        required: false,
-        method: '',
+        parameter_name: '',
+        parameter_direction_id: 1,
+        reference_parameter_name: '',
+        is_required: false,
+        parameter_method_id: 1,
         reference: '',
-        default: '',
+        parameter_value: '',
         description: '',
-        prefix: '',
-        encrypted: '',
-        assignment: '',
+        command_line_prefix: '',
+        is_encrypted: false,
+        command_line_assignment_char: '',
         id: newItems.length + 1,
       });
       return { data: newItems, changes: true };
@@ -296,7 +360,7 @@ class DefinitionPage extends PureComponent {
     }
     this.setState(prevState => {
       const newItems = [...prevState.data];
-      newItems[index].name = name;
+      newItems[index].parameter_name = name;
       return { data: newItems, changes: true };
     });
   };
@@ -304,7 +368,7 @@ class DefinitionPage extends PureComponent {
   saveDefault = (defaultValue, index) => {
     this.setState(prevState => {
       const newItems = [...prevState.data];
-      newItems[index].default = defaultValue;
+      newItems[index].parameter_value = defaultValue;
       return { data: newItems, changes: true };
     });
   };
@@ -312,7 +376,7 @@ class DefinitionPage extends PureComponent {
   handleChangeMethod = defaultValue => {
     this.setState(prevState => {
       const newItems = [...prevState.data];
-      newItems[this.state.index].method = defaultValue;
+      newItems[this.state.index].parameter_method_id = defaultValue;
       return { data: newItems, changes: true, method: defaultValue };
     });
   };
@@ -328,7 +392,7 @@ class DefinitionPage extends PureComponent {
   changeRequired = index => {
     this.setState(prevState => {
       const newItems = [...prevState.data];
-      newItems[index].required = !newItems[index].required;
+      newItems[index].is_required = !newItems[index].is_required;
       return { data: newItems, changes: true };
     });
   };
@@ -337,8 +401,87 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[this.state.index][name] = value;
-      return { data: newItems, changes: true, [name]: value };
+      return { data: newItems, changes: true };
     });
+  };
+
+  saveDefinition = async () => {
+    const {
+      definitionName,
+      description,
+      dockerImage,
+      method,
+      startupCommand,
+      timeout,
+      success,
+      region,
+      cpu,
+      gpu,
+      retries,
+      memory,
+      data,
+      params,
+    } = this.state;
+    const {
+      editJobDefinition,
+      location,
+      lookups,
+      editDefinitionParams,
+    } = this.props;
+    const [, , , , definition_id] = location.pathname.split('/');
+    const timeOut = timeout.split(':');
+
+    const dataForApi = {
+      job_definition_name: definitionName,
+      description: description,
+      docker_image: dockerImage,
+      result_method_id: method,
+      startup_command: startupCommand,
+      timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
+      stdout_success_text: success,
+      region_endpoint_hint: lookups.locations.filter(
+        filter => filter.location_id === region,
+      )[0].location_name,
+      cpu,
+      gpu,
+      max_retries: retries,
+      memory_gb: memory,
+    };
+    await editJobDefinition(dataForApi, definition_id);
+
+    const filteredData = data.filter(
+      filter => filter.parameter_name.length > 1,
+    );
+    if (filteredData.length > 0) {
+      filteredData.forEach(parameter => {
+        delete parameter['owner_id'];
+        const keys = Object.keys(parameter);
+        keys.forEach(async key => {
+          console.log(key);
+          await editDefinitionParams(
+            {
+              [key]: parameter[key],
+              parameter_method_id: parameter.parameter_method_id,
+              parameter_direction_id: parameter.parameter_direction_id,
+              parameter_name: parameter.parameter_name,
+            },
+            definition_id,
+          );
+        });
+      });
+    }
+
+    const filteredDataOutput = params.filter(
+      filter => filter.parameter_name.length > 1,
+    );
+    if (filteredDataOutput.length > 0) {
+      filteredDataOutput.forEach(parameter => {
+        const keys = Object.keys(parameter);
+        keys.forEach(async key => {
+          await editDefinitionParams({ [key]: parameter[key] }, definition_id);
+        });
+      });
+    }
   };
 
   thirdTab = () => (
@@ -613,7 +756,6 @@ class DefinitionPage extends PureComponent {
   render() {
     const { hamburger, history, projects } = this.props;
     const {
-      label,
       definitionName,
       dockerImage,
       startupCommand,
@@ -621,17 +763,11 @@ class DefinitionPage extends PureComponent {
       tab,
       open,
       project,
-      parameter,
       changes,
       anchorEl,
       anchorElEnv,
       openEnv,
-      method,
-      encrypted,
-      prefix,
-      assignment,
       ignore,
-      escaped,
     } = this.state;
     const id = 1;
     let content = '';
@@ -672,10 +808,10 @@ class DefinitionPage extends PureComponent {
               >
                 Job Definitions
               </div>
-              <div>{label}</div>
+              <div>{definitionName}</div>
             </Breadcrumbs>
             <div className={cn.flex} />
-            <div className={cn.iconContainer}>
+            <div className={cn.iconContainer} onClick={this.saveDefinition}>
               <FontAwesomeIcon
                 icon={['far', 'save']}
                 color={changes ? 'orange' : '#818fa3'}
@@ -808,7 +944,9 @@ class DefinitionPage extends PureComponent {
               </NativeSelect>
               <CustomInput
                 placeholder="Parameter Name"
-                value={parameter}
+                value={
+                  this.state.data[this.state.index].reference_parameter_name
+                }
                 name="referenceParameter"
                 onChange={e => this.changeReferenceParameter(e.target.value)}
                 inputStyles={{ input: cn.inputStyles }}
@@ -826,7 +964,7 @@ class DefinitionPage extends PureComponent {
               <div className={cn.label}>Environment Variable</div>
               <NativeSelect
                 style={{ ...this.getWidth(), marginBottom: '10px' }}
-                value={method}
+                value={this.state.data[this.state.index].parameter_method_id}
                 onChange={e => this.handleChangeMethod(e.target.value)}
                 input={<BootstrapInput name="method" id="method" />}
               >
@@ -834,14 +972,16 @@ class DefinitionPage extends PureComponent {
                 <option value={1}>Command Line</option>
                 <option value={2}>Environment Variable</option>
               </NativeSelect>
-              {Number(method) === 1 && (
+              {Number(this.state.data[this.state.index].parameter_method_id) ===
+                1 && (
                 <CustomCheckbox
-                  onChange={e => this.changeEnv('encrypted', e)}
-                  checked={encrypted}
+                  onChange={e => this.changeEnv('is_encrypted', e)}
+                  checked={this.state.data[this.state.index].is_encrypted}
                   label="Encrypted"
                 />
               )}
-              {Number(method) === 2 && (
+              {Number(this.state.data[this.state.index].parameter_method_id) ===
+                2 && (
                 <>
                   <div
                     style={{
@@ -853,19 +993,29 @@ class DefinitionPage extends PureComponent {
                     <div>
                       <CustomInput
                         placeholder="Prefix"
-                        value={prefix}
+                        value={
+                          this.state.data[this.state.index].command_line_prefix
+                        }
                         name="prefix"
-                        onChange={e => this.changeEnv('prefix', e.target.value)}
+                        onChange={e =>
+                          this.changeEnv('command_line_prefix', e.target.value)
+                        }
                         inputStyles={{ input: cn.inputStyles }}
                       />
                     </div>
                     <div>
                       <CustomInput
                         placeholder="Assignment"
-                        value={assignment}
+                        value={
+                          this.state.data[this.state.index]
+                            .command_line_assignment_char
+                        }
                         name="assignment"
                         onChange={e =>
-                          this.changeEnv('assignment', e.target.value)
+                          this.changeEnv(
+                            'command_line_assignment_char',
+                            e.target.value,
+                          )
                         }
                         inputStyles={{ input: cn.inputStyles }}
                       />
@@ -881,15 +1031,24 @@ class DefinitionPage extends PureComponent {
                   >
                     <div>
                       <CustomCheckbox
-                        onChange={value => this.changeEnv('escaped', value)}
-                        checked={escaped}
+                        onChange={value =>
+                          this.changeEnv('command_line_escaped', value)
+                        }
+                        checked={
+                          this.state.data[this.state.index].command_line_escaped
+                        }
                         label="Escaped"
                       />
                     </div>
                     <div style={{ width: '46%' }}>
                       <CustomCheckbox
-                        onChange={value => this.changeEnv('ignore', value)}
-                        checked={ignore}
+                        onChange={value =>
+                          this.changeEnv('command_line_ignore_name', value)
+                        }
+                        checked={
+                          this.state.data[this.state.index]
+                            .command_line_ignore_name
+                        }
                         label="Ignore Name"
                       />
                     </div>
@@ -908,10 +1067,13 @@ const mapStateToProps = state => ({
   hamburger: state.hamburger,
   lookups: state.lookups,
   projects: state.projects,
+  parameters: state.parameters,
 });
 
 const mapDispatchToProps = {
   getJobDefinition: getJobDefinitionAction,
+  editJobDefinition: editJobDefinitionAction,
+  editDefinitionParams: editDefinitionParamsAction,
   logoutUserProps: logoutUser,
   setLoadingAction: setLoading,
 };
