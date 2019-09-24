@@ -26,8 +26,8 @@ export const TableContentWrapper = React.memo(
               borderRadius: 'unset',
             },
             elevation2: {
-              marginTop: '18px !important'
-            }
+              marginTop: '18px !important',
+            },
           },
           // MuiToolbar: {
           //   root: {
@@ -37,8 +37,8 @@ export const TableContentWrapper = React.memo(
           // },
           MuiFormControlLabel: {
             label: {
-              color: 'red !important'
-            }
+              color: 'red !important',
+            },
           },
           MUIDataTableHeadCell: {
             root: {
@@ -73,7 +73,7 @@ export const TableContentWrapper = React.memo(
             root: {
               width: '10px !important',
               height: '10px !important',
-            }
+            },
           },
           MuiTableCell: {
             root: {
@@ -88,6 +88,12 @@ export const TableContentWrapper = React.memo(
             },
             head: {
               fontSize: '1rem',
+            },
+          },
+          MUIDataTableBody: {
+            emptyTitle: {
+              color: '#62738d',
+              fontSize: '13px',
             },
           },
           MuiTableRow: {

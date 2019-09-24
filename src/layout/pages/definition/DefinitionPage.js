@@ -1,214 +1,349 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { logoutUser, setLoading } from 'ducks/actions';
 import {
   getJobDefinition as getJobDefinitionAction,
-  editJobDefinition as editJobDefinitionAction,
-  editDefinitionParams as editDefinitionParamsAction,
+  editDefinition as editDefinitionProps,
 } from 'ducks/operators/job_definition';
-import * as Sentry from '@sentry/browser';
 import {
-  Toolbar,
-  Breadcrumbs,
-  Paper,
-  Tabs,
-  Tab,
-  FormControl,
-  NativeSelect,
-} from '@material-ui/core';
+  editParameters as editParametersProps,
+  saveParameters as saveParametersProps,
+} from 'ducks/operators/parameters';
+import { handleError } from 'ducks/operators/settings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as Sentry from '@sentry/browser';
+import { Toolbar, Breadcrumbs, Paper, NativeSelect } from '@material-ui/core';
 import { Poper } from 'components/poper/Poper';
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import { logoutUser, setLoading } from 'ducks/actions';
 import CustomCheckbox from 'components/checkbox/Checkbox';
-import {
-  CustomInput,
-  CustomInputTextArea,
-  CustomInputBack,
-} from 'components/material-input/CustomInput';
-import {
-  BootstrapInput,
-  BootstrapInputDisabled,
-} from 'components/bootsrap-input/BootstrapInput';
-import { TableContainer } from 'components/table-view/TableContainer';
-import { TableContent } from 'components/table-view/TableContent';
-import classNames from 'classnames';
+import { CustomInput } from 'components/material-input/CustomInput';
+import { BootstrapInput } from 'components/bootsrap-input/BootstrapInput';
+import uuid from 'uuid';
+import { DefinitionBlock } from './DefinitionBlock';
+import { DefinitionTabs } from './DefinitionTabs';
+import { ConfigTab } from './ConfigTab';
+import { InputsTab } from './InputsTab';
+import { OutputsTab } from './OutputsTab';
 import cn from './Definition.module.scss';
-import { configureColumns } from './columns';
-import { configureColumnsOutput } from './outputColumns';
-
-const tabStyle = {
-  width: '300px',
-  fontSize: 14,
-  fontWeight: 400,
-  minHeight: 44,
-  textTransform: 'capitalize',
-  borderBottom: '1px solid transparent',
-  borderRight: '1px solid #cfd7e6',
-};
 
 class DefinitionPage extends PureComponent {
   static propTypes = {
     getJobDefinition: PropTypes.func,
     setLoadingAction: PropTypes.func,
+    editDefinition: PropTypes.func,
+    handleErrorProps: PropTypes.func,
+    editParameters: PropTypes.func,
+    saveParameters: PropTypes.func,
+    logoutUserProps: PropTypes.func,
     hamburger: PropTypes.object,
+    job_definition: PropTypes.object,
     projects: PropTypes.array,
-    lookups: PropTypes.object,
+    parameters: PropTypes.array,
+    locations: PropTypes.array,
     history: PropTypes.object,
     location: PropTypes.object,
   };
 
-  options = {
-    filterType: 'textField',
-    selectableRows: 'none',
-    search: false,
-    pagination: false,
-    filter: false,
-    download: false,
-    viewColumns: false,
-    print: false,
-  };
-
   state = {
-    definitionName: '',
-    dockerImage: '',
-    startupCommand: '',
     description: '',
     cpu: '',
     timeout: '',
     location: 'empty',
-    retries: '',
+    max_retries: '',
     gpu: '',
-    memory: '',
+    memory_gb: '',
     region: 'empty',
-    success: '',
+    stdout_success_text: '',
     tab: 0,
     open: false,
     openEnv: false,
-    index: 0,
+    row_id: null,
     project: '',
-    method: '',
-    ignore: '',
-    params: [
-      {
-        parameter_name: '',
-        description: '',
-      },
-    ],
-    data: [
-      {
-        parameter_name: '',
-        parameter_direction_id: 1,
-        reference_parameter_name: '',
-        is_required: false,
-        parameter_method_id: 1,
-        reference: '',
-        parameter_value: '',
-        description: '',
-        command_line_prefix: '',
-        is_encrypted: false,
-        command_line_assignment_char: '',
-        command_line_escaped: '',
-        command_line_ignore_name: '',
-        id: 1,
-      },
-    ],
+    result_method_id: '',
+    project_id: null,
     changes: false,
     anchorEl: null,
     anchorElEnv: null,
+    parameters: [],
+    callbacks: {
+      saveName: (value, id) => this.saveName(value, id),
+      changeRequired: id => this.changeRequired(id),
+      saveDefault: (value, id) => this.saveDefault(value, id),
+      saveDescription: (value, id) => this.saveDescription(value, id),
+      handleOpenRef: (value, id) => this.handleOpenRef(value, id),
+      deleteRow: id => this.deleteRow(id),
+      handleOpenMethod: (value, id) => this.handleOpenMethod(value, id),
+    },
   };
+
+  static getDerivedStateFromProps(props, state) {
+    const { job_definition, parameters } = props;
+    const { job_definition_id } = state;
+    if (job_definition.job_definition_id !== job_definition_id) {
+      return {
+        ...job_definition,
+        parameters: [
+          ...parameters,
+          {
+            parameter_name: '',
+            description: '',
+            parameter_direction_id: 1,
+            parameter_method_id: 1,
+            modified: false,
+            saved: false,
+            uuid: uuid.v1(),
+          },
+          {
+            parameter_name: '',
+            description: '',
+            parameter_direction_id: 2,
+            parameter_method_id: 1,
+            modified: false,
+            saved: false,
+            uuid: uuid.v1(),
+          },
+        ],
+      };
+    }
+    return null;
+  }
 
   componentDidMount() {
     this.setInitialData();
   }
 
   componentWillUnmount() {
-    this.setState({ changes: false });
+    this.setState({
+      changes: false,
+      row_id: null,
+      open: false,
+      openEnv: false,
+    });
   }
 
+  handleChangeTab = (e, value) => {
+    this.setState({ tab: value });
+  };
+
+  handleDefinitionBlock = input => {
+    this.setState({ ...input, changes: true });
+  };
+
+  handleDefinitionTabs = input => {
+    this.setState({ ...input, changes: true });
+  };
+
+  saveName = (name, id) => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    parameters[index] = {
+      ...parameters[index],
+      parameter_name: name,
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  changeRequired = id => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    parameters[index] = {
+      ...parameters[index],
+      is_required: !parameters[index].is_required,
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  handleOpenMethod = (event, id) => {
+    const { anchorElEnv } = this.state;
+    this.setState({
+      openEnv: true,
+      row_id: id,
+      anchorElEnv: anchorElEnv ? null : event.currentTarget,
+    });
+  };
+
+  handleOpenRef = (event, id) => {
+    const { anchorEl } = this.state;
+    this.setState({
+      open: true,
+      row_id: id,
+      anchorEl: anchorEl ? null : event.currentTarget,
+    });
+  };
+
+  changeReferenceParameter = reference_parameter_name => {
+    const { row_id, parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
+    parameters[index] = {
+      ...parameters[index],
+      reference_parameter_name,
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  handleChangeMethod = parameter_method_id => {
+    const { row_id, parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
+    parameters[index] = {
+      ...parameters[index],
+      parameter_method_id,
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+        result_method_id: parameter_method_id,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  changeEnv = (name, value) => {
+    const { row_id, parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
+    parameters[index] = {
+      ...parameters[index],
+      [name]: value,
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  handleChangeProject = reference => {
+    const { row_id, parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
+    parameters[index] = {
+      ...parameters[index],
+      reference: 'Reference Added',
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+        project: reference,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  saveDefault = (value, id) => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    parameters[index] = {
+      ...parameters[index],
+      parameter_value: value,
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  saveDescription = (value, id) => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    parameters[index] = {
+      ...parameters[index],
+      description: value,
+      modified: true,
+    };
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  deleteRow = id => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    parameters.splice(index, 1);
+    this.setState(
+      {
+        parameters: [...parameters],
+        changes: true,
+        row_id: null,
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  handleRowManagement = () => {
+    const { parameters } = this.state;
+
+    const inputs = parameters.filter(
+      p => p.parameter_direction_id === 1 && p.modified === false,
+    );
+    const outputs = parameters.filter(
+      p => p.parameter_direction_id === 2 && p.modified === false,
+    );
+
+    if (inputs.length === 0) {
+      this.configNewRow(1);
+    }
+    if (outputs.length === 0) {
+      this.configNewRow(2);
+    }
+  };
+
+  configNewRow = direction_id => {
+    const { parameters } = this.state;
+    const new_row = {
+      parameter_name: '',
+      description: '',
+      parameter_direction_id: direction_id,
+      modified: false,
+      uuid: uuid.v1(),
+    };
+    parameters.push(new_row);
+    this.setState({
+      parameters: [...parameters],
+    });
+  };
+
   setInitialData = async () => {
-    const {
-      getJobDefinition,
-      setLoadingAction,
-      location,
-      lookups,
-    } = this.props;
+    const { getJobDefinition, setLoadingAction, location } = this.props;
     const [, , , , definition_id] = location.pathname.split('/');
 
     try {
       await setLoadingAction(true);
-      const result = await getJobDefinition(definition_id);
-      const definition = result[0];
-      const parameters = result[1];
-      if (parameters.length > 0) {
-        const input = parameters.filter(
-          filter => filter.parameter_direction_id === 1,
-        );
-        const output = parameters.filter(
-          filter => filter.parameter_direction_id === 2,
-        );
-
-        const params = input.map(parameter => ({
-          ...parameter,
-          // TODO clarification about reference_id and reference_type_id
-          reference: parameter.reference_type_id,
-        }));
-
-        if (params.length > 0) {
-          params.push({
-            parameter_name: '',
-            reference_parameter_name: '',
-            parameter_direction_id: 1,
-            is_required: false,
-            parameter_method_id: 1,
-            reference: '',
-            parameter_value: '',
-            description: '',
-            command_line_prefix: '',
-            is_encrypted: false,
-            command_line_assignment_char: '',
-            command_line_escaped: '',
-            command_line_ignore_name: '',
-          });
-        }
-
-        if (output.length > 0) {
-          output.push({
-            parameter_name: '',
-            description: '',
-          });
-        }
-
-        if (params.length > 0 && output.length > 0) {
-          this.setState({ data: params, params: output });
-        }
-        if (params.length > 0 && output.length === 0) {
-          this.setState({ data: params });
-        }
-        if (params.length === 0 && output.length > 0) {
-          this.setState({ params: output });
-        }
-      }
-
-      this.setState({
-        definitionName: definition.job_definition_name,
-        description: definition.description,
-        dockerImage: definition.docker_image,
-        method: definition.result_method_id,
-        startupCommand: definition.startup_command,
-        timeout: new Date(definition.timeout_seconds * 1000)
-          .toUTCString()
-          .match(/(\d\d:\d\d)/)[0],
-        success: definition.stdout_success_text,
-        region: lookups.locations.filter(
-          filter => filter.location_name === definition.region_endpoint_hint,
-        )[0].location_id,
-        cpu: definition.cpu,
-        gpu: definition.gpu,
-        retries: definition.max_retries,
-        memory: definition.memory_gb,
-      });
-      await this.createColumns();
+      await getJobDefinition(definition_id);
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
@@ -216,525 +351,64 @@ class DefinitionPage extends PureComponent {
     setLoadingAction(false);
   };
 
-  handleChangeTab = (event, newValue) => {
-    this.setState({ tab: newValue });
-  };
-
-  changeName = (value, index) => {
-    const { params } = this.state;
-    if (params.length === index + 1) {
-      this.addMoreParameters();
-    }
-    this.setState(prevState => {
-      const newItems = [...prevState.params];
-      newItems[index].parameter_name = value;
-      return { params: newItems, changes: true };
-    });
-  };
-
-  changeDescription = (description, index) => {
-    this.setState(prevState => {
-      const newItems = [...prevState.params];
-      newItems[index].description = description;
-      return { params: newItems, changes: true };
-    });
-  };
-
-  deleteOutputRow = index => {
-    const { params } = this.state;
-    const result = params.filter((item, indexNew) => indexNew !== index);
-    this.setState({ params: result, changes: true, index: 0 });
-  };
-
-  deleteInputRow = index => {
-    const { data } = this.state;
-    const result = data.filter((item, indexNew) => indexNew !== index);
-    this.setState({ data: result, changes: true, index: 0 });
-  };
-
-  changeReferenceParameter = referenceParameter => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[this.state.index].reference_parameter_name = referenceParameter;
-      return { data: newItems, parameter: referenceParameter, changes: true };
-    });
-  };
-
-  handleClickOpen = (event, index) => {
-    this.setState({
-      open: true,
-      index,
-      anchorEl: this.state.anchorEl ? null : event.currentTarget,
-    });
-  };
-
-  handleClickOpenMethod = (event, index) => {
-    this.setState({
-      openEnv: true,
-      index,
-      anchorElEnv: this.state.anchorElEnv ? null : event.currentTarget,
-    });
-  };
-
-  addMoreParameters = () => {
-    this.setState(prevState => {
-      const newItems = [...prevState.params];
-      newItems.push({
-        parameter_name: '',
-        description: '',
-      });
-      return { params: newItems, changes: true };
-    });
-  };
-
-  addMNewRow = () => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems.push({
-        parameter_name: '',
-        parameter_direction_id: 1,
-        reference_parameter_name: '',
-        is_required: false,
-        parameter_method_id: 1,
-        reference: '',
-        parameter_value: '',
-        description: '',
-        command_line_prefix: '',
-        is_encrypted: false,
-        command_line_assignment_char: '',
-        id: newItems.length + 1,
-      });
-      return { data: newItems, changes: true };
-    });
-  };
-
-  secondTab = () => (
-    <TableContainer style={cn.tableContainerWrapper}>
-      <TableContent
-        tableData={this.state.data}
-        tableOptions={this.options}
-        columns={this.createColumns()}
-        styles={{
-          MuiTableCell: {
-            root: {
-              border: '1px solid #dde3ee',
-              borderBottom: '1px solid #dde3ee',
-            },
-            body: {
-              fontSize: '13px',
-              fontWeight: 300,
-              lineHeight: '1',
-              padding: '5px !important',
-              '&:nth-child(2)': {
-                width: 189,
-              },
-              '&:nth-child(4)': {
-                width: 79,
-              },
-              '&:nth-child(6)': {
-                width: 79,
-              },
-              '&:nth-child(8)': {
-                width: 139,
-              },
-              '&:nth-child(10)': {
-                width: 139,
-              },
-              '&:nth-child(14)': {
-                width: 29,
-              },
-            },
-            head: {
-              fontSize: '1rem',
-            },
-          },
-        }}
-      />
-    </TableContainer>
-  );
-
-  saveName = (name, index) => {
-    const { data } = this.state;
-    if (data.length === index + 1) {
-      this.addMNewRow();
-    }
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[index].parameter_name = name;
-      return { data: newItems, changes: true };
-    });
-  };
-
-  saveDefault = (defaultValue, index) => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[index].parameter_value = defaultValue;
-      return { data: newItems, changes: true };
-    });
-  };
-
-  handleChangeMethod = defaultValue => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[this.state.index].parameter_method_id = defaultValue;
-      return { data: newItems, changes: true, method: defaultValue };
-    });
-  };
-
-  saveDescription = (description, index) => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[index].description = description;
-      return { data: newItems, changes: true };
-    });
-  };
-
-  changeRequired = index => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[index].is_required = !newItems[index].is_required;
-      return { data: newItems, changes: true };
-    });
-  };
-
-  changeEnv = (name, value) => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[this.state.index][name] = value;
-      return { data: newItems, changes: true };
-    });
-  };
-
   saveDefinition = async () => {
     const {
-      definitionName,
+      job_definition_name,
       description,
-      dockerImage,
-      method,
-      startupCommand,
+      docker_image,
+      result_method_id,
+      startup_command,
       timeout,
-      success,
+      stdout_success_text,
       region,
       cpu,
       gpu,
-      retries,
-      memory,
+      max_retries,
+      memory_gb,
       data,
-      params,
+      parameters,
     } = this.state;
     const {
-      editJobDefinition,
-      location,
-      lookups,
-      editDefinitionParams,
+      editDefinition,
+      getJobDefinition,
+      setLoadingAction,
+      handleErrorProps,
+      job_definition,
+      locations,
+      saveParameters,
+      editParameters,
     } = this.props;
-    const [, , , , definition_id] = location.pathname.split('/');
+
+    const { job_definition_id } = job_definition;
     const timeOut = timeout.split(':');
 
-    const dataForApi = {
-      job_definition_name: definitionName,
-      description: description,
-      docker_image: dockerImage,
-      result_method_id: method,
-      startup_command: startupCommand,
+    const post_data = {
+      job_definition_name,
+      description,
+      docker_image,
+      result_method_id,
+      startup_command,
       timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
-      stdout_success_text: success,
-      region_endpoint_hint: lookups.locations.filter(
+      stdout_success_text,
+      region_endpoint_hint: locations.filter(
         filter => filter.location_id === region,
       )[0].location_name,
       cpu,
       gpu,
-      max_retries: retries,
-      memory_gb: memory,
+      max_retries,
+      memory_gb,
     };
-    await editJobDefinition(dataForApi, definition_id);
 
-    const filteredData = data.filter(
-      filter => filter.parameter_name.length > 1,
-    );
-    if (filteredData.length > 0) {
-      filteredData.forEach(parameter => {
-        delete parameter['owner_id'];
-        const keys = Object.keys(parameter);
-        keys.forEach(async key => {
-          console.log(key);
-          await editDefinitionParams(
-            {
-              [key]: parameter[key],
-              parameter_method_id: parameter.parameter_method_id,
-              parameter_direction_id: parameter.parameter_direction_id,
-              parameter_name: parameter.parameter_name,
-            },
-            definition_id,
-          );
-        });
-      });
+    try {
+      await setLoadingAction(true);
+      await editParameters(parameters, job_definition_id);
+      await saveParameters(parameters, job_definition_id);
+      await editDefinition(post_data, job_definition_id);
+      await getJobDefinition(job_definition_id);
+    } catch (err) {
+      handleErrorProps(err, data);
     }
-
-    const filteredDataOutput = params.filter(
-      filter => filter.parameter_name.length > 1,
-    );
-    if (filteredDataOutput.length > 0) {
-      filteredDataOutput.forEach(parameter => {
-        const keys = Object.keys(parameter);
-        keys.forEach(async key => {
-          await editDefinitionParams({ [key]: parameter[key] }, definition_id);
-        });
-      });
-    }
-  };
-
-  thirdTab = () => (
-    <TableContainer style={cn.tableContainerWrapper}>
-      <TableContent
-        tableData={this.state.params}
-        tableOptions={this.options}
-        columns={this.createColumnsOutput()}
-        styles={{
-          MuiTableCell: {
-            root: {
-              border: '1px solid #dde3ee',
-              borderBottom: '1px solid #dde3ee',
-            },
-            body: {
-              fontSize: '13px',
-              fontWeight: 300,
-              lineHeight: '1',
-              padding: '2.5px !important',
-              '&:nth-child(2)': {
-                width: 189,
-              },
-              '&:nth-child(6)': {
-                width: 29,
-              },
-            },
-            head: {
-              fontSize: '1rem',
-            },
-          },
-        }}
-      />
-    </TableContainer>
-  );
-
-  createColumns = () =>
-    configureColumns(
-      this.saveName,
-      this.changeRequired,
-      this.saveDefault,
-      this.saveDescription,
-      this.handleClickOpen,
-      this.deleteInputRow,
-      this.handleClickOpenMethod,
-    );
-
-  createColumnsOutput = () =>
-    configureColumnsOutput(
-      this.changeName,
-      this.changeDescription,
-      this.deleteOutputRow,
-    );
-
-  firstTab = () => {
-    const {
-      cpu,
-      timeout,
-      retries,
-      location,
-      gpu,
-      method,
-      region,
-      memory,
-      success,
-    } = this.state;
-    const {
-      lookups: { locations, result_methods },
-    } = this.props;
-
-    return (
-      <>
-        <div className={cn.containerRow}>
-          <div className={cn.containerLeft}>
-            <div className={cn.label}>CPU</div>
-            <CustomInput
-              className={cn.rowPadding}
-              type="number"
-              label="CPU"
-              value={cpu}
-              name="cpu"
-              onChange={e =>
-                this.setState({ cpu: e.target.value, changes: true })
-              }
-              inputStyles={{ input: cn.inputStyles }}
-            />
-          </div>
-          <div className={cn.containerMiddle}>
-            <div className={cn.label}>Timeout</div>
-            <CustomInput
-              type="time"
-              className={cn.rowPadding}
-              label="Timeout"
-              value={timeout}
-              name="dockerImage"
-              onChange={e =>
-                this.setState({ timeout: e.target.value, changes: true })
-              }
-              inputStyles={{ input: cn.inputStyles }}
-            />
-          </div>
-          <div className={cn.containerRight}>
-            <div className={cn.label}>Max Retries</div>
-            <CustomInput
-              className={cn.rowPadding}
-              type="number"
-              label="Max Retries"
-              value={retries}
-              name="retries"
-              onChange={e =>
-                this.setState({ retries: e.target.value, changes: true })
-              }
-              inputStyles={{ input: cn.inputStyles }}
-            />
-          </div>
-        </div>
-        <div className={cn.containerRow}>
-          <div className={cn.containerLeft}>
-            <div className={cn.label}>GPU</div>
-            <CustomInput
-              className={cn.rowPadding}
-              label="GPU"
-              type="number"
-              value={gpu}
-              name="gpu"
-              onChange={e =>
-                this.setState({ gpu: e.target.value, changes: true })
-              }
-              inputStyles={{ input: cn.inputStyles }}
-            />
-          </div>
-          <FormControl className={cn.containerMiddle}>
-            <div className={cn.label}>Location</div>
-            <NativeSelect
-              disabled={region !== 'empty'}
-              value={location}
-              onChange={e =>
-                this.setState({ location: e.target.value, changes: true })
-              }
-              input={
-                region !== 'empty' ? (
-                  <BootstrapInputDisabled name="location" id="location" />
-                ) : (
-                  <BootstrapInput name="location" id="location" />
-                )
-              }
-            >
-              <option key="empty" value="empty" />
-              {locations.map(item => (
-                <option key={item.uuid} value={item.location_id}>
-                  {item.location_name}
-                </option>
-              ))}
-            </NativeSelect>
-          </FormControl>
-          <FormControl className={cn.containerRight}>
-            <div className={cn.label}>Result Method</div>
-            <NativeSelect
-              value={method}
-              onChange={e =>
-                this.setState({ method: e.target.value, changes: true })
-              }
-              input={<BootstrapInput name="method" id="method" />}
-            >
-              <option key="empty" value="empty" />
-              {result_methods.map(item => (
-                <option key={item.uuid} value={item.result_method_id}>
-                  {item.result_method_name}
-                </option>
-              ))}
-            </NativeSelect>
-          </FormControl>
-        </div>
-        <div className={cn.containerRow}>
-          <div className={cn.containerLeft}>
-            <div className={cn.label}>Memory GB</div>
-            <CustomInput
-              className={cn.rowPadding}
-              label="Memory GB"
-              type="number"
-              value={memory}
-              name="memory"
-              onChange={e =>
-                this.setState({ memory: e.target.value, changes: true })
-              }
-              inputStyles={{ input: cn.inputStyles }}
-            />
-          </div>
-          <FormControl className={cn.containerMiddle}>
-            <div className={cn.label}>Region Hint</div>
-            <NativeSelect
-              disabled={location !== 'empty'}
-              value={region}
-              onChange={e =>
-                this.setState({ region: e.target.value, changes: true })
-              }
-              input={
-                location !== 'empty' ? (
-                  <BootstrapInputDisabled name="region" id="region" />
-                ) : (
-                  <BootstrapInput name="region" id="region" />
-                )
-              }
-            >
-              <option key="empty" value="empty" />
-              {locations.map(item => (
-                <option key={item.uuid} value={item.location_id}>
-                  {item.location_name}
-                </option>
-              ))}
-            </NativeSelect>
-          </FormControl>
-          <div className={cn.containerRight}>
-            <div className={cn.label}>Success Text</div>
-            {Number(method) === 2 ? (
-              <CustomInput
-                className={cn.rowPadding}
-                label="Success Text"
-                value={success}
-                name="success"
-                onChange={e =>
-                  this.setState({ success: e.target.value, changes: true })
-                }
-                inputStyles={{
-                  input: cn.inputStyles,
-                }}
-              />
-            ) : (
-              <CustomInputBack
-                disabled
-                className={cn.rowPadding}
-                label="Success Text"
-                value={success}
-                name="success"
-                onChange={e =>
-                  this.setState({ success: e.target.value, changes: true })
-                }
-                inputStyles={{
-                  input: cn.inputStyles,
-                }}
-              />
-            )}
-          </div>
-        </div>
-      </>
-    );
-  };
-
-  handleChangeProject = reference => {
-    this.setState(prevState => {
-      const newItems = [...prevState.data];
-      newItems[this.state.index].reference = 'Reference Added';
-      return { data: newItems, project: reference, changes: true };
-    });
+    setLoadingAction(false);
   };
 
   logout = () => {
@@ -744,43 +418,38 @@ class DefinitionPage extends PureComponent {
     history.push('/login');
   };
 
-  getWidth = () => {
-    const { method } = this.state;
-    if (Number(method) === 2) {
-      return { width: 300 };
-    }
-
-    return { width: 200 };
-  };
-
   render() {
     const { hamburger, history, projects } = this.props;
     const {
       definitionName,
-      dockerImage,
-      startupCommand,
-      description,
-      tab,
-      open,
-      project,
       changes,
-      anchorEl,
-      anchorElEnv,
+      job_definition_name,
+      docker_image,
+      startup_command,
+      description,
+      cpu,
+      timeout,
+      max_retries,
+      gpu,
+      stdout_success_text,
+      location,
+      result_method_id,
+      region,
+      memory_gb,
+      parameters,
+      callbacks,
+      tab,
+      project,
       openEnv,
-      ignore,
+      open,
+      anchorElEnv,
+      anchorEl,
+      row_id,
+      project_id,
     } = this.state;
-    const id = 1;
-    let content = '';
-    if (tab === 0) {
-      content = this.firstTab();
-    }
-    if (tab === 1) {
-      content = this.secondTab();
-    }
-    if (tab === 2) {
-      content = this.thirdTab();
-    }
 
+    const row = parameters.find(parameter => parameter.uuid === row_id);
+    const selected_row = row || {};
     return (
       <>
         <CustomAppBar hamburger={hamburger.open}>
@@ -803,7 +472,9 @@ class DefinitionPage extends PureComponent {
               <div
                 className={cn.text}
                 onClick={() => {
-                  history.push(`/projects/${id}/definitions/unarchived`);
+                  history.push(
+                    `/projects/${project_id}/definitions/unarchived`,
+                  );
                 }}
               >
                 Job Definitions
@@ -822,105 +493,50 @@ class DefinitionPage extends PureComponent {
             </div>
           </Toolbar>
         </CustomAppBar>
-        <Paper className={cn.contentAlign}>
-          <div className={cn.containerRow}>
-            <div className={classNames(cn.container, cn.inputSmall)}>
-              <div className={cn.label}>Job Definition</div>
-              <CustomInput
-                label="Job Definition"
-                value={definitionName}
-                name="definitionName"
-                onChange={e =>
-                  this.setState({
-                    definitionName: e.target.value,
-                    changes: true,
-                  })
-                }
-                inputStyles={{ input: cn.inputStyles }}
-              />
-            </div>
-            <div className={classNames(cn.containerLast, cn.inputMedium)}>
-              <div className={cn.label}>Docker Image</div>
-              <CustomInput
-                label="Docker Image"
-                value={dockerImage}
-                name="dockerImage"
-                onChange={e =>
-                  this.setState({ dockerImage: e.target.value, changes: true })
-                }
-                inputStyles={{ input: cn.inputStyles }}
-              />
-            </div>
-          </div>
-          <div className={cn.containerLast}>
-            <div className={cn.label}>Startup Command</div>
-            <CustomInputTextArea
-              multiline
-              label="Startup Command"
-              value={startupCommand}
-              name="startupCommand"
-              onChange={e =>
-                this.setState({ startupCommand: e.target.value, changes: true })
-              }
-              inputStyles={{ input: cn.inputStyles }}
-              className={cn.top}
+        <DefinitionBlock
+          job_definition_name={job_definition_name}
+          docker_image={docker_image}
+          startup_command={startup_command}
+          description={description}
+          handleDefinitionBlock={this.handleDefinitionBlock}
+        />
+        <DefinitionTabs
+          job_definition={this.state}
+          handleChangeTab={this.handleChangeTab}
+          tab={tab}
+          handleDefinitionTabs={this.handleDefinitionTabs}
+        >
+          {tab === 0 && (
+            <ConfigTab
+              cpu={cpu}
+              timeout={timeout}
+              max_retries={max_retries}
+              gpu={gpu}
+              stdout_success_text={stdout_success_text}
+              location={location}
+              result_method_id={result_method_id}
+              region={region}
+              memory_gb={memory_gb}
+              handleDefinitionTabs={this.handleDefinitionTabs}
             />
-          </div>
-          <div className={classNames(cn.containerLast, cn.topItem)}>
-            <div className={cn.label}>Description</div>
-            <CustomInputTextArea
-              multiline
-              label="Description"
-              value={description}
-              name="description"
-              onChange={e =>
-                this.setState({ description: e.target.value, changes: true })
-              }
-              inputStyles={{ input: cn.inputStyles }}
-              className={cn.top}
+          )}
+          {tab === 1 && (
+            <InputsTab
+              callbacks={callbacks}
+              parameters={parameters.filter(
+                parameter => parameter.parameter_direction_id === 1,
+              )}
             />
-          </div>
-        </Paper>
-        <Paper className={cn.contentAlignSecond}>
-          <Tabs
-            value={tab}
-            indicatorColor="primary"
-            textColor="primary"
-            classes={{
-              root: cn.tabsWrapper,
-            }}
-            onChange={this.handleChangeTab}
-            TabIndicatorProps={{
-              style: {
-                backgroundColor: '#3e96ed',
-              },
-            }}
-          >
-            <Tab
-              style={{
-                ...tabStyle,
-                color: tab === 0 ? '#3e96ed' : '#62738d',
-              }}
-              label="Configurations"
+          )}
+          {tab === 2 && (
+            <OutputsTab
+              callbacks={callbacks}
+              parameters={parameters.filter(
+                parameter => parameter.parameter_direction_id === 2,
+              )}
             />
-            <Tab
-              style={{
-                ...tabStyle,
-                color: tab === 1 ? '#3e96ed' : '#62738d',
-              }}
-              label="Inputs"
-            />
-            <Tab
-              style={{
-                ...tabStyle,
-                color: tab === 2 ? '#3e96ed' : '#62738d',
-              }}
-              label="Outputs"
-            />
-          </Tabs>
-          {tab === 0 && <div className={cn.tabValue}>{content}</div>}
-          {tab !== 0 && <div className={cn.tabValueAlt}>{content}</div>}
-        </Paper>
+          )}
+        </DefinitionTabs>
         <Poper
           open={open}
           anchorEl={anchorEl}
@@ -936,17 +552,15 @@ class DefinitionPage extends PureComponent {
                 input={<BootstrapInput name="project" id="project" />}
               >
                 <option value="" />
-                {projects.map(project => (
-                  <option value={project.project_id}>
-                    {project.project_name}
+                {projects.map(item => (
+                  <option value={item.project_id} key={item.uuid}>
+                    {item.project_name}
                   </option>
                 ))}
               </NativeSelect>
               <CustomInput
                 placeholder="Parameter Name"
-                value={
-                  this.state.data[this.state.index].reference_parameter_name
-                }
+                value={selected_row.reference_parameter_name}
                 name="referenceParameter"
                 onChange={e => this.changeReferenceParameter(e.target.value)}
                 inputStyles={{ input: cn.inputStyles }}
@@ -960,28 +574,31 @@ class DefinitionPage extends PureComponent {
           clickAway={() => this.setState({ openEnv: false, anchorElEnv: null })}
         >
           <Paper>
-            <div className={cn.formWrapper} style={this.getWidth()}>
+            <div className={cn.formWrapper} style={{ width: 300 }}>
               <div className={cn.label}>Environment Variable</div>
               <NativeSelect
-                style={{ ...this.getWidth(), marginBottom: '10px' }}
-                value={this.state.data[this.state.index].parameter_method_id}
+                style={{ width: 300, marginBottom: '10px' }}
+                value={selected_row.parameter_method_id}
                 onChange={e => this.handleChangeMethod(e.target.value)}
-                input={<BootstrapInput name="method" id="method" />}
+                input={
+                  <BootstrapInput
+                    name="parameter_method_id"
+                    id="parameter_method_id"
+                  />
+                }
               >
                 <option value="" />
                 <option value={1}>Command Line</option>
                 <option value={2}>Environment Variable</option>
               </NativeSelect>
-              {Number(this.state.data[this.state.index].parameter_method_id) ===
-                1 && (
+              {Number(selected_row.parameter_method_id) === 1 && (
                 <CustomCheckbox
-                  onChange={e => this.changeEnv('is_encrypted', e)}
-                  checked={this.state.data[this.state.index].is_encrypted}
+                  onChange={value => this.changeEnv('is_encrypted', value)}
+                  checked={selected_row.is_encrypted}
                   label="Encrypted"
                 />
               )}
-              {Number(this.state.data[this.state.index].parameter_method_id) ===
-                2 && (
+              {Number(selected_row.parameter_method_id) === 2 && (
                 <>
                   <div
                     style={{
@@ -993,9 +610,7 @@ class DefinitionPage extends PureComponent {
                     <div>
                       <CustomInput
                         placeholder="Prefix"
-                        value={
-                          this.state.data[this.state.index].command_line_prefix
-                        }
+                        value={selected_row.command_line_prefix}
                         name="prefix"
                         onChange={e =>
                           this.changeEnv('command_line_prefix', e.target.value)
@@ -1006,10 +621,7 @@ class DefinitionPage extends PureComponent {
                     <div>
                       <CustomInput
                         placeholder="Assignment"
-                        value={
-                          this.state.data[this.state.index]
-                            .command_line_assignment_char
-                        }
+                        value={selected_row.command_line_assignment_char}
                         name="assignment"
                         onChange={e =>
                           this.changeEnv(
@@ -1034,9 +646,7 @@ class DefinitionPage extends PureComponent {
                         onChange={value =>
                           this.changeEnv('command_line_escaped', value)
                         }
-                        checked={
-                          this.state.data[this.state.index].command_line_escaped
-                        }
+                        checked={selected_row.command_line_escaped}
                         label="Escaped"
                       />
                     </div>
@@ -1045,10 +655,7 @@ class DefinitionPage extends PureComponent {
                         onChange={value =>
                           this.changeEnv('command_line_ignore_name', value)
                         }
-                        checked={
-                          this.state.data[this.state.index]
-                            .command_line_ignore_name
-                        }
+                        checked={selected_row.command_line_ignore_name}
                         label="Ignore Name"
                       />
                     </div>
@@ -1065,17 +672,20 @@ class DefinitionPage extends PureComponent {
 
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
-  lookups: state.lookups,
+  locations: state.lookups.locations,
   projects: state.projects,
   parameters: state.parameters,
+  job_definition: state.job_definition,
 });
 
 const mapDispatchToProps = {
   getJobDefinition: getJobDefinitionAction,
-  editJobDefinition: editJobDefinitionAction,
-  editDefinitionParams: editDefinitionParamsAction,
+  editDefinition: editDefinitionProps,
+  editParameters: editParametersProps,
+  saveParameters: saveParametersProps,
   logoutUserProps: logoutUser,
   setLoadingAction: setLoading,
+  handleErrorProps: handleError,
 };
 
 export default connect(

@@ -31,7 +31,7 @@ export const jobDefinitionReducer = (state = initial_state, action) => {
     case SET_JOB_DEFINITION:
       return action.payload;
     case CLEAR_JOB_DEFINITION:
-      return [];
+      return { ...initial_state };
     default:
       return state;
   }
