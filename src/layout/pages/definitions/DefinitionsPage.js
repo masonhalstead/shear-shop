@@ -130,7 +130,6 @@ class DefinitionsPage extends PureComponent {
       await getJobDefinitions(project_id);
       await this.createColumns();
       setLoadingAction(false);
-
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
@@ -198,8 +197,13 @@ class DefinitionsPage extends PureComponent {
 
   createDefinition = async () => {
     const { jobName } = this.state;
-
-    const { addJobDefinition, getJobDefinitions, location, setLoadingAction } = this.props;
+    const {
+      addJobDefinition,
+      getJobDefinitions,
+      location,
+      setLoadingAction,
+    } = this.props;
+    
     const [, , project_id] = location.pathname.split('/');
 
     await setLoadingAction(true);
@@ -211,12 +215,15 @@ class DefinitionsPage extends PureComponent {
       docker_image: '/dockerimage',
       result_method_id: 1,
       startup_command: 'nothing',
-      timeout_seconds: 10000,
+      timeout_seconds: 86400,
       stdout_success_text: 'winning',
       region_endpoint_hint: 'us-east-1e',
+      cpu: 0,
+      gpu: 0,
+      memory_gb: 0,
       parameters: [
         {
-          parameter_name: 'Parameter 2',
+          parameter_name: 'Parameter2',
           parameter_direction_id: 1,
           parameter_method_id: 1,
           is_required: true,
@@ -232,7 +239,7 @@ class DefinitionsPage extends PureComponent {
           reference_parameter_name: null,
         },
         {
-          parameter_name: 'Parameter 3',
+          parameter_name: 'Parameter3',
           parameter_direction_id: 2,
           parameter_method_id: 1,
           is_required: true,

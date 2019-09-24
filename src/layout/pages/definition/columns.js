@@ -1,18 +1,21 @@
 import React from 'react';
 import { CustomInputNoBorders } from 'components/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NativeSelect, Select, MenuItem, ListItemIcon} from '@material-ui/core';
+import {
+  NativeSelect,
+  Select,
+  MenuItem,
+  ListItemIcon,
+} from '@material-ui/core';
 import cn from './Definition.module.scss';
 
-export const configureColumns = (
-  saveName,
-  changeRequired,
-  saveDefault,
-  saveDescription,
-  handleClickOpen,
-  deleteInputRow,
-  handleClickOpenMethod,
-) => [
+export const configureColumns = callbacks => [
+  {
+    name: 'uuid',
+    options: {
+      display: false,
+    },
+  },
   {
     name: 'parameter_name',
     label: 'Name',
@@ -25,7 +28,9 @@ export const configureColumns = (
             placeholder="Parameter"
             value={value}
             name="name"
-            onChange={e => saveName(e.target.value, tableMeta.rowIndex)}
+            onChange={e =>
+              callbacks.saveName(e.target.value, tableMeta.rowData[0])
+            }
             inputStyles={{ input: cn.customHeight }}
           />
         </div>
@@ -41,7 +46,7 @@ export const configureColumns = (
       customBodyRender: (value, tableMeta) => (
         <div
           style={{ textAlign: 'center', cursor: 'pointer' }}
-          onClick={() => changeRequired(tableMeta.rowIndex)}
+          onClick={() => callbacks.changeRequired(tableMeta.rowData[0])}
         >
           {value ? (
             <FontAwesomeIcon
@@ -71,18 +76,18 @@ export const configureColumns = (
           <Select
             style={{ width: '100%' }}
             value={value}
-            onClick={e => handleClickOpenMethod(e, tableMeta.rowIndex)}
+            onClick={e => callbacks.handleOpenMethod(e, tableMeta.rowData[0])}
             input={<CustomInputNoBorders name="method" id="method" readOnly />}
           >
             <MenuItem style={{ display: 'none' }} value={1}>
               <ListItemIcon>
-              <FontAwesomeIcon
-                icon="terminal"
-                color="#818fa3"
-                style={{ width: '25px', height: '15px' }}
-              />
+                <FontAwesomeIcon
+                  icon="terminal"
+                  color="#818fa3"
+                  style={{ width: '25px', height: '15px' }}
+                />
               </ListItemIcon>
-              </MenuItem>
+            </MenuItem>
             <MenuItem style={{ display: 'none' }} value={2}>
               <ListItemIcon>
                 <FontAwesomeIcon
@@ -108,7 +113,7 @@ export const configureColumns = (
           <NativeSelect
             style={{ width: '100%' }}
             value={value}
-            onClick={e => handleClickOpen(e, tableMeta.rowIndex)}
+            onClick={e => callbacks.handleClickOpen(e, tableMeta.rowData[0])}
             input={
               <CustomInputNoBorders name="reference" id="reference" readOnly />
             }
@@ -133,7 +138,9 @@ export const configureColumns = (
             inputStyles={{ input: cn.customHeight }}
             value={value}
             name="default"
-            onChange={e => saveDefault(e.target.value, tableMeta.rowIndex)}
+            onChange={e =>
+              callbacks.saveDefault(e.target.value, tableMeta.rowData[0])
+            }
           />
         </div>
       ),
@@ -151,7 +158,9 @@ export const configureColumns = (
             inputStyles={{ input: cn.customHeight }}
             value={value}
             name="description"
-            onChange={e => saveDescription(e.target.value, tableMeta.rowIndex)}
+            onChange={e =>
+              callbacks.saveDescription(e.target.value, tableMeta.rowData[0])
+            }
           />
         </div>
       ),
@@ -167,7 +176,7 @@ export const configureColumns = (
         tableMeta.rowIndex !== 0 && (
           <div
             style={{ textAlign: 'center', cursor: 'pointer' }}
-            onClick={() => deleteInputRow(tableMeta.rowIndex)}
+            onClick={() => callbacks.deleteRow(tableMeta.rowData[0])}
           >
             <FontAwesomeIcon icon="trash" color="#818fa3" />
           </div>

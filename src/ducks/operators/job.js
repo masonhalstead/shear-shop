@@ -3,7 +3,7 @@ import { getParameters } from 'ducks/operators/parameters';
 import { getData } from 'utils/axios';
 
 export const getJobConfig = job_id => async dispatch => {
-  const job_route = `/jobs/${job_id}/parameters`;
+  const job_route = `/jobs/${job_id}`;
   const [job] = await Promise.all([
     dispatch(getJob(job_id)),
     dispatch(getParameters(job_route)),
