@@ -99,7 +99,7 @@ export const configureColumns = (openModal, openDefinition) => [
       display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
-          <span className={cn.textColor}>{value}</span>
+          <span className={cn.textColor}>{new Date(value).toLocaleDateString("en-US")}</span>
         </div>
       ),
     },

@@ -70,24 +70,24 @@ class DefinitionPage extends PureComponent {
   };
 
   state = {
-    definitionName: '',
-    dockerImage: '',
-    startupCommand: '',
+    job_definition_name: '',
+    docker_image: '',
+    startup_command: '',
     description: '',
     cpu: '',
-    timeout: '',
-    location: 'empty',
-    retries: '',
+    timeout_seconds: '',
+    location_id: 'empty',
+    max_retries: '',
     gpu: '',
-    memory: '',
+    memory_gb: '',
     region: 'empty',
-    success: '',
+    stdout_success_text: '',
     tab: 0,
     open: false,
     openEnv: false,
     index: 0,
     project: '',
-    method: '',
+    result_method_id: '',
     ignore: '',
     params: [
       {
@@ -190,23 +190,18 @@ class DefinitionPage extends PureComponent {
         }
       }
 
+      const region = lookups.locations.filter(
+        filter => filter.location_name === definition.region_endpoint_hint,
+      );
+
       this.setState({
-        definitionName: definition.job_definition_name,
-        description: definition.description,
-        dockerImage: definition.docker_image,
-        method: definition.result_method_id,
-        startupCommand: definition.startup_command,
-        timeout: new Date(definition.timeout_seconds * 1000)
+        ...definition,
+        timeout_seconds: new Date(definition.timeout_seconds * 1000)
           .toUTCString()
           .match(/(\d\d:\d\d)/)[0],
-        success: definition.stdout_success_text,
-        region: lookups.locations.filter(
-          filter => filter.location_name === definition.region_endpoint_hint,
-        )[0].location_id,
-        cpu: definition.cpu,
-        gpu: definition.gpu,
-        retries: definition.max_retries,
-        memory: definition.memory_gb,
+        region: region.length > 0 ? region[0].location_id : 'empty',
+        location_id:
+          definition.location_id === null ? 'empty' : definition.location_id,
       });
       await this.createColumns();
     } catch (err) {
@@ -377,7 +372,7 @@ class DefinitionPage extends PureComponent {
     this.setState(prevState => {
       const newItems = [...prevState.data];
       newItems[this.state.index].parameter_method_id = defaultValue;
-      return { data: newItems, changes: true, method: defaultValue };
+      return { data: newItems, changes: true };
     });
   };
 
@@ -407,20 +402,21 @@ class DefinitionPage extends PureComponent {
 
   saveDefinition = async () => {
     const {
-      definitionName,
+      job_definition_name,
       description,
-      dockerImage,
-      method,
-      startupCommand,
-      timeout,
-      success,
+      docker_image,
+      result_method_id,
+      startup_command,
+      timeout_seconds,
+      stdout_success_text,
       region,
       cpu,
       gpu,
-      retries,
-      memory,
+      max_retries,
+      memory_gb,
       data,
       params,
+      location_id,
     } = this.state;
     const {
       editJobDefinition,
@@ -429,23 +425,27 @@ class DefinitionPage extends PureComponent {
       editDefinitionParams,
     } = this.props;
     const [, , , , definition_id] = location.pathname.split('/');
-    const timeOut = timeout.split(':');
+    const timeOut = timeout_seconds.split(':');
 
     const dataForApi = {
-      job_definition_name: definitionName,
-      description: description,
-      docker_image: dockerImage,
-      result_method_id: method,
-      startup_command: startupCommand,
+      job_definition_name,
+      description,
+      docker_image,
+      result_method_id,
+      startup_command,
       timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
-      stdout_success_text: success,
-      region_endpoint_hint: lookups.locations.filter(
-        filter => filter.location_id === region,
-      )[0].location_name,
+      stdout_success_text,
+      region_endpoint_hint:
+        region !== 'empty'
+          ? lookups.locations.filter(
+              filter => filter.location_id === Number(region),
+            )[0].location_name
+          : 'empty',
+      location_id: location_id === 'empty' ? null : location_id,
       cpu,
       gpu,
-      max_retries: retries,
-      memory_gb: memory,
+      max_retries,
+      memory_gb,
     };
     await editJobDefinition(dataForApi, definition_id);
 
@@ -538,14 +538,14 @@ class DefinitionPage extends PureComponent {
   firstTab = () => {
     const {
       cpu,
-      timeout,
-      retries,
-      location,
+      timeout_seconds,
+      max_retries,
+      location_id,
       gpu,
-      method,
+      result_method_id,
       region,
-      memory,
-      success,
+      memory_gb,
+      stdout_success_text,
     } = this.state;
     const {
       lookups: { locations, result_methods },
@@ -574,10 +574,13 @@ class DefinitionPage extends PureComponent {
               type="time"
               className={cn.rowPadding}
               label="Timeout"
-              value={timeout}
-              name="dockerImage"
+              value={timeout_seconds}
+              name="timeout"
               onChange={e =>
-                this.setState({ timeout: e.target.value, changes: true })
+                this.setState({
+                  timeout_seconds: e.target.value,
+                  changes: true,
+                })
               }
               inputStyles={{ input: cn.inputStyles }}
             />
@@ -588,10 +591,10 @@ class DefinitionPage extends PureComponent {
               className={cn.rowPadding}
               type="number"
               label="Max Retries"
-              value={retries}
+              value={max_retries}
               name="retries"
               onChange={e =>
-                this.setState({ retries: e.target.value, changes: true })
+                this.setState({ max_retries: e.target.value, changes: true })
               }
               inputStyles={{ input: cn.inputStyles }}
             />
@@ -616,9 +619,9 @@ class DefinitionPage extends PureComponent {
             <div className={cn.label}>Location</div>
             <NativeSelect
               disabled={region !== 'empty'}
-              value={location}
+              value={location_id}
               onChange={e =>
-                this.setState({ location: e.target.value, changes: true })
+                this.setState({ location_id: e.target.value, changes: true })
               }
               input={
                 region !== 'empty' ? (
@@ -639,9 +642,12 @@ class DefinitionPage extends PureComponent {
           <FormControl className={cn.containerRight}>
             <div className={cn.label}>Result Method</div>
             <NativeSelect
-              value={method}
+              value={result_method_id}
               onChange={e =>
-                this.setState({ method: e.target.value, changes: true })
+                this.setState({
+                  result_method_id: e.target.value,
+                  changes: true,
+                })
               }
               input={<BootstrapInput name="method" id="method" />}
             >
@@ -661,10 +667,10 @@ class DefinitionPage extends PureComponent {
               className={cn.rowPadding}
               label="Memory GB"
               type="number"
-              value={memory}
+              value={memory_gb}
               name="memory"
               onChange={e =>
-                this.setState({ memory: e.target.value, changes: true })
+                this.setState({ memory_gb: e.target.value, changes: true })
               }
               inputStyles={{ input: cn.inputStyles }}
             />
@@ -672,13 +678,13 @@ class DefinitionPage extends PureComponent {
           <FormControl className={cn.containerMiddle}>
             <div className={cn.label}>Region Hint</div>
             <NativeSelect
-              disabled={location !== 'empty'}
+              disabled={location_id !== 'empty'}
               value={region}
               onChange={e =>
                 this.setState({ region: e.target.value, changes: true })
               }
               input={
-                location !== 'empty' ? (
+                location_id !== 'empty' ? (
                   <BootstrapInputDisabled name="region" id="region" />
                 ) : (
                   <BootstrapInput name="region" id="region" />
@@ -695,14 +701,17 @@ class DefinitionPage extends PureComponent {
           </FormControl>
           <div className={cn.containerRight}>
             <div className={cn.label}>Success Text</div>
-            {Number(method) === 2 ? (
+            {Number(result_method_id) === 2 ? (
               <CustomInput
                 className={cn.rowPadding}
                 label="Success Text"
-                value={success}
+                value={stdout_success_text}
                 name="success"
                 onChange={e =>
-                  this.setState({ success: e.target.value, changes: true })
+                  this.setState({
+                    stdout_success_text: e.target.value,
+                    changes: true,
+                  })
                 }
                 inputStyles={{
                   input: cn.inputStyles,
@@ -713,10 +722,13 @@ class DefinitionPage extends PureComponent {
                 disabled
                 className={cn.rowPadding}
                 label="Success Text"
-                value={success}
+                value={stdout_success_text}
                 name="success"
                 onChange={e =>
-                  this.setState({ success: e.target.value, changes: true })
+                  this.setState({
+                    stdout_success_text: e.target.value,
+                    changes: true,
+                  })
                 }
                 inputStyles={{
                   input: cn.inputStyles,
@@ -745,8 +757,7 @@ class DefinitionPage extends PureComponent {
   };
 
   getWidth = () => {
-    const { method } = this.state;
-    if (Number(method) === 2) {
+    if (Number(this.state.data[this.state.index].parameter_method_id) === 2) {
       return { width: 300 };
     }
 
@@ -756,9 +767,9 @@ class DefinitionPage extends PureComponent {
   render() {
     const { hamburger, history, projects } = this.props;
     const {
-      definitionName,
-      dockerImage,
-      startupCommand,
+      job_definition_name,
+      docker_image,
+      startup_command,
       description,
       tab,
       open,
@@ -808,7 +819,7 @@ class DefinitionPage extends PureComponent {
               >
                 Job Definitions
               </div>
-              <div>{definitionName}</div>
+              <div>{job_definition_name}</div>
             </Breadcrumbs>
             <div className={cn.flex} />
             <div className={cn.iconContainer} onClick={this.saveDefinition}>
@@ -828,11 +839,11 @@ class DefinitionPage extends PureComponent {
               <div className={cn.label}>Job Definition</div>
               <CustomInput
                 label="Job Definition"
-                value={definitionName}
+                value={job_definition_name}
                 name="definitionName"
                 onChange={e =>
                   this.setState({
-                    definitionName: e.target.value,
+                    job_definition_name: e.target.value,
                     changes: true,
                   })
                 }
@@ -843,10 +854,10 @@ class DefinitionPage extends PureComponent {
               <div className={cn.label}>Docker Image</div>
               <CustomInput
                 label="Docker Image"
-                value={dockerImage}
+                value={docker_image}
                 name="dockerImage"
                 onChange={e =>
-                  this.setState({ dockerImage: e.target.value, changes: true })
+                  this.setState({ docker_image: e.target.value, changes: true })
                 }
                 inputStyles={{ input: cn.inputStyles }}
               />
@@ -857,10 +868,13 @@ class DefinitionPage extends PureComponent {
             <CustomInputTextArea
               multiline
               label="Startup Command"
-              value={startupCommand}
+              value={startup_command}
               name="startupCommand"
               onChange={e =>
-                this.setState({ startupCommand: e.target.value, changes: true })
+                this.setState({
+                  startup_command: e.target.value,
+                  changes: true,
+                })
               }
               inputStyles={{ input: cn.inputStyles }}
               className={cn.top}
