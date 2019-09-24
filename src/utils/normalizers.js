@@ -21,9 +21,10 @@ export function normalizeDefinition(data, locations = []) {
 
 export function normalizeParameters(parameters) {
   return parameters.map(parameter => ({
-    ...parameter,
+    parameter_method_id: 1,
     modified: true,
     saved: true,
     uuid: uuid.v1(),
+    ...parameter,
   }));
 }
