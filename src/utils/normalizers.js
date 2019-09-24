@@ -18,3 +18,12 @@ export function normalizeDefinition(data, locations = []) {
     uuid: uuid.v1(),
   };
 }
+
+export function normalizeParameters(parameters) {
+  return parameters.map(parameter => ({
+    ...parameter,
+    modified: true,
+    saved: true,
+    uuid: uuid.v1(),
+  }));
+}

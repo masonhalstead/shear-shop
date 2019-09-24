@@ -6,7 +6,10 @@ import {
   getJobDefinition as getJobDefinitionAction,
   editDefinition as editDefinitionProps,
 } from 'ducks/operators/job_definition';
-import { editParameters as editParametersProps } from 'ducks/operators/parameters';
+import {
+  editParameters as editParametersProps,
+  saveParameters as saveParametersProps,
+} from 'ducks/operators/parameters';
 import { handleError } from 'ducks/operators/settings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as Sentry from '@sentry/browser';
@@ -31,6 +34,7 @@ class DefinitionPage extends PureComponent {
     editDefinition: PropTypes.func,
     handleErrorProps: PropTypes.func,
     editParameters: PropTypes.func,
+    saveParameters: PropTypes.func,
     logoutUserProps: PropTypes.func,
     hamburger: PropTypes.object,
     job_definition: PropTypes.object,
@@ -86,6 +90,7 @@ class DefinitionPage extends PureComponent {
             description: '',
             parameter_direction_id: 1,
             modified: false,
+            saved: false,
             uuid: uuid.v1(),
           },
           {
@@ -93,6 +98,7 @@ class DefinitionPage extends PureComponent {
             description: '',
             parameter_direction_id: 2,
             modified: false,
+            saved: false,
             uuid: uuid.v1(),
           },
         ],
@@ -367,6 +373,7 @@ class DefinitionPage extends PureComponent {
       handleErrorProps,
       job_definition,
       locations,
+      saveParameters,
       editParameters,
     } = this.props;
 
@@ -393,6 +400,7 @@ class DefinitionPage extends PureComponent {
     try {
       await setLoadingAction(true);
       await editParameters(parameters, job_definition_id);
+      await saveParameters(parameters, job_definition_id);
       await editDefinition(post_data, job_definition_id);
       await getJobDefinition(job_definition_id);
     } catch (err) {
@@ -672,6 +680,7 @@ const mapDispatchToProps = {
   getJobDefinition: getJobDefinitionAction,
   editDefinition: editDefinitionProps,
   editParameters: editParametersProps,
+  saveParameters: saveParametersProps,
   logoutUserProps: logoutUser,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
