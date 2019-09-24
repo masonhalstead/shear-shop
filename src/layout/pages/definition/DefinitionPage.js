@@ -1,28 +1,28 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { logoutUser, setLoading } from 'ducks/actions';
 import {
   getJobDefinition as getJobDefinitionAction,
   editDefinition as editDefinitionProps,
 } from 'ducks/operators/job_definition';
 import { editParameters as editParametersProps } from 'ducks/operators/parameters';
 import { handleError } from 'ducks/operators/settings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as Sentry from '@sentry/browser';
 import { Toolbar, Breadcrumbs, Paper, NativeSelect } from '@material-ui/core';
 import { Poper } from 'components/poper/Poper';
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import { logoutUser, setLoading } from 'ducks/actions';
 import CustomCheckbox from 'components/checkbox/Checkbox';
 import { CustomInput } from 'components/material-input/CustomInput';
 import { BootstrapInput } from 'components/bootsrap-input/BootstrapInput';
 import uuid from 'uuid';
-import cn from './Definition.module.scss';
 import { DefinitionBlock } from './DefinitionBlock';
 import { DefinitionTabs } from './DefinitionTabs';
 import { ConfigTab } from './ConfigTab';
 import { InputsTab } from './InputsTab';
 import { OutputsTab } from './OutputsTab';
+import cn from './Definition.module.scss';
 
 class DefinitionPage extends PureComponent {
   static propTypes = {
@@ -36,20 +36,9 @@ class DefinitionPage extends PureComponent {
     job_definition: PropTypes.object,
     projects: PropTypes.array,
     parameters: PropTypes.array,
-    lookups: PropTypes.object,
+    locations: PropTypes.array,
     history: PropTypes.object,
     location: PropTypes.object,
-  };
-
-  options = {
-    filterType: 'textField',
-    selectableRows: 'none',
-    search: false,
-    pagination: false,
-    filter: false,
-    download: false,
-    viewColumns: false,
-    print: false,
   };
 
   state = {
@@ -68,6 +57,7 @@ class DefinitionPage extends PureComponent {
     row_id: null,
     project: '',
     result_method_id: '',
+    project_id: null,
     changes: false,
     anchorEl: null,
     anchorElEnv: null,
@@ -77,7 +67,7 @@ class DefinitionPage extends PureComponent {
       changeRequired: id => this.changeRequired(id),
       saveDefault: (value, id) => this.saveDefault(value, id),
       saveDescription: (value, id) => this.saveDescription(value, id),
-      handleClickOpen: (value, id) => this.handleClickOpen(value, id),
+      handleOpenRef: (value, id) => this.handleOpenRef(value, id),
       deleteRow: id => this.deleteRow(id),
       handleOpenMethod: (value, id) => this.handleOpenMethod(value, id),
     },
@@ -116,7 +106,12 @@ class DefinitionPage extends PureComponent {
   }
 
   componentWillUnmount() {
-    this.setState({ changes: false });
+    this.setState({
+      changes: false,
+      row_id: null,
+      open: false,
+      openEnv: false,
+    });
   }
 
   handleChangeTab = (e, value) => {
@@ -174,7 +169,7 @@ class DefinitionPage extends PureComponent {
     });
   };
 
-  handleClickOpen = (event, id) => {
+  handleOpenRef = (event, id) => {
     const { anchorEl } = this.state;
     this.setState({
       open: true,
@@ -371,7 +366,7 @@ class DefinitionPage extends PureComponent {
       setLoadingAction,
       handleErrorProps,
       job_definition,
-      lookups,
+      locations,
       editParameters,
     } = this.props;
 
@@ -386,7 +381,7 @@ class DefinitionPage extends PureComponent {
       startup_command,
       timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
       stdout_success_text,
-      region_endpoint_hint: lookups.locations.filter(
+      region_endpoint_hint: locations.filter(
         filter => filter.location_id === region,
       )[0].location_name,
       cpu,
@@ -440,9 +435,9 @@ class DefinitionPage extends PureComponent {
       anchorElEnv,
       anchorEl,
       row_id,
+      project_id,
     } = this.state;
 
-    const id = 1;
     const row = parameters.find(parameter => parameter.uuid === row_id);
     const selected_row = row || {};
     return (
@@ -467,7 +462,9 @@ class DefinitionPage extends PureComponent {
               <div
                 className={cn.text}
                 onClick={() => {
-                  history.push(`/projects/${id}/definitions/unarchived`);
+                  history.push(
+                    `/projects/${project_id}/definitions/unarchived`,
+                  );
                 }}
               >
                 Job Definitions
@@ -545,9 +542,9 @@ class DefinitionPage extends PureComponent {
                 input={<BootstrapInput name="project" id="project" />}
               >
                 <option value="" />
-                {projects.map(project => (
-                  <option value={project.project_id}>
-                    {project.project_name}
+                {projects.map(item => (
+                  <option value={item.project_id} key={item.uuid}>
+                    {item.project_name}
                   </option>
                 ))}
               </NativeSelect>
@@ -665,7 +662,7 @@ class DefinitionPage extends PureComponent {
 
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
-  lookups: state.lookups,
+  locations: state.lookups.locations,
   projects: state.projects,
   parameters: state.parameters,
   job_definition: state.job_definition,

@@ -113,7 +113,7 @@ export const configureColumns = callbacks => [
           <NativeSelect
             style={{ width: '100%' }}
             value={value}
-            onClick={e => callbacks.handleClickOpen(e, tableMeta.rowData[0])}
+            onClick={e => callbacks.handleOpenRef(e, tableMeta.rowData[0])}
             input={
               <CustomInputNoBorders name="reference" id="reference" readOnly />
             }

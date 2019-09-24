@@ -15,16 +15,16 @@ import cn from './Definition.module.scss';
 export class ConnectedConfigTab extends PureComponent {
   static propTypes = {
     cpu: PropTypes.number,
-    timeout: PropTypes.number,
+    timeout: PropTypes.string,
     max_retries: PropTypes.number,
     gpu: PropTypes.number,
     stdout_success_text: PropTypes.string,
-    location: PropTypes.object,
+    location: PropTypes.string,
     locations: PropTypes.array,
     result_method_id: PropTypes.number,
     region: PropTypes.number,
     memory_gb: PropTypes.number,
-    result_methods: PropTypes.number,
+    result_methods: PropTypes.array,
     handleDefinitionTabs: PropTypes.func,
   };
 

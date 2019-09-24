@@ -22,7 +22,9 @@ export const configureColumnsOutput = callbacks => [
             placeholder="Parameter"
             value={value}
             name="paramsName"
-            onChange={e => callbacks.saveName(e.target.value, tableMeta.rowData[0])}
+            onChange={e =>
+              callbacks.saveName(e.target.value, tableMeta.rowData[0])
+            }
             inputStyles={{ input: cn.customHeight }}
           />
         </div>
