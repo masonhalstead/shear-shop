@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
-import { Toolbar, Breadcrumbs, Dialog, Button } from '@material-ui/core';
+import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
 import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
@@ -13,15 +13,8 @@ import { CustomizedInputBase } from 'components/search/SearchInput';
 import { logoutUser, setLoading } from 'ducks/actions';
 import Popover from 'components/popover/Popover';
 import TableViewCol from 'components/view-column/ViewColumn';
-import classNames from 'classnames';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from 'components/dialogs/Dialogs';
-import { CustomInput } from 'components/material-input/CustomInput';
 import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
-import {CreateJobDefinition} from 'layout/components/modals/create-job-definition/CreateJobDefinition';
+import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
 import cn from './Definitions.module.scss';
 import { configureColumns } from './columns';
 
@@ -67,6 +60,7 @@ class DefinitionsPage extends PureComponent {
     columns: [],
     viewColumns: [],
     open: false,
+    id: '',
   };
 
   componentDidMount() {
@@ -106,9 +100,9 @@ class DefinitionsPage extends PureComponent {
   };
 
   openDefinition = id => {
-    const { history } = this.props;
-    const projectId = 1;
-    history.push(`/projects/${projectId}/definitions/${id}/definition`);
+    const { history, location } = this.props;
+    const [, , project_id] = location.pathname.split('/');
+    history.push(`/projects/${project_id}/definitions/${id}/definition`);
   };
 
   onSearch = e => {
@@ -236,12 +230,14 @@ class DefinitionsPage extends PureComponent {
       viewColumns,
       open,
       jobName,
+      id,
     } = this.state;
+
+    const projectId = location.pathname.split('/')[2];
 
     let projectName = '';
     if (projects.length > 0) {
       if (!Object(project).hasOwnProperty('project_id')) {
-        const projectId = location.pathname.split('/')[2];
         projectName = projects.filter(
           project => project.project_id === Number(projectId),
         )[0].project_name;
@@ -314,14 +310,18 @@ class DefinitionsPage extends PureComponent {
             />
           </TableContainer>
         )}
-        <RunDefinition
-          opened={run}
-          toggleModal={() => this.setState({ run: false })}
-          runJob={this.runJob}
-          handleClose={this.handleClose}
-          title={title}
-          locations={lookups.locations}
-        />
+        {run && (
+          <RunDefinition
+            opened={run}
+            toggleModal={() => this.setState({ run: false })}
+            runJob={this.runJob}
+            handleClose={this.handleClose}
+            title={title}
+            id={id}
+            locations={lookups.locations}
+            projectId={projectId}
+          />
+        )}
         <CreateJobDefinition
           handleCloseDefinition={this.handleCloseDefinition}
           open={open}

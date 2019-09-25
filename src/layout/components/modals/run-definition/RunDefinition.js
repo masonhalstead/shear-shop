@@ -1,18 +1,16 @@
 import React, { PureComponent } from 'react';
 import * as PropTypes from 'prop-types';
 import { CustomizedDialogs } from 'components/modal/CustomModal';
-import { Typography, NativeSelect, FormControl } from '@material-ui/core';
-import {
-  CustomInput,
-  CustomInputTextArea,
-} from 'components/material-input/CustomInput';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  BootstrapInput,
-  BootstrapInputDisabled,
-} from 'components/bootsrap-input/BootstrapInput';
-import classNames from 'classnames';
-import cn from './RunDefinition.module.scss';
+import { DefinitionBlock } from './DefinitonBlock';
+import * as Sentry from '@sentry/browser';
+import uuid from 'uuid';
+import { getJobDefinition as getJobDefinitionAction } from 'ducks/operators/job_definition';
+import { addJob as addJobAction } from 'ducks/operators/job';
+import { setLoading } from 'ducks/actions';
+import { handleError } from 'ducks/operators/settings';
+import { connect } from 'react-redux';
+import { DefinitionParameters } from './DefinitionParameters';
+import { AdditionalParameters } from './AdditionalParameters';
 
 class RunDefinition extends PureComponent {
   static propTypes = {
@@ -23,79 +21,247 @@ class RunDefinition extends PureComponent {
     locations: PropTypes.array,
   };
 
+  static getDerivedStateFromProps(props, state) {
+    const { job_definition, parameters } = props;
+    const { job_definition_id } = state;
+    if (job_definition.job_definition_id !== job_definition_id) {
+      return {
+        ...job_definition,
+        parameters: [...parameters],
+      };
+    }
+    return null;
+  }
+
+  componentDidMount() {
+    this.setInitialData();
+  }
+
   state = {
-    dockerImage: '',
-    startupCommand: '',
+    docker_image: '',
+    startup_command: '',
     cpu: '',
     gpu: '',
-    memory: '',
+    memory_gb: '',
     timeout: '',
-    location: 'empty',
+    location_id: 'empty',
     region: 'empty',
-    batchDesc: '',
-    batchID: '',
-    params: [
+    batch_description: '',
+    batch_id: '',
+    additionalParameters: [
       {
-        value: '',
-        description: '',
-      },
-      {
-        value: '',
-        description: '',
-      },
-      {
-        value: '',
-        description: '',
+        parameter_name: '',
+        parameter_direction_id: 1,
+        parameter_method_id: 1,
+        parameter_value: '',
+        modified: false,
+        uuid: uuid.v1(),
       },
     ],
+    callbacks: {
+      saveDefault: (value, id) => this.saveDefault(value, id),
+      saveKey: (value, id) => this.saveKey(value, id),
+      saveValue: (value, id) => this.saveValue(value, id),
+      deleteRow: id => this.deleteRow(id),
+    },
   };
 
-  changeName = (value, index) => {
-    this.setState(prevState => {
-      const newItems = [...prevState.params];
-      newItems[index].value = value;
-      return { params: newItems };
+  setInitialData = async () => {
+    const { getJobDefinition, setLoadingAction, id } = this.props;
+
+    try {
+      await setLoadingAction(true);
+      await getJobDefinition(id);
+    } catch (err) {
+      // Only fires if the server is off line or the body isnt set correctly
+      Sentry.captureException(err);
+    }
+    setLoadingAction(false);
+  };
+
+  saveDefault = (value, id) => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    parameters[index] = {
+      ...parameters[index],
+      parameter_value: value,
+      modified: true,
+    };
+    this.setState({
+      parameters: [...parameters],
     });
   };
 
-  changeDescription = (description, index) => {
-    this.setState(prevState => {
-      const newItems = [...prevState.params];
-      newItems[index].description = description;
-      return { params: newItems };
+  saveValue = (value, id) => {
+    const { additionalParameters } = this.state;
+    const index = additionalParameters.findIndex(
+      parameter => parameter.uuid === id,
+    );
+    additionalParameters[index] = {
+      ...additionalParameters[index],
+      parameter_value: value,
+      modified: true,
+    };
+    this.setState(
+      {
+        additionalParameters: [...additionalParameters],
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  saveKey = (name, id) => {
+    const { additionalParameters } = this.state;
+    const index = additionalParameters.findIndex(
+      parameter => parameter.uuid === id,
+    );
+    additionalParameters[index] = {
+      ...additionalParameters[index],
+      parameter_name: name,
+      modified: true,
+    };
+    this.setState(
+      {
+        additionalParameters: [...additionalParameters],
+      },
+      () => this.handleRowManagement(),
+    );
+  };
+
+  handleRowManagement = () => {
+    const { additionalParameters } = this.state;
+
+    const inputs = additionalParameters.filter(p => p.modified === false);
+
+    if (inputs.length === 0) {
+      this.configNewRow();
+    }
+  };
+
+  configNewRow = () => {
+    const { additionalParameters } = this.state;
+    const new_row = {
+      parameter_name: '',
+      parameter_direction_id: 1,
+      parameter_method_id: 1,
+      parameter_value: '',
+      modified: false,
+      uuid: uuid.v1(),
+    };
+    additionalParameters.push(new_row);
+    this.setState({
+      additionalParameters: [...additionalParameters],
     });
   };
 
-  addMoreParameters = () => {
-    this.setState(prevState => {
-      const newItems = [...prevState.params];
-      newItems.push({
-        value: '',
-        description: '',
-      });
-      return { params: newItems };
-    });
+  deleteRow = id => {
+    const { additionalParameters } = this.state;
+    const index = additionalParameters.findIndex(
+      parameter => parameter.uuid === id,
+    );
+    additionalParameters.splice(index, 1);
+    this.setState(
+      {
+        additionalParameters: [...additionalParameters],
+        row_id: null,
+      },
+      () => this.handleRowManagement(),
+    );
   };
 
-  runJob = () => {
-    const { runJob } = this.props;
-    runJob();
+  runJob = async () => {
+    const {
+      job_definition_name,
+      description,
+      docker_image,
+      result_method_id,
+      startup_command,
+      timeout,
+      stdout_success_text,
+      region,
+      cpu,
+      gpu,
+      max_retries,
+      memory_gb,
+      data,
+      parameters,
+      location_id,
+      batch_id,
+      batch_description,
+      additionalParameters
+    } = this.state;
+    const {
+      projectId,
+      runJob,
+      setLoadingAction,
+      handleErrorProps,
+      job_definition,
+      locations,
+      addJob,
+    } = this.props;
+
+    const { job_definition_id } = job_definition;
+    const timeOut = timeout.split(':');
+
+    const params = [...parameters, ...additionalParameters];
+    console.log(params);
+
+    const post_data = {
+      project_id: Number(projectId),
+      job_definition_name,
+      description,
+      docker_image,
+      result_method_id,
+      startup_command,
+      timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
+      stdout_success_text,
+      region_endpoint_hint:
+        region !== 'empty'
+          ? locations.filter(
+          filter => filter.location_id === Number(region),
+          )[0].location_name
+          : 'empty',
+      location_id: location_id === 'empty' ? null : location_id,
+      cpu,
+      gpu,
+      max_retries,
+      memory_gb,
+      batch_id,
+      batch_description,
+      parameters: params.filter(filter => filter.parameter_name.length > 0),
+    };
+
+    try {
+      await setLoadingAction(true);
+      await addJob(post_data, job_definition_id);
+      runJob();
+    } catch (err) {
+      handleErrorProps(err, data);
+    }
+    setLoadingAction(false);
+  };
+
+
+  handleDefinitionBlock = input => {
+    this.setState({ ...input, changes: true });
   };
 
   render() {
     const { opened, handleClose, title, locations } = this.props;
     const {
-      dockerImage,
-      startupCommand,
+      docker_image,
+      startup_command,
       cpu,
       gpu,
-      memory,
+      memory_gb,
       timeout,
-      location,
+      location_id,
       region,
-      batchID,
-      batchDesc,
-      params,
+      batch_id,
+      batch_description,
+      parameters,
+      callbacks,
+      additionalParameters,
     } = this.state;
     return (
       <CustomizedDialogs
@@ -104,199 +270,50 @@ class RunDefinition extends PureComponent {
         runJob={this.runJob}
         title={title}
       >
-        <Typography component={'span'} gutterBottom>
-          <div className={cn.container}>
-            <div className={cn.label}>Docker Image</div>
-            <CustomInput
-              label="Docker Image"
-              value={dockerImage}
-              name="dockerImage"
-              onChange={e => this.setState({ dockerImage: e.target.value })}
-              inputStyles={{ input: cn.inputStyles }}
-            />
-          </div>
-          <div className={cn.container}>
-            <div className={cn.label}>Startup Command</div>
-            <CustomInputTextArea
-              multiline
-              label="Startup Command"
-              value={startupCommand}
-              name="startupCommand"
-              onChange={e => this.setState({ startupCommand: e.target.value })}
-              inputStyles={{ input: cn.inputStyles }}
-              className={cn.top}
-            />
-          </div>
-          <div className={cn.containerRow}>
-            <div className={cn.splitContainer}>
-              <div className={classNames(cn.containerInput, cn.inputSmall)}>
-                <div className={cn.label}>CPU</div>
-                <CustomInput
-                  label="CPU"
-                  type="number"
-                  value={cpu}
-                  name="cpu"
-                  onChange={e => this.setState({ cpu: e.target.value })}
-                  inputStyles={{ input: cn.inputStylesSmall }}
-                  className={cn.top}
-                />
-              </div>
-              <div className={classNames(cn.containerInput, cn.inputSmall)}>
-                <div className={cn.label}>GPU</div>
-                <CustomInput
-                  className={cn.align}
-                  label="GPU"
-                  value={gpu}
-                  type="number"
-                  name="gru"
-                  onChange={e => this.setState({ gpu: e.target.value })}
-                  inputStyles={{ input: cn.inputStylesSmall }}
-                />
-              </div>
-              <div className={classNames(cn.containerInputLast, cn.inputSmall)}>
-                <div className={cn.label}>Memory GB</div>
-                <CustomInput
-                  className={cn.align}
-                  label="Memory GB"
-                  type="number"
-                  value={memory}
-                  name="memory"
-                  onChange={e => this.setState({ memory: e.target.value })}
-                  inputStyles={{ input: cn.inputStylesSmall }}
-                />
-              </div>
-            </div>
-            <div className={cn.containerInputLast}>
-              <div className={cn.label}>Timeout</div>
-              <CustomInput
-                type="time"
-                label="Timeout"
-                value={timeout}
-                name="timeout"
-                onChange={e => this.setState({ timeout: e.target.value })}
-                inputStyles={{ input: cn.inputStylesSmall }}
-                className={cn.align}
-              />
-            </div>
-          </div>
-          <div className={cn.containerRow}>
-            <div className={classNames(cn.containerInputLast, cn.inputMedium)}>
-              <div className={cn.label}>Location</div>
-              <NativeSelect
-                disabled={region !== 'empty'}
-                value={location}
-                style={{ width: '100%' }}
-                onChange={e => this.setState({ location: e.target.value })}
-                input={
-                  region !== 'empty' ? (
-                    <BootstrapInputDisabled name="location" id="location" />
-                  ) : (
-                    <BootstrapInput name="location" id="location" />
-                  )
-                }
-              >
-                <option key="empty" value="empty" />
-                {locations.map(item => (
-                  <option key={item.uuid} value={item.location_id}>
-                    {item.location_name}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-            <div className={classNames(cn.containerInputLast)}>
-              <div className={cn.label}>Region Hint</div>
-              <NativeSelect
-                disabled={location !== 'empty'}
-                value={region}
-                style={{ width: '100%' }}
-                onChange={e => this.setState({ region: e.target.value })}
-                input={
-                  location !== 'empty' ? (
-                    <BootstrapInputDisabled name="region" id="region" />
-                  ) : (
-                    <BootstrapInput name="region" id="region" />
-                  )
-                }
-              >
-                <option key="empty" value="empty" />
-                {locations.map(item => (
-                  <option key={item.uuid} value={item.location_id}>
-                    {item.location_name}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-          </div>
-          <div className={cn.containerRow}>
-            <div className={classNames(cn.containerInputLast, cn.inputLarge)}>
-              <div className={cn.label}>Batch Descriptor</div>
-              <CustomInput
-                label="Batch Descriptor"
-                value={batchDesc}
-                name="batchDesc"
-                onChange={e => this.setState({ batchDesc: e.target.value })}
-                inputStyles={{ input: cn.customHeight }}
-                className={cn.top}
-              />
-            </div>
-            <div className={cn.containerInputLast}>
-              <div className={cn.label}>Batch ID</div>
-              <CustomInput
-                className={cn.align}
-                label="Batch ID"
-                value={batchID}
-                name="batchID"
-                onChange={e => this.setState({ batchID: e.target.value })}
-                inputStyles={{ input: cn.customHeight }}
-              />
-            </div>
-          </div>
-          <div className={cn.divider} />
-        </Typography>
-        <Typography component={'span'}>
-          <div className={cn.label}>Parameters</div>
-          {params.map((param, index) => (
-            <div className={cn.containerRow} key={`name_${index}`}>
-              <div className={cn.formControl}>
-                <div className={cn.container}>
-                  <div className={cn.label}>{`Parameter ${index} Name`}</div>
-                  <CustomInput
-                    label={`Parameter ${index} Name`}
-                    value={param.value}
-                    name={`name_${index}`}
-                    onChange={e => this.changeName(e.target.value, index)}
-                    inputStyles={{ input: cn.customHeight }}
-                    className={cn.top}
-                  />
-                </div>
-              </div>
-              <div className={cn.formControl}>
-                <div className={cn.container}>
-                  <div
-                    className={cn.label}
-                  >{`Parameter ${index} Description`}</div>
-                  <CustomInput
-                    className={cn.align}
-                    label={`Parameter ${index} Description`}
-                    value={param.description}
-                    name={`desc_${index}`}
-                    onChange={e =>
-                      this.changeDescription(e.target.value, index)
-                    }
-                    inputStyles={{ input: cn.customHeight }}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-          <div className={cn.addMore} onClick={this.addMoreParameters}>
-            <FontAwesomeIcon icon="plus" color="#818fa3" />
-            <span className={cn.addMoreButton}>Add More Parameters</span>
-          </div>
-        </Typography>
+        <DefinitionBlock
+          docker_image={docker_image}
+          startup_command={startup_command}
+          cpu={cpu}
+          gpu={gpu}
+          memory_gb={memory_gb}
+          timeout={timeout}
+          locations={locations}
+          location_id={location_id}
+          region={region}
+          batch_id={batch_id}
+          batch_description={batch_description}
+          handleDefinitionBlock={this.handleDefinitionBlock}
+        />
+        <DefinitionParameters
+          callbacks={callbacks}
+          parameters={parameters.filter(
+            parameter => parameter.parameter_direction_id === 1,
+          )}
+        />
+        <AdditionalParameters
+          callbacks={callbacks}
+          parameters={additionalParameters}
+        />
       </CustomizedDialogs>
     );
   }
 }
 
-export default RunDefinition;
+const mapStateToProps = state => ({
+  locations: state.lookups.locations,
+  projects: state.projects,
+  parameters: state.parameters,
+  job_definition: state.job_definition,
+});
+
+const mapDispatchToProps = {
+  getJobDefinition: getJobDefinitionAction,
+  addJob: addJobAction,
+  setLoadingAction: setLoading,
+  handleErrorProps: handleError,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(RunDefinition);

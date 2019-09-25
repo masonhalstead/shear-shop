@@ -2,10 +2,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
-import { configureColumns } from './columns';
-import cn from './Definition.module.scss';
+import { configureColumnsOutput } from './additionalColumns';
 
-export class InputsTab extends PureComponent {
+import cn from './RunDefinition.module.scss';
+
+export class AdditionalParameters extends PureComponent {
   static propTypes = {
     callbacks: PropTypes.object,
     parameters: PropTypes.array,
@@ -26,10 +27,11 @@ export class InputsTab extends PureComponent {
     this.createColumns();
   }
 
-  createColumns = () => configureColumns(this.props.callbacks);
+  createColumns = () => configureColumnsOutput(this.props.callbacks);
 
   render() {
     const { parameters } = this.props;
+
     return (
       <div className={cn.tabValueAlt}>
         <TableContainer style={cn.tableContainerWrapper}>
@@ -47,25 +49,13 @@ export class InputsTab extends PureComponent {
                   fontSize: '13px',
                   fontWeight: 300,
                   lineHeight: '1',
-                  padding: '2.5px !important',
-                  '&:nth-child(2)': {
-                    width: 189,
-                  },
-                  '&:nth-child(4)': {
-                    width: 79,
-                  },
-                  '&:nth-child(6)': {
-                    width: 79,
-                  },
-                  '&:nth-child(8)': {
-                    width: 139,
-                  },
-                  '&:nth-child(10)': {
-                    width: 139,
-                  },
-                  '&:nth-child(14)': {
-                    width: 29,
-                  },
+                  // padding: '2.5px !important',
+                  // '&:nth-child(2)': {
+                  //   width: 189,
+                  // },
+                  // '&:nth-child(6)': {
+                  //   width: 39,
+                  // },
                 },
                 head: {
                   fontSize: '1rem',

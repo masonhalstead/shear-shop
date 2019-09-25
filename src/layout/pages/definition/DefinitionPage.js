@@ -426,7 +426,6 @@ class DefinitionPage extends PureComponent {
   render() {
     const { hamburger, history, projects, job_definition } = this.props;
     const {
-      definitionName,
       changes,
       job_definition_name,
       docker_image,
