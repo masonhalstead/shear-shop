@@ -1,6 +1,7 @@
 export const routes = {
   ROOT: '/',
   LOGIN: '/login',
+  SANDBOX: '/sandbox',
   PROJECTS: '/projects',
   PROJECT: '/projects/:project_id',
   BATCHES: '/projects/:project_id/batches',

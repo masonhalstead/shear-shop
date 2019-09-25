@@ -1,7 +1,7 @@
 import React from 'react';
-import { CustomInputNoBorders } from 'components/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import cn from './Definition.module.scss';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
 
 export const configureColumnsOutput = callbacks => [
   {
@@ -17,17 +17,15 @@ export const configureColumnsOutput = callbacks => [
       filter: false,
       sort: false,
       customBodyRender: (value, tableMeta) => (
-        <div style={{ cursor: 'pointer' }}>
-          <CustomInputNoBorders
-            placeholder="Parameter"
-            value={value}
-            name="paramsName"
-            onChange={e =>
-              callbacks.saveName(e.target.value, tableMeta.rowData[0])
-            }
-            inputStyles={{ input: cn.customHeight }}
-          />
-        </div>
+        <InputWrapper
+          value={value}
+          component={Input}
+          placeholder="Enter Parameter Name"
+          bulk
+          handleOnChange={input =>
+            callbacks.saveName(input.value, tableMeta.rowData[0])
+          }
+        />
       ),
     },
   },
@@ -38,16 +36,14 @@ export const configureColumnsOutput = callbacks => [
       filter: false,
       sort: false,
       customBodyRender: (value, tableMeta) => (
-        <div style={{ textAlign: 'center' }}>
-          <CustomInputNoBorders
-            inputStyles={{ input: cn.customHeight }}
-            value={value}
-            name="description"
-            onChange={e =>
-              callbacks.saveDescription(e.target.value, tableMeta.rowData[0])
-            }
-          />
-        </div>
+        <InputWrapper
+          value={value}
+          component={Input}
+          bulk
+          handleOnChange={input =>
+            callbacks.saveDescription(input.value, tableMeta.rowData[0])
+          }
+        />
       ),
     },
   },

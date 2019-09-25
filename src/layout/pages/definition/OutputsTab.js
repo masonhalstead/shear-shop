@@ -49,7 +49,7 @@ export class OutputsTab extends PureComponent {
                   fontSize: '13px',
                   fontWeight: 300,
                   lineHeight: '1',
-                  padding: '2.5px !important',
+                  padding: '0px !important',
                   '&:nth-child(2)': {
                     width: 189,
                   },

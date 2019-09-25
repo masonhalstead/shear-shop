@@ -47,6 +47,11 @@ export class App extends PureComponent {
             />
             <PrivateRoute
               exact
+              path={routes.SANDBOX}
+              component={pages.SandboxPage}
+            />
+            <PrivateRoute
+              exact
               path={routes.PROJECTS}
               component={pages.ProjectsPage}
             />
