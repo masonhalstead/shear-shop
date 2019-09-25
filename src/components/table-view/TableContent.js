@@ -91,6 +91,9 @@ export const TableContentWrapper = React.memo(
             },
           },
           MUIDataTableBody: {
+            root: {
+              overflowX: 'visible',
+            },
             emptyTitle: {
               color: '#62738d',
               fontSize: '13px',
@@ -98,14 +101,19 @@ export const TableContentWrapper = React.memo(
           },
           MuiTableRow: {
             root: {
-              height: '33px',
+              height: '31px',
+              maxHeight: '31px',
               '&$hover:hover': { backgroundColor: 'none' },
             },
           },
           MUIDataTable: {
             paper: {
-              overflowX: 'auto',
+              overflowX: 'visible',
               boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.08)',
+            },
+            responsiveStacked: {
+              overflow: 'visible',
+              overflowX: 'visible',
             },
           },
           // MuiTypography: {

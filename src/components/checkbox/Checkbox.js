@@ -13,6 +13,7 @@ export const defaultViewColStyles = theme => ({
   icon: {
     borderRadius: 3,
     width: 14,
+    minWidth: 14,
     height: 14,
     boxShadow:
       'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
@@ -52,8 +53,8 @@ export const defaultViewColStyles = theme => ({
   label: {
     fontSize: '13px',
     marginLeft: '5px',
-    color: '#3b4253',
-    fontWeight: 300,
+    color: '#62738d !important',
+    fontWeight: 500,
   },
 });
 
@@ -71,6 +72,7 @@ class CustomCheckbox extends React.PureComponent {
     const { classes, onChange, checked, label } = this.props;
 
     return (
+      <div>
       <FormControlLabel
         classes={{ label: classes.label }}
         control={
@@ -87,7 +89,7 @@ class CustomCheckbox extends React.PureComponent {
           />
         }
         label={label}
-      />
+      /></div>
     );
   }
 }

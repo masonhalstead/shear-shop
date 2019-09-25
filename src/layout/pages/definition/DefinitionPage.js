@@ -13,12 +13,8 @@ import {
 import { handleError } from 'ducks/operators/settings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as Sentry from '@sentry/browser';
-import { Toolbar, Breadcrumbs, Paper, NativeSelect } from '@material-ui/core';
-import { Poper } from 'components/poper/Poper';
+import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
-import CustomCheckbox from 'components/checkbox/Checkbox';
-import { CustomInput } from 'components/material-input/CustomInput';
-import { BootstrapInput } from 'components/bootsrap-input/BootstrapInput';
 import uuid from 'uuid';
 import { DefinitionBlock } from './DefinitionBlock';
 import { DefinitionTabs } from './DefinitionTabs';
@@ -38,7 +34,6 @@ class DefinitionPage extends PureComponent {
     logoutUserProps: PropTypes.func,
     hamburger: PropTypes.object,
     job_definition: PropTypes.object,
-    projects: PropTypes.array,
     parameters: PropTypes.array,
     locations: PropTypes.array,
     history: PropTypes.object,
@@ -56,24 +51,18 @@ class DefinitionPage extends PureComponent {
     region: 'empty',
     stdout_success_text: '',
     tab: 0,
-    open: false,
-    openEnv: false,
-    row_id: null,
-    project: '',
     result_method_id: '',
     project_id: null,
     changes: false,
-    anchorEl: null,
-    anchorElEnv: null,
     parameters: [],
     callbacks: {
       saveName: (value, id) => this.saveName(value, id),
       changeRequired: id => this.changeRequired(id),
       saveDefault: (value, id) => this.saveDefault(value, id),
       saveDescription: (value, id) => this.saveDescription(value, id),
-      handleOpenRef: (value, id) => this.handleOpenRef(value, id),
+      handleReference: (value, id) => this.handleReference(value, id),
       deleteRow: id => this.deleteRow(id),
-      handleOpenMethod: (value, id) => this.handleOpenMethod(value, id),
+      handleMethod: (item, id) => this.handleMethod(item, id),
     },
   };
 
@@ -116,9 +105,6 @@ class DefinitionPage extends PureComponent {
   componentWillUnmount() {
     this.setState({
       changes: false,
-      row_id: null,
-      open: false,
-      openEnv: false,
     });
   }
 
@@ -168,30 +154,18 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  handleOpenMethod = (event, id) => {
-    const { anchorElEnv } = this.state;
-    this.setState({
-      openEnv: true,
-      row_id: id,
-      anchorElEnv: anchorElEnv ? null : event.currentTarget,
-    });
-  };
-
-  handleOpenRef = (event, id) => {
-    const { anchorEl } = this.state;
-    this.setState({
-      open: true,
-      row_id: id,
-      anchorEl: anchorEl ? null : event.currentTarget,
-    });
-  };
-
-  changeReferenceParameter = reference_parameter_name => {
-    const { row_id, parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
+  handleMethod = (item, id) => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
     parameters[index] = {
       ...parameters[index],
-      reference_parameter_name,
+      parameter_method_id: item.parameter_method_id,
+      parameter_method_name: item.parameter_method_name,
+      command_line_assignment_char: item.command_line_assignment_char,
+      command_line_escaped: item.command_line_escaped,
+      command_line_ignore_name: item.command_line_ignore_name,
+      command_line_prefix: item.command_line_prefix,
+      is_encrypted: item.is_encrypted,
       modified: true,
     };
     this.setState(
@@ -203,54 +177,21 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  handleChangeMethod = parameter_method_id => {
-    const { row_id, parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
-    parameters[index] = {
-      ...parameters[index],
-      parameter_method_id,
-      modified: true,
-    };
-    this.setState(
-      {
-        parameters: [...parameters],
-        changes: true,
-        result_method_id: parameter_method_id,
-      },
-      () => this.handleRowManagement(),
-    );
-  };
+  handleReference = (item, id) => {
+    const { parameters } = this.state;
+    const index = parameters.findIndex(parameter => parameter.uuid === id);
 
-  changeEnv = (name, value) => {
-    const { row_id, parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
     parameters[index] = {
       ...parameters[index],
-      [name]: value,
+      reference_id: item.reference_id,
+      reference_parameter_name: item.reference_parameter_name,
+      reference: item.reference,
       modified: true,
     };
     this.setState(
       {
         parameters: [...parameters],
         changes: true,
-      },
-      () => this.handleRowManagement(),
-    );
-  };
-
-  handleChangeProject = reference => {
-    const { row_id, parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === row_id);
-    parameters[index] = {
-      ...parameters[index],
-      reference: 'Reference Added',
-      modified: true,
-    };
-    this.setState(
-      {
-        parameters: [...parameters],
-        changes: true,
-        project: reference,
       },
       () => this.handleRowManagement(),
     );
@@ -298,7 +239,6 @@ class DefinitionPage extends PureComponent {
       {
         parameters: [...parameters],
         changes: true,
-        row_id: null,
       },
       () => this.handleRowManagement(),
     );
@@ -393,9 +333,8 @@ class DefinitionPage extends PureComponent {
       stdout_success_text,
       region_endpoint_hint:
         region !== 'empty'
-          ? locations.filter(
-          filter => filter.location_id === Number(region),
-          )[0].location_name
+          ? locations.filter(filter => filter.location_id === Number(region))[0]
+              .location_name
           : 'empty',
       location_id: location_id === 'empty' ? null : location_id,
       cpu,
@@ -424,7 +363,7 @@ class DefinitionPage extends PureComponent {
   };
 
   render() {
-    const { hamburger, history, projects, job_definition } = this.props;
+    const { hamburger, history } = this.props;
     const {
       changes,
       job_definition_name,
@@ -443,17 +382,9 @@ class DefinitionPage extends PureComponent {
       parameters,
       callbacks,
       tab,
-      project,
-      openEnv,
-      open,
-      anchorElEnv,
-      anchorEl,
-      row_id,
       project_id,
     } = this.state;
 
-    const row = parameters.find(parameter => parameter.uuid === row_id);
-    const selected_row = row || {};
     return (
       <>
         <CustomAppBar hamburger={hamburger.open}>
@@ -541,134 +472,6 @@ class DefinitionPage extends PureComponent {
             />
           )}
         </DefinitionTabs>
-        <Poper
-          open={open}
-          anchorEl={anchorEl}
-          clickAway={() => this.setState({ open: false, anchorEl: null })}
-        >
-          <Paper>
-            <div className={cn.formWrapper}>
-              <div className={cn.label}>Project</div>
-              <NativeSelect
-                style={{ width: '225px', marginBottom: '10px' }}
-                value={project}
-                onChange={e => this.handleChangeProject(e.target.value)}
-                input={<BootstrapInput name="project" id="project" />}
-              >
-                <option value="" />
-                {projects.map(item => (
-                  <option value={item.project_id} key={item.uuid}>
-                    {item.project_name}
-                  </option>
-                ))}
-              </NativeSelect>
-              <CustomInput
-                placeholder="Parameter Name"
-                value={selected_row.reference_parameter_name}
-                name="referenceParameter"
-                onChange={e => this.changeReferenceParameter(e.target.value)}
-                inputStyles={{ input: cn.inputStyles }}
-              />
-            </div>
-          </Paper>
-        </Poper>
-        <Poper
-          open={openEnv}
-          anchorEl={anchorElEnv}
-          clickAway={() => this.setState({ openEnv: false, anchorElEnv: null })}
-        >
-          <Paper>
-            <div className={cn.formWrapper} style={{ width: 300 }}>
-              <div className={cn.label}>Environment Variable</div>
-              <NativeSelect
-                style={{ width: 300, marginBottom: '10px' }}
-                value={selected_row.parameter_method_id}
-                onChange={e => this.handleChangeMethod(e.target.value)}
-                input={
-                  <BootstrapInput
-                    name="parameter_method_id"
-                    id="parameter_method_id"
-                  />
-                }
-              >
-                <option value="" />
-                <option value={1}>Command Line</option>
-                <option value={2}>Environment Variable</option>
-              </NativeSelect>
-              {Number(selected_row.parameter_method_id) === 1 && (
-                <CustomCheckbox
-                  onChange={value => this.changeEnv('is_encrypted', value)}
-                  checked={selected_row.is_encrypted}
-                  label="Encrypted"
-                />
-              )}
-              {Number(selected_row.parameter_method_id) === 2 && (
-                <>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <div>
-                      <CustomInput
-                        placeholder="Prefix"
-                        value={selected_row.command_line_prefix}
-                        name="prefix"
-                        onChange={e =>
-                          this.changeEnv('command_line_prefix', e.target.value)
-                        }
-                        inputStyles={{ input: cn.inputStyles }}
-                      />
-                    </div>
-                    <div>
-                      <CustomInput
-                        placeholder="Assignment"
-                        value={selected_row.command_line_assignment_char}
-                        name="assignment"
-                        onChange={e =>
-                          this.changeEnv(
-                            'command_line_assignment_char',
-                            e.target.value,
-                          )
-                        }
-                        inputStyles={{ input: cn.inputStyles }}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginTop: 10,
-                    }}
-                  >
-                    <div>
-                      <CustomCheckbox
-                        onChange={value =>
-                          this.changeEnv('command_line_escaped', value)
-                        }
-                        checked={selected_row.command_line_escaped}
-                        label="Escaped"
-                      />
-                    </div>
-                    <div style={{ width: '46%' }}>
-                      <CustomCheckbox
-                        onChange={value =>
-                          this.changeEnv('command_line_ignore_name', value)
-                        }
-                        checked={selected_row.command_line_ignore_name}
-                        label="Ignore Name"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </Paper>
-        </Poper>
       </>
     );
   }
@@ -677,7 +480,6 @@ class DefinitionPage extends PureComponent {
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
   locations: state.lookups.locations,
-  projects: state.projects,
   parameters: state.parameters,
   job_definition: state.job_definition,
 });
