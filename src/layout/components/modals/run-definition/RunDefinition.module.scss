@@ -103,3 +103,13 @@
 input[type=time]::-webkit-datetime-edit-ampm-field {
   display: none;
 }
+
+.tabValueAlt {
+  padding: 25px 0 0 0;
+}
+
+.tableContainerWrapper {
+  display: flex;
+  flex-direction: column;
+}
+

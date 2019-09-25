@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { setProject as setProjectAction, logoutUser } from 'ducks/actions';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Dialog, Toolbar } from '@material-ui/core';
+import { Toolbar } from '@material-ui/core';
+import { CreateProjectModal } from 'layout/components/modals/project-modal/CreateProject';
 
 import { CustomAppBar } from 'components/app-bar/AppBar';
 import {
@@ -13,13 +14,6 @@ import {
 } from 'ducks/operators/projects';
 
 import * as Sentry from '@sentry/browser';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from 'components/dialogs/Dialogs';
-import { CustomInput } from 'components/material-input/CustomInput';
-import classNames from 'classnames';
 import cn from './Project.module.scss';
 
 class ProjectsPage extends PureComponent {
@@ -108,6 +102,7 @@ class ProjectsPage extends PureComponent {
           {projects.length > 0 &&
             projects.map(project => (
               <div
+                key={project.project_name}
                 className={cn.projectItem}
                 onClick={() => {
                   this.goToJobsPage(project);
@@ -123,39 +118,13 @@ class ProjectsPage extends PureComponent {
               </div>
             ))}
         </div>
-        <Dialog
-          onClose={this.handleCloseProject}
-          aria-labelledby="customized-dialog-title"
+        <CreateProjectModal
+          handleCloseProject={this.handleCloseProject}
           open={open}
-          classes={{ paper: cn.paper }}
-        >
-          <DialogTitle
-            id="customized-dialog-title"
-            onClose={this.handleCloseProject}
-          >
-            <div className={cn.title}>Create Project</div>
-          </DialogTitle>
-          <DialogContent>
-            <div className={cn.container}>
-              <div className={cn.label}>Project Name</div>
-              <CustomInput
-                value={projectName}
-                name="projectName"
-                onChange={e => this.changeProjectName(e.target.value)}
-              />
-            </div>
-          </DialogContent>
-          <DialogActions className={cn.actions}>
-            <Button
-              onClick={this.createProject}
-              color="primary"
-              size="large"
-              className={classNames(cn.btn, cn.btnPrimary)}
-            >
-              Create Project
-            </Button>
-          </DialogActions>
-        </Dialog>
+          projectName={projectName}
+          changeProjectName={this.changeProjectName}
+          createProject={this.createProject}
+        />
       </>
     );
   }

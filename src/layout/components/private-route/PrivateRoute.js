@@ -8,7 +8,7 @@ import PrivateLayout from '../private-layout/PrivateLayout';
 
 class PrivateRouteWrapper extends React.PureComponent {
   static propTypes = {
-    isAuthenticated: PropTypes.string,
+    isAuthenticated: PropTypes.any,
     component: PropTypes.any,
     location: PropTypes.object,
   };

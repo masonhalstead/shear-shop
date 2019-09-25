@@ -7,14 +7,17 @@ export function normalizeWithUUID(array) {
   }));
 }
 export function normalizeDefinition(data, locations = []) {
+  const region = locations.filter(
+    filter => filter.location_name === data.region_endpoint_hint,
+  );
   return {
     ...data,
     timeout: new Date(data.timeout_seconds * 1000)
       .toUTCString()
       .match(/(\d\d:\d\d)/)[0],
-    region: locations.filter(
-      location => location.location_name === data.region_endpoint_hint,
-    )[0].location_id,
+    region: region.length > 0 ? region[0].location_id : 'empty',
+    location_id:
+      data.location_id === null ? 'empty' : data.location_id,
     uuid: uuid.v1(),
   };
 }

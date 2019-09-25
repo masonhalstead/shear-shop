@@ -26,7 +26,7 @@ export const configureColumns = callbacks => [
         <div style={{ cursor: 'pointer' }}>
           <CustomInputNoBorders
             placeholder="Parameter"
-            value={value}
+            value={value || ''}
             name="name"
             onChange={e =>
               callbacks.saveName(e.target.value, tableMeta.rowData[0])
@@ -75,7 +75,7 @@ export const configureColumns = callbacks => [
         <div style={{ textAlign: 'center' }}>
           <Select
             style={{ width: '100%' }}
-            value={value}
+            value={value || undefined}
             onClick={e => callbacks.handleOpenMethod(e, tableMeta.rowData[0])}
             input={<CustomInputNoBorders name="method" id="method" readOnly />}
           >
@@ -112,7 +112,7 @@ export const configureColumns = callbacks => [
         <div style={{ textAlign: 'center' }}>
           <NativeSelect
             style={{ width: '100%' }}
-            value={value}
+            value={value || undefined}
             onClick={e => callbacks.handleOpenRef(e, tableMeta.rowData[0])}
             input={
               <CustomInputNoBorders name="reference" id="reference" readOnly />
@@ -136,7 +136,7 @@ export const configureColumns = callbacks => [
         <div style={{ textAlign: 'center' }}>
           <CustomInputNoBorders
             inputStyles={{ input: cn.customHeight }}
-            value={value}
+            value={value || ''}
             name="default"
             onChange={e =>
               callbacks.saveDefault(e.target.value, tableMeta.rowData[0])
@@ -156,7 +156,7 @@ export const configureColumns = callbacks => [
         <div style={{ textAlign: 'center' }}>
           <CustomInputNoBorders
             inputStyles={{ input: cn.customHeight }}
-            value={value}
+            value={value || ''}
             name="description"
             onChange={e =>
               callbacks.saveDescription(e.target.value, tableMeta.rowData[0])

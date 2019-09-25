@@ -32,7 +32,7 @@ export class DefinitionBlock extends PureComponent {
             <div className={cn.label}>Job Definition</div>
             <CustomInput
               label="Job Definition"
-              value={job_definition_name}
+              value={job_definition_name || ''}
               name="Job Definition"
               onChange={e =>
                 handleDefinitionBlock({
@@ -46,7 +46,7 @@ export class DefinitionBlock extends PureComponent {
             <div className={cn.label}>Docker Image</div>
             <CustomInput
               label="Docker Image"
-              value={docker_image}
+              value={docker_image || ''}
               name="Docker Image"
               onChange={e =>
                 handleDefinitionBlock({
@@ -62,7 +62,7 @@ export class DefinitionBlock extends PureComponent {
           <CustomInputTextArea
             multiline
             label="Startup Command"
-            value={startup_command}
+            value={startup_command || ''}
             name="Startup Command"
             onChange={e =>
               handleDefinitionBlock({
@@ -78,7 +78,7 @@ export class DefinitionBlock extends PureComponent {
           <CustomInputTextArea
             multiline
             label="Description"
-            value={description}
+            value={description || ''}
             name="description"
             onChange={e =>
               handleDefinitionBlock({

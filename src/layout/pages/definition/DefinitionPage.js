@@ -49,7 +49,7 @@ class DefinitionPage extends PureComponent {
     description: '',
     cpu: '',
     timeout: '',
-    location: 'empty',
+    location_id: 'empty',
     max_retries: '',
     gpu: '',
     memory_gb: '',
@@ -367,6 +367,7 @@ class DefinitionPage extends PureComponent {
       memory_gb,
       data,
       parameters,
+      location_id,
     } = this.state;
     const {
       editDefinition,
@@ -390,9 +391,13 @@ class DefinitionPage extends PureComponent {
       startup_command,
       timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
       stdout_success_text,
-      region_endpoint_hint: locations.filter(
-        filter => filter.location_id === region,
-      )[0].location_name,
+      region_endpoint_hint:
+        region !== 'empty'
+          ? locations.filter(
+          filter => filter.location_id === Number(region),
+          )[0].location_name
+          : 'empty',
+      location_id: location_id === 'empty' ? null : location_id,
       cpu,
       gpu,
       max_retries,
@@ -419,9 +424,8 @@ class DefinitionPage extends PureComponent {
   };
 
   render() {
-    const { hamburger, history, projects } = this.props;
+    const { hamburger, history, projects, job_definition } = this.props;
     const {
-      definitionName,
       changes,
       job_definition_name,
       docker_image,
@@ -432,7 +436,7 @@ class DefinitionPage extends PureComponent {
       max_retries,
       gpu,
       stdout_success_text,
-      location,
+      location_id,
       result_method_id,
       region,
       memory_gb,
@@ -479,7 +483,7 @@ class DefinitionPage extends PureComponent {
               >
                 Job Definitions
               </div>
-              <div>{definitionName}</div>
+              <div>{job_definition_name}</div>
             </Breadcrumbs>
             <div className={cn.flex} />
             <div className={cn.iconContainer} onClick={this.saveDefinition}>
@@ -513,7 +517,7 @@ class DefinitionPage extends PureComponent {
               max_retries={max_retries}
               gpu={gpu}
               stdout_success_text={stdout_success_text}
-              location={location}
+              location={location_id}
               result_method_id={result_method_id}
               region={region}
               memory_gb={memory_gb}

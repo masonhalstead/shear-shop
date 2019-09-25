@@ -91,7 +91,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             />
           </div>
           <Divider className={cn.dividerOpen} />
-          <List classKey={{ root: cn.root }}>
+          <List classkey={{ root: cn.root }}>
             <ListItem
               button
               key="Projects"
@@ -106,10 +106,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   className={cn.fontIconAlign}
                 />
               </ListItemIcon>
-              <ListItemText
-                primary="Projects"
-                classes={{ primary: cn.rootColor, root: cn.textRoot }}
-              />
+              {open && (
+                <ListItemText
+                  primary="Projects"
+                  classes={{ primary: cn.rootColor, root: cn.textRoot }}
+                />
+              )}
             </ListItem>
           </List>
           <Divider
@@ -118,7 +120,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               { [cn.dividerClosed]: !open },
             )}
           />
-          <List classKey={{ root: cn.root }}>
+          <List classkey={{ root: cn.root }}>
             <ListItem
               button
               key="Jobs"
@@ -133,10 +135,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   className={cn.fontIconAlign}
                 />
               </ListItemIcon>
-              <ListItemText
-                primary="Jobs"
-                classes={{ primary: cn.rootColor, root: cn.textRoot }}
-              />
+              {open && (
+                <ListItemText
+                  primary="Jobs"
+                  classes={{ primary: cn.rootColor, root: cn.textRoot }}
+                />
+              )}
             </ListItem>
             {open && (
               <div className={cn.deepMenuItems}>
@@ -236,10 +240,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
                   className={cn.fontIconAlign}
                 />
               </ListItemIcon>
-              <ListItemText
-                primary="Job Definitions"
-                classes={{ primary: cn.rootColor, root: cn.textRoot }}
-              />
+              {open && (
+                <ListItemText
+                  primary="Job Definitions"
+                  classes={{ primary: cn.rootColor, root: cn.textRoot }}
+                />
+              )}
             </ListItem>
             {open && (
               <div className={cn.deepMenuItems}>
@@ -266,7 +272,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
           </List>
           <Divider className={cn.dividerOpen} />
           {!open && (
-            <List classKey={{ root: cn.root }}>
+            <List classkey={{ root: cn.root }}>
               <ListItem button key="Chevron" onClick={this.handleDrawerOpen}>
                 <ListItemIcon>
                   <FontAwesomeIcon
@@ -283,15 +289,11 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             <div className={cn.version} onClick={this.handleDrawerOpen}>
               {REACT_APP_VERSION}
               <div className={cn.closeButton}>
-                <ListItem button key="Close">
-                  <ListItemIcon>
-                    <FontAwesomeIcon
-                      icon="times"
-                      color="white"
-                      className={cn.fontIconAlignChevron}
-                    />
-                  </ListItemIcon>
-                </ListItem>
+                <FontAwesomeIcon
+                  icon="times"
+                  color="white"
+                  className={cn.fontIconAlignChevron}
+                />
               </div>
             </div>
           )}

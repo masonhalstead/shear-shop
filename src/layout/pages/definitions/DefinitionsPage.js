@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
-import { Toolbar, Breadcrumbs, Dialog, Button } from '@material-ui/core';
+import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
 import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
@@ -13,65 +13,10 @@ import { CustomizedInputBase } from 'components/search/SearchInput';
 import { logoutUser, setLoading } from 'ducks/actions';
 import Popover from 'components/popover/Popover';
 import TableViewCol from 'components/view-column/ViewColumn';
-import classNames from 'classnames';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from 'components/dialogs/Dialogs';
-import { CustomInput } from 'components/material-input/CustomInput';
 import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
+import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
 import cn from './Definitions.module.scss';
 import { configureColumns } from './columns';
-
-// const result = {
-//   client: 'Edelman',
-//   statement: 'April 2019',
-//   startdate: '2019-04-01T00:00:00',
-//   enddate: '2019-04-30T00:00:00',
-//   data: [
-//     {
-//       jobdefinition: 'Run Python',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-1',
-//       timeout: '32min',
-//       method: 'STDOUT JSON',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 1,
-//     },
-//     {
-//       jobdefinition: 'QScopeUpdate',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-14',
-//       timeout: '12h 32min',
-//       method: 'STDOUT',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 2,
-//     },
-//     {
-//       jobdefinition: 'QScopeUpdate Strategy2',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-14',
-//       timeout: '1h 32min',
-//       method: 'STDOUT("done")',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 3,
-//     },
-//     {
-//       jobdefinition: 'QScopeUpdate Strategy1',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-2',
-//       timeout: '2min',
-//       method: 'Auto',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 3,
-//     },
-//   ],
-// };
 
 class DefinitionsPage extends PureComponent {
   static propTypes = {
@@ -115,6 +60,7 @@ class DefinitionsPage extends PureComponent {
     columns: [],
     viewColumns: [],
     open: false,
+    id: '',
   };
 
   componentDidMount() {
@@ -154,9 +100,9 @@ class DefinitionsPage extends PureComponent {
   };
 
   openDefinition = id => {
-    const { history } = this.props;
-    const projectId = 1;
-    history.push(`/projects/${projectId}/definitions/${id}/definition`);
+    const { history, location } = this.props;
+    const [, , project_id] = location.pathname.split('/');
+    history.push(`/projects/${project_id}/definitions/${id}/definition`);
   };
 
   onSearch = e => {
@@ -203,7 +149,7 @@ class DefinitionsPage extends PureComponent {
       location,
       setLoadingAction,
     } = this.props;
-    
+
     const [, , project_id] = location.pathname.split('/');
 
     await setLoadingAction(true);
@@ -284,12 +230,14 @@ class DefinitionsPage extends PureComponent {
       viewColumns,
       open,
       jobName,
+      id,
     } = this.state;
+
+    const projectId = location.pathname.split('/')[2];
 
     let projectName = '';
     if (projects.length > 0) {
       if (!Object(project).hasOwnProperty('project_id')) {
-        const projectId = location.pathname.split('/')[2];
         projectName = projects.filter(
           project => project.project_id === Number(projectId),
         )[0].project_name;
@@ -362,47 +310,25 @@ class DefinitionsPage extends PureComponent {
             />
           </TableContainer>
         )}
-        <RunDefinition
-          opened={run}
-          toggleModal={() => this.setState({ run: false })}
-          runJob={this.runJob}
-          handleClose={this.handleClose}
-          title={title}
-          locations={lookups.locations}
-        />
-        <Dialog
-          onClose={this.handleCloseDefinition}
-          aria-labelledby="customized-dialog-title"
+        {run && (
+          <RunDefinition
+            opened={run}
+            toggleModal={() => this.setState({ run: false })}
+            runJob={this.runJob}
+            handleClose={this.handleClose}
+            title={title}
+            id={id}
+            locations={lookups.locations}
+            projectId={projectId}
+          />
+        )}
+        <CreateJobDefinition
+          handleCloseDefinition={this.handleCloseDefinition}
           open={open}
-          classes={{ paper: cn.paper }}
-        >
-          <DialogTitle
-            id="customized-dialog-title"
-            onClose={this.handleCloseDefinition}
-          >
-            <div className={cn.title}>Create Job Definition</div>
-          </DialogTitle>
-          <DialogContent>
-            <div className={cn.container}>
-              <div className={cn.label}>Job Definition Name</div>
-              <CustomInput
-                value={jobName}
-                name="jobName"
-                onChange={e => this.changeJobName(e.target.value)}
-              />
-            </div>
-          </DialogContent>
-          <DialogActions className={cn.actions}>
-            <Button
-              onClick={this.createDefinition}
-              color="primary"
-              size="large"
-              className={classNames(cn.btn, cn.btnPrimary)}
-            >
-              Create Definition
-            </Button>
-          </DialogActions>
-        </Dialog>
+          jobName={jobName}
+          changeJobName={this.changeJobName}
+          createDefinition={this.createDefinition}
+        />
       </>
     );
   }

@@ -18,6 +18,7 @@ export const getJobDefinition = definition_id => async dispatch => {
 export const getDefinition = definition_id => async (dispatch, getState) => {
   const state = getState();
   const res = await getData(`/job_definitions/${definition_id}`);
+
   const definition = normalizeDefinition(res.data, state.lookups.locations);
   await dispatch(setJobDefinition(definition));
   return definition;

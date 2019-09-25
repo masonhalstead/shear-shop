@@ -19,10 +19,10 @@ export class ConnectedConfigTab extends PureComponent {
     max_retries: PropTypes.number,
     gpu: PropTypes.number,
     stdout_success_text: PropTypes.string,
-    location: PropTypes.string,
+    location: PropTypes.number,
     locations: PropTypes.array,
     result_method_id: PropTypes.number,
-    region: PropTypes.number,
+    region: PropTypes.any,
     memory_gb: PropTypes.number,
     result_methods: PropTypes.array,
     handleDefinitionTabs: PropTypes.func,
@@ -53,7 +53,7 @@ export class ConnectedConfigTab extends PureComponent {
               className={cn.rowPadding}
               type="number"
               label="CPU"
-              value={cpu}
+              value={cpu || ''}
               name="cpu"
               onChange={e => handleDefinitionTabs({ cpu: e.target.value })}
               inputStyles={{ input: cn.inputStyles }}
@@ -65,7 +65,7 @@ export class ConnectedConfigTab extends PureComponent {
               type="time"
               className={cn.rowPadding}
               label="Timeout"
-              value={timeout}
+              value={timeout || ''}
               name="dockerImage"
               onChange={e => handleDefinitionTabs({ timeout: e.target.value })}
               inputStyles={{ input: cn.inputStyles }}
@@ -77,7 +77,7 @@ export class ConnectedConfigTab extends PureComponent {
               className={cn.rowPadding}
               type="number"
               label="Max Retries"
-              value={max_retries}
+              value={max_retries || ''}
               name="max_retries"
               onChange={e =>
                 handleDefinitionTabs({ max_retries: e.target.value })
@@ -93,7 +93,7 @@ export class ConnectedConfigTab extends PureComponent {
               className={cn.rowPadding}
               label="GPU"
               type="number"
-              value={gpu}
+              value={gpu || ''}
               name="gpu"
               onChange={e => handleDefinitionTabs({ gpu: e.target.value })}
               inputStyles={{ input: cn.inputStyles }}
@@ -103,7 +103,7 @@ export class ConnectedConfigTab extends PureComponent {
             <div className={cn.label}>Location</div>
             <NativeSelect
               disabled={region !== 'empty'}
-              value={location}
+              value={location || undefined}
               onChange={e => handleDefinitionTabs({ location: e.target.value })}
               input={
                 region !== 'empty' ? (
@@ -124,7 +124,7 @@ export class ConnectedConfigTab extends PureComponent {
           <FormControl className={cn.containerRight}>
             <div className={cn.label}>Result Method</div>
             <NativeSelect
-              value={result_method_id}
+              value={result_method_id || undefined}
               onChange={e =>
                 handleDefinitionTabs({ result_method_id: e.target.value })
               }
@@ -148,7 +148,7 @@ export class ConnectedConfigTab extends PureComponent {
               className={cn.rowPadding}
               label="Memory GB"
               type="number"
-              value={memory_gb}
+              value={memory_gb || ''}
               name="memory_gb"
               onChange={e =>
                 handleDefinitionTabs({ memory_gb: e.target.value })
@@ -160,7 +160,7 @@ export class ConnectedConfigTab extends PureComponent {
             <div className={cn.label}>Region Hint</div>
             <NativeSelect
               disabled={location !== 'empty'}
-              value={region}
+              value={region || undefined}
               onChange={e => handleDefinitionTabs({ region: e.target.value })}
               input={
                 location !== 'empty' ? (
@@ -184,7 +184,7 @@ export class ConnectedConfigTab extends PureComponent {
               <CustomInput
                 className={cn.rowPadding}
                 label="Success Text"
-                value={stdout_success_text}
+                value={stdout_success_text || ''}
                 name="stdout_success_text"
                 onChange={e =>
                   handleDefinitionTabs({ stdout_success_text: e.target.value })
@@ -198,7 +198,7 @@ export class ConnectedConfigTab extends PureComponent {
                 disabled
                 className={cn.rowPadding}
                 label="Success Text"
-                value={stdout_success_text}
+                value={stdout_success_text || ''}
                 name="stdout_success_text"
                 onChange={e =>
                   handleDefinitionTabs({ stdout_success_text: e.target.value })
