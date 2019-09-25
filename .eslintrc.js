@@ -70,6 +70,7 @@ module.exports = {
     'react/require-default-props': 0,
     'react/require-extension': 0,
     'react/self-closing-comp': 0,
+    'react/state-in-constructor': 0,
     'react/static-property-placement': 0,
     'require-yield': 0,
     'camelcase': 0,

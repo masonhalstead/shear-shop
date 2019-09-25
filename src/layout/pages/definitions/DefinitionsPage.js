@@ -21,57 +21,9 @@ import {
 } from 'components/dialogs/Dialogs';
 import { CustomInput } from 'components/material-input/CustomInput';
 import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
+import {CreateJobDefinition} from 'layout/components/modals/create-job-definition/CreateJobDefinition';
 import cn from './Definitions.module.scss';
 import { configureColumns } from './columns';
-
-// const result = {
-//   client: 'Edelman',
-//   statement: 'April 2019',
-//   startdate: '2019-04-01T00:00:00',
-//   enddate: '2019-04-30T00:00:00',
-//   data: [
-//     {
-//       jobdefinition: 'Run Python',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-1',
-//       timeout: '32min',
-//       method: 'STDOUT JSON',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 1,
-//     },
-//     {
-//       jobdefinition: 'QScopeUpdate',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-14',
-//       timeout: '12h 32min',
-//       method: 'STDOUT',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 2,
-//     },
-//     {
-//       jobdefinition: 'QScopeUpdate Strategy2',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-14',
-//       timeout: '1h 32min',
-//       method: 'STDOUT("done")',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 3,
-//     },
-//     {
-//       jobdefinition: 'QScopeUpdate Strategy1',
-//       requirements: '1CPU, 16GM RAM',
-//       location: 'us east-2',
-//       timeout: '2min',
-//       method: 'Auto',
-//       createdBy: 'Linyx User',
-//       created: '8/13/19 13:00:00',
-//       id: 3,
-//     },
-//   ],
-// };
 
 class DefinitionsPage extends PureComponent {
   static propTypes = {
@@ -130,7 +82,6 @@ class DefinitionsPage extends PureComponent {
       await getJobDefinitions(project_id);
       await this.createColumns();
       setLoadingAction(false);
-
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
@@ -198,8 +149,13 @@ class DefinitionsPage extends PureComponent {
 
   createDefinition = async () => {
     const { jobName } = this.state;
+    const {
+      addJobDefinition,
+      getJobDefinitions,
+      location,
+      setLoadingAction,
+    } = this.props;
 
-    const { addJobDefinition, getJobDefinitions, location, setLoadingAction } = this.props;
     const [, , project_id] = location.pathname.split('/');
 
     await setLoadingAction(true);
@@ -211,12 +167,15 @@ class DefinitionsPage extends PureComponent {
       docker_image: '/dockerimage',
       result_method_id: 1,
       startup_command: 'nothing',
-      timeout_seconds: 10000,
+      timeout_seconds: 86400,
       stdout_success_text: 'winning',
       region_endpoint_hint: 'us-east-1e',
+      cpu: 0,
+      gpu: 0,
+      memory_gb: 0,
       parameters: [
         {
-          parameter_name: 'Parameter 2',
+          parameter_name: 'Parameter2',
           parameter_direction_id: 1,
           parameter_method_id: 1,
           is_required: true,
@@ -232,7 +191,7 @@ class DefinitionsPage extends PureComponent {
           reference_parameter_name: null,
         },
         {
-          parameter_name: 'Parameter 3',
+          parameter_name: 'Parameter3',
           parameter_direction_id: 2,
           parameter_method_id: 1,
           is_required: true,
@@ -363,39 +322,13 @@ class DefinitionsPage extends PureComponent {
           title={title}
           locations={lookups.locations}
         />
-        <Dialog
-          onClose={this.handleCloseDefinition}
-          aria-labelledby="customized-dialog-title"
+        <CreateJobDefinition
+          handleCloseDefinition={this.handleCloseDefinition}
           open={open}
-          classes={{ paper: cn.paper }}
-        >
-          <DialogTitle
-            id="customized-dialog-title"
-            onClose={this.handleCloseDefinition}
-          >
-            <div className={cn.title}>Create Job Definition</div>
-          </DialogTitle>
-          <DialogContent>
-            <div className={cn.container}>
-              <div className={cn.label}>Job Definition Name</div>
-              <CustomInput
-                value={jobName}
-                name="jobName"
-                onChange={e => this.changeJobName(e.target.value)}
-              />
-            </div>
-          </DialogContent>
-          <DialogActions className={cn.actions}>
-            <Button
-              onClick={this.createDefinition}
-              color="primary"
-              size="large"
-              className={classNames(cn.btn, cn.btnPrimary)}
-            >
-              Create Definition
-            </Button>
-          </DialogActions>
-        </Dialog>
+          jobName={jobName}
+          changeJobName={this.changeJobName}
+          createDefinition={this.createDefinition}
+        />
       </>
     );
   }

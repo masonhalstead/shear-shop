@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TableContainer } from 'components/table-view/TableContainer';
 import { TableContent } from 'components/table-view/TableContent';
-import { Toolbar, Breadcrumbs, Dialog, Button } from '@material-ui/core';
+import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
+import {BatchModal} from 'layout/components/modals/batch-modal/BatchModal';
 import {
   getJobs as getJobsAction,
   addJobBatch as addJobBatchAction,
@@ -17,13 +18,6 @@ import Popover from 'components/popover/Popover';
 import TableViewCol from 'components/view-column/ViewColumn';
 import { configureColumns } from './columns';
 import cn from './Jobs.module.scss';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from 'components/dialogs/Dialogs';
-import { CustomInput } from 'components/material-input/CustomInput';
-import classNames from 'classnames';
 
 const result = {
   data: [
@@ -319,39 +313,13 @@ class JobsPage extends PureComponent {
             />
           </TableContainer>
         )}
-        <Dialog
-          onClose={this.handleCloseBatch}
-          aria-labelledby="customized-dialog-title"
+        <BatchModal
+          handleCloseBatch={this.handleCloseBatch}
           open={open}
-          classes={{ paper: cn.paper }}
-        >
-          <DialogTitle
-            id="customized-dialog-title"
-            onClose={this.handleCloseProject}
-          >
-            <div className={cn.title}>Edit Batch</div>
-          </DialogTitle>
-          <DialogContent>
-            <div className={cn.container}>
-              <div className={cn.label}>Batch Name</div>
-              <CustomInput
-                value={batchName}
-                name="batchName"
-                onChange={e => this.changeBatchName(e.target.value)}
-              />
-            </div>
-          </DialogContent>
-          <DialogActions className={cn.actions}>
-            <Button
-              onClick={this.createBatch}
-              color="primary"
-              size="large"
-              className={classNames(cn.btn, cn.btnPrimary)}
-            >
-              Edit Batch
-            </Button>
-          </DialogActions>
-        </Dialog>
+          batchName={batchName}
+          changeBatchName={this.changeBatchName}
+          createBatch={this.createBatch}
+        />
       </>
     );
   }

@@ -104,7 +104,7 @@ class RunDefinition extends PureComponent {
         runJob={this.runJob}
         title={title}
       >
-        <Typography gutterBottom>
+        <Typography component={'span'} gutterBottom>
           <div className={cn.container}>
             <div className={cn.label}>Docker Image</div>
             <CustomInput
@@ -253,10 +253,10 @@ class RunDefinition extends PureComponent {
           </div>
           <div className={cn.divider} />
         </Typography>
-        <Typography>
+        <Typography component={'span'}>
           <div className={cn.label}>Parameters</div>
           {params.map((param, index) => (
-            <div className={cn.containerRow}>
+            <div className={cn.containerRow} key={`name_${index}`}>
               <div className={cn.formControl}>
                 <div className={cn.container}>
                   <div className={cn.label}>{`Parameter ${index} Name`}</div>
@@ -290,7 +290,7 @@ class RunDefinition extends PureComponent {
             </div>
           ))}
           <div className={cn.addMore} onClick={this.addMoreParameters}>
-            <FontAwesomeIcon icon="plus" color="#818fa3" size={30} />
+            <FontAwesomeIcon icon="plus" color="#818fa3" />
             <span className={cn.addMoreButton}>Add More Parameters</span>
           </div>
         </Typography>

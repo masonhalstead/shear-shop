@@ -91,7 +91,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             />
           </div>
           <Divider className={cn.dividerOpen} />
-          <List classKey={{ root: cn.root }}>
+          <List classkey={{ root: cn.root }}>
             <ListItem
               button
               key="Projects"
@@ -118,7 +118,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               { [cn.dividerClosed]: !open },
             )}
           />
-          <List classKey={{ root: cn.root }}>
+          <List classkey={{ root: cn.root }}>
             <ListItem
               button
               key="Jobs"
@@ -266,7 +266,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
           </List>
           <Divider className={cn.dividerOpen} />
           {!open && (
-            <List classKey={{ root: cn.root }}>
+            <List classkey={{ root: cn.root }}>
               <ListItem button key="Chevron" onClick={this.handleDrawerOpen}>
                 <ListItemIcon>
                   <FontAwesomeIcon

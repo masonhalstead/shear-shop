@@ -3,11 +3,13 @@ import { CustomInputNoBorders } from 'components/material-input/CustomInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cn from './Definition.module.scss';
 
-export const configureColumnsOutput = (
-  saveOutputName,
-  saveOutputDescription,
-  deleteOutputRow,
-) => [
+export const configureColumnsOutput = callbacks => [
+  {
+    name: 'uuid',
+    options: {
+      display: false,
+    },
+  },
   {
     name: 'parameter_name',
     label: 'Name',
@@ -20,7 +22,9 @@ export const configureColumnsOutput = (
             placeholder="Parameter"
             value={value}
             name="paramsName"
-            onChange={e => saveOutputName(e.target.value, tableMeta.rowIndex)}
+            onChange={e =>
+              callbacks.saveName(e.target.value, tableMeta.rowData[0])
+            }
             inputStyles={{ input: cn.customHeight }}
           />
         </div>
@@ -40,7 +44,7 @@ export const configureColumnsOutput = (
             value={value}
             name="description"
             onChange={e =>
-              saveOutputDescription(e.target.value, tableMeta.rowIndex)
+              callbacks.saveDescription(e.target.value, tableMeta.rowData[0])
             }
           />
         </div>
@@ -57,7 +61,7 @@ export const configureColumnsOutput = (
         tableMeta.rowIndex !== 0 && (
           <div
             style={{ textAlign: 'center', cursor: 'pointer' }}
-            onClick={() => deleteOutputRow(tableMeta.rowIndex)}
+            onClick={() => callbacks.deleteRow(tableMeta.rowData[0])}
           >
             <FontAwesomeIcon icon="trash" color="#818fa3" />
           </div>
