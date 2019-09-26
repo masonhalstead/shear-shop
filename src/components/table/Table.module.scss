@@ -13,13 +13,13 @@
   color: #62738d;
   font-size: 13px;
   background: #f7f8fb;
-  border: 1px solid #dde3ee;
+  border: 1px solid #cfd7e6;
 }
 .tableHeaderCell {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-right: 1px solid #dde3ee;
+  border-right: 1px solid #cfd7e6;
   span {
     margin-left: 10px;
   }
@@ -42,22 +42,22 @@
   font-size: 13px;
   font-weight: 300;
   height: 32px;
-  border-left: 1px solid #dde3ee;
-  border-right: 1px solid #dde3ee;
-  border-bottom: 1px solid #dde3ee;
+  border-left: 1px solid #cfd7e6;
+  border-right: 1px solid #cfd7e6;
+  border-bottom: 1px solid #cfd7e6;
 }
 .tableRow {
   display: flex;
   align-items: stretch;
   background: #fff;
-  border: 1px solid #dde3ee;
+  border: 1px solid #cfd7e6;
   border-top: none;
 }
 .tableCell {
   display: flex;
   width: 100%;
   align-items: center;
-  border-right: 1px solid #dde3ee;
+  border-right: 1px solid #cfd7e6;
   min-width: 0;
 }
 .tableHeader > div:last-child,
