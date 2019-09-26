@@ -33,7 +33,7 @@
   .placeholder {
     overflow: hidden;
     cursor: pointer;
-    color: #62738d;
+    color: lighten(#62738d,20);
     font-size: 13px;
     text-overflow: ellipsis;
     word-break: break-all;

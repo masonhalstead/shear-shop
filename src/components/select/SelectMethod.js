@@ -7,16 +7,6 @@ import { CheckboxAlt } from 'components/checkbox/CheckboxAlt';
 import cn from './Select.module.scss';
 
 class ConnectedSelectMethod extends Component {
-  state = {
-    parameter_method_name: 'Command Line',
-    parameter_method_id: 1,
-    is_encrypted: false,
-    command_line_prefix: '',
-    command_line_assignment_char: '',
-    command_line_escaped: null,
-    command_line_ignore_name: null,
-  };
-
   handleParameterSelect = item => {
     const { handleMultiSelect } = this.props;
     let command_line = {};
@@ -44,44 +34,40 @@ class ConnectedSelectMethod extends Component {
     };
 
     handleMultiSelect(state);
-    this.setState(state);
   };
 
-  handleRowManagement = () => {
+  handleRowManagement = item => {
     const { handleMultiSelect } = this.props;
-    handleMultiSelect(this.state);
+    const { row } = this.props;
+
+    handleMultiSelect({
+      ...row,
+      ...item,
+    });
   };
 
   handlePrefix = item => {
-    this.setState({ command_line_prefix: item.value }, () =>
-      this.handleRowManagement(),
-    );
+    this.handleRowManagement({ command_line_prefix: item.value });
   };
 
   handleAssignment = item => {
-    this.setState({ command_line_assignment_char: item.value }, () =>
-      this.handleRowManagement(),
-    );
+    this.handleRowManagement({ command_line_assignment_char: item.value });
   };
 
   handleEncrypt = value => {
-    this.setState({ is_encrypted: value }, () => this.handleRowManagement());
+    this.handleRowManagement({ is_encrypted: value });
   };
 
   handleEscaped = value => {
-    this.setState({ command_line_escaped: value }, () =>
-      this.handleRowManagement(),
-    );
+    this.handleRowManagement({ command_line_escaped: value });
   };
 
   handleIgnored = value => {
-    this.setState({ command_line_ignore_name: value }, () =>
-      this.handleRowManagement(),
-    );
+    this.handleRowManagement({ command_line_ignore_name: value });
   };
 
   render() {
-    const { parameter_methods } = this.props;
+    const { parameter_methods, row } = this.props;
     const {
       command_line_prefix,
       command_line_assignment_char,
@@ -90,7 +76,7 @@ class ConnectedSelectMethod extends Component {
       command_line_escaped,
       command_line_ignore_name,
       is_encrypted,
-    } = this.state;
+    } = row;
     return (
       <div className={cn.selectMethodContainer}>
         <Dropdown

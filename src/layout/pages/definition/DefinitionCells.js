@@ -56,6 +56,7 @@ export const MethodCell = ({ row, callbacks }) => {
   return (
     <DropdownMethod
       icon={icon}
+      row={row}
       handleOnSelect={item => callbacks.handleMethod(row, item)}
     />
   );
@@ -73,6 +74,7 @@ export const ReferencesCell = ({ row, callbacks }) => {
     <DropdownReference
       value={row.reference}
       right_icon="chevron-down"
+      row={row}
       handleOnSelect={item => callbacks.handleReference(row, item)}
     />
   );

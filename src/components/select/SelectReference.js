@@ -13,12 +13,6 @@ const extended = [
 ];
 
 class ConnectedSelectReference extends Component {
-  state = {
-    project_name: '',
-    reference_parameter_name: '',
-    reference_id: null,
-  };
-
   handleProjectSelect = item => {
     let state = {
       reference_id: item.project_id,
@@ -34,23 +28,33 @@ class ConnectedSelectReference extends Component {
         reference: '',
       };
     }
-    this.setState(state, () => this.handleRowManagement());
+    this.handleRowManagement(state);
   };
 
-  handleRowManagement = () => {
+  handleRowManagement = item => {
     const { handleMultiSelect } = this.props;
-    handleMultiSelect(this.state);
+    const { row } = this.props;
+
+    handleMultiSelect({
+      ...row,
+      ...item,
+    });
   };
 
   handleReferenceName = item => {
-    this.setState({ reference_parameter_name: item.value }, () =>
-      this.handleRowManagement(),
-    );
+    this.handleRowManagement({ reference_parameter_name: item.value });
   };
 
   render() {
-    const { projects } = this.props;
-    const { reference_parameter_name, project_name } = this.state;
+    const { projects, row } = this.props;
+    const { reference_parameter_name, reference_id } = row;
+    let project_name = '';
+    const index = projects.findIndex(
+      project => project.project_id === reference_id,
+    );
+    if (index > -1) {
+      project_name = projects[index].project_name;
+    }
     return (
       <div className={cn.selectMethodContainer}>
         <Dropdown
