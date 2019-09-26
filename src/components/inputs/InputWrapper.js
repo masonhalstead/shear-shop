@@ -56,7 +56,7 @@ export class InputWrapper extends Component {
       ...rest
     } = this.props;
     return (
-      <div className={cn.inputWrapper} style={{margin}}>
+      <div className={cn.inputWrapper} style={{ margin }}>
         {label && (
           <InputLabel label={label} handleClose={this.props.handleClose} />
         )}

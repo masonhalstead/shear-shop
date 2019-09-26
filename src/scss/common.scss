@@ -15,6 +15,20 @@ h6 {
     margin: 5px 0px;
 }
 
+a {
+  color: #3e96ed;
+  font-weight: 300;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.cell {
+  padding: 0px 5px;
+  align-self: center;
+  margin: 0px;
+  width: 100%;
+}
+
 .MuiListItem-button:hover {
   background-color: transparent;
 }

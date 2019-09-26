@@ -2,25 +2,21 @@ export function isObject(obj) {
   const type = typeof obj;
   return type === 'function' || (type === 'object' && !!obj);
 }
-export function manageBulkStyles(bulk = false, background = '#fff') {
-  if (!bulk) {
-    return {
-      styles: {},
-      scroll_styles: {},
-    };
+
+export function formatNull(value, append = '') {
+  if (value === null || value === undefined) {
+    return append;
   }
-  return {
-    styles: {
-      background: background === '#fff' ? 'transparent' : background,
-      margin: '0px',
-      border_radius: '0px',
-      border: 'none',
-    },
-    scroll_styles: {
-      width: 'auto',
-      left: '-1px',
-      right: '-1px',
-      borderRadius: '0px',
-    },
-  };
+  return value;
+}
+
+export function containsStrings(string1 = '', string2 = '') {
+  return string1
+    .toString()
+    .toLowerCase()
+    .includes(string2.toString().toLowerCase());
+}
+
+export function compareJSON(array1 = [], array2 = []) {
+  return JSON.stringify(array1) === JSON.stringify(array2);
 }

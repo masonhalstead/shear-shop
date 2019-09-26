@@ -70,6 +70,17 @@
   min-height: 30px;
   max-height: 30px;
 }
+.inputNavIcon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  justify-content: center;
+  min-width: 24px;
+  width: 24px;
+  color: #62738d;
+  min-height: 30px;
+  max-height: 30px;
+}
 .inputRightIcon {
   margin-right: 5px;
   border-top-right-radius: 5px;
