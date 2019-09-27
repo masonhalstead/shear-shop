@@ -15,7 +15,7 @@ const getClassForState = state => {
 
 export const configureColumns = (openDetailPage, openBatch) => [
   {
-    name: 'jobname',
+    name: 'job_definition_name',
     label: 'Job',
     options: {
       filter: true,
@@ -29,7 +29,7 @@ export const configureColumns = (openDetailPage, openBatch) => [
     },
   },
   {
-    name: 'state',
+    name: 'job_state_name',
     label: 'State',
     options: {
       filter: true,
@@ -45,7 +45,7 @@ export const configureColumns = (openDetailPage, openBatch) => [
     },
   },
   {
-    name: 'duration',
+    name: 'duration_seconds',
     label: 'Duration',
     options: {
       filter: true,
@@ -59,7 +59,7 @@ export const configureColumns = (openDetailPage, openBatch) => [
     },
   },
   {
-    name: 'requirements',
+    name: 'required_gpu',
     label: 'Requirements',
     options: {
       filter: true,
@@ -73,7 +73,7 @@ export const configureColumns = (openDetailPage, openBatch) => [
     },
   },
   {
-    name: 'createdBy',
+    name: 'created_by',
     label: 'Created By',
     options: {
       filter: true,
@@ -87,7 +87,7 @@ export const configureColumns = (openDetailPage, openBatch) => [
     },
   },
   {
-    name: 'created',
+    name: 'start_datetime_utc',
     label: 'Created',
     options: {
       filter: true,
@@ -95,13 +95,13 @@ export const configureColumns = (openDetailPage, openBatch) => [
       display: true,
       customBodyRender: value => (
         <div style={{ textAlign: 'center' }}>
-          <span className={cn.textColor}>{value}</span>
+          <span className={cn.textColor}>{new Date(value).toLocaleDateString("en-US")}</span>
         </div>
       ),
     },
   },
   {
-    name: 'id',
+    name: 'job_id',
     label: ' ',
     options: {
       viewColumns: false,
@@ -113,7 +113,7 @@ export const configureColumns = (openDetailPage, openBatch) => [
     },
   },
   {
-    name: 'id',
+    name: 'job_id',
     label: ' ',
     options: {
       viewColumns: false,
