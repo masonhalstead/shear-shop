@@ -8,6 +8,7 @@ export class DropdownMethod extends Component {
   static propTypes = {
     icon: PropTypes.string,
     handleOnSelect: PropTypes.func,
+    row: PropTypes.object,
   };
 
   static defaultProps = {
@@ -20,7 +21,7 @@ export class DropdownMethod extends Component {
   };
 
   render() {
-    const { icon } = this.props;
+    const { icon, row } = this.props;
 
     return (
       <SelectContainer
@@ -32,6 +33,7 @@ export class DropdownMethod extends Component {
         }}
         select={{
           component: SelectMethod,
+          row,
         }}
       />
     );

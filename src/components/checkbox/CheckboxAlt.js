@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from './Checkbox.module.scss';
 
-export const CheckboxAlt = ({ checked, onChange, label, margin }) => (
+export const CheckboxAlt = ({ checked, onChange, label, margin, weight }) => (
   <div
     className={cn.checkboxContainer}
     onClick={() => onChange(!checked)}
@@ -14,18 +14,24 @@ export const CheckboxAlt = ({ checked, onChange, label, margin }) => (
       checked={checked}
       readOnly
     />
-    {label && <p className={cn.checkboxLabel}>{label}</p>}
+    {label && (
+      <p className={cn.checkboxLabel} style={{ fontWeight: weight }}>
+        {label}
+      </p>
+    )}
   </div>
 );
 CheckboxAlt.defaultProps = {
   checked: false,
   label: false,
+  weight: 400,
   margin: '0px',
   onChange: () => {},
 };
 CheckboxAlt.propTypes = {
   onChange: PropTypes.func,
   label: PropTypes.any,
+  weight: PropTypes.number,
   margin: PropTypes.string,
   checked: PropTypes.bool,
 };

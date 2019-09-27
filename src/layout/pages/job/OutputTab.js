@@ -1,38 +1,74 @@
-import { TableContainer } from 'components/table-view/TableContainer';
-import cn from './Job.module.scss';
-import { TableContent } from 'components/table-view/TableContent';
-import React from 'react';
-import { configureColumnsOutput, data } from './outputColumns';
+import React, { Component } from 'react';
+import { Table } from 'components/table/Table';
+import uuid from 'uuid';
+import {
+  ParameterNameCell,
+  ParameterValueCell,
+  ParameterDescriptionCell,
+} from './JobCells';
 
-export const OutputTab = ({ options }) => (
-  <TableContainer style={cn.tableContainerWrapper}>
-    <TableContent
-      tableData={data}
-      tableOptions={options}
-      columns={configureColumnsOutput()}
-      styles={{
-        MuiTableCell: {
-          root: {
-            border: '1px solid #dde3ee',
-            borderBottom: '1px solid #dde3ee',
-          },
-          body: {
-            fontSize: '13px',
-            fontWeight: 300,
-            lineHeight: '1',
-            padding: '5px !important',
-            '&:nth-child(2)': {
-              width: 189,
-            },
-            '&:nth-child(4)': {
-              width: 189,
-            },
-          },
-          head: {
-            fontSize: '1rem',
-          },
-        },
-      }}
-    />
-  </TableContainer>
-);
+const data = [
+  {
+    parameter_name: 'Parameter Name',
+    default_value: 'default value',
+    description: '',
+  },
+  {
+    parameter_name: 'Parameter Name',
+    default_value: 'default value',
+    description: '',
+  },
+  {
+    parameter_name: 'Parameter Name',
+    default_value: 'default value',
+    description: '',
+  },
+  {
+    parameter_name: 'Parameter Name',
+    default_value: 'default value',
+    description: '',
+  },
+];
+
+export class OutputTab extends Component {
+  state = {
+    headers: [
+      {
+        title: 'Name',
+        show: true,
+        min_width: '225px',
+        sort: 'default',
+        sort_key: 'parameter_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Value',
+        show: true,
+        min_width: '225px',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Description',
+        show: true,
+        flex_grow: 1,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+    ],
+  };
+
+  render() {
+    return (
+      <Table
+        rows={data}
+        headers={this.state.headers}
+        cell_components={[
+          ParameterNameCell,
+          ParameterValueCell,
+          ParameterDescriptionCell,
+        ]}
+      />
+    );
+  }
+}

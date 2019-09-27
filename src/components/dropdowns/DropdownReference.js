@@ -8,6 +8,7 @@ export class DropdownReference extends Component {
   static propTypes = {
     value: PropTypes.string,
     right_icon: PropTypes.any,
+    row: PropTypes.object,
     handleOnSelect: PropTypes.func,
   };
 
@@ -17,7 +18,7 @@ export class DropdownReference extends Component {
   };
 
   render() {
-    const { right_icon, value } = this.props;
+    const { right_icon, row, value } = this.props;
     return (
       <SelectContainer
         handleOnMultiSelect={this.handleOnMultiSelect}
@@ -29,6 +30,7 @@ export class DropdownReference extends Component {
         }}
         select={{
           component: SelectReference,
+          row,
         }}
       />
     );

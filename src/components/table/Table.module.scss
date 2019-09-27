@@ -1,0 +1,71 @@
+@import 'scss/common';
+
+.table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+}
+.tableHeader {
+  display: flex;
+  align-items: stretch;
+  font-weight: 400;
+  color: #62738d;
+  font-size: 13px;
+  background: #f7f8fb;
+  border: 1px solid #cfd7e6;
+}
+.tableHeaderCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #cfd7e6;
+  span {
+    margin-left: 10px;
+  }
+}
+.headerSort {
+  cursor: pointer;
+}
+.headerSort:hover {
+  color: #3e96ed;
+}
+.tableRowWrapper {
+  flex-grow: 1;
+}
+.tableRowEmpty {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: #62738d;
+  font-size: 13px;
+  font-weight: 300;
+  height: 32px;
+  border-left: 1px solid #cfd7e6;
+  border-right: 1px solid #cfd7e6;
+  border-bottom: 1px solid #cfd7e6;
+}
+.tableRow {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border: 1px solid #cfd7e6;
+  border-top: none;
+}
+.tableCell {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  border-right: 1px solid #cfd7e6;
+  min-width: 0;
+}
+.tableHeader > div:last-child,
+.tableRow > div:last-child,
+.tableRowDefault > div:last-child {
+  border-right: none;
+}
+.tableRow:hover .tableCell {
+  background: #e1edf7 !important;
+}
+

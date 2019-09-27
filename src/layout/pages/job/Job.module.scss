@@ -1,5 +1,47 @@
 @import "src/scss/styles";
 
+.cell {
+  padding: 0px 5px;
+  color: #62738d;
+  font-weight: 300;
+  font-size: 13px;
+  align-self: center;
+  margin: 0px;
+  width: 100%;
+}
+.overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
+.jobCell {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 5px;
+  align-self: center;
+  margin: 0px;
+  width: 100%;
+}
+.description {
+  color: #62738d;
+  font-size: 11px;
+}
+.stateIcon {
+  font-size: 11px;
+  color: #5db85b;
+  margin-right: 10px;
+}
+.textCenter {
+  text-align: center;
+  justify-content: center;
+}
+.textRight {
+  text-align: right;
+  justify-content: flex-end;
+}
+
+
 .flex {
   flex-grow: 1;
 }

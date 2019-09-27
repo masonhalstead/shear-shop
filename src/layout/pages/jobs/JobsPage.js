@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TableContainer } from 'components/table-view/TableContainer';
-import { TableContent } from 'components/table-view/TableContent';
 import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
 import { BatchModal } from 'layout/components/modals/batch-modal/BatchModal';
@@ -14,9 +12,19 @@ import {
 import { logoutUser, setLoading } from 'ducks/actions';
 import * as Sentry from '@sentry/browser';
 import { CustomizedInputBase } from 'components/search/SearchInput';
-import Popover from 'components/popover/Popover';
-import TableViewCol from 'components/view-column/ViewColumn';
-import { configureColumns } from './columns';
+import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
+import { Table } from 'components/table/Table';
+import uuid from 'uuid';
+import {
+  JobCell,
+  StateCell,
+  DurationCell,
+  RequirementsCell,
+  CreatedByCell,
+  CreatedCell,
+  EditBatchCell,
+  RunJobCell,
+} from './JobsCells';
 import cn from './Jobs.module.scss';
 
 const result = {
@@ -446,25 +454,79 @@ class JobsPage extends PureComponent {
     return state;
   }
 
-  options = {
-    filterType: 'textField',
-    selectableRows: 'none',
-    search: true,
-    pagination: false,
-    filter: true,
-    download: false,
-    viewColumns: true,
-    print: false,
-  };
-
   state = {
     label: 'Last 24 Hours',
-    search: '',
-    viewColumns: [],
-    columns: [],
     open: false,
     jobId: '',
     batchName: '',
+    columns: [],
+    search_string: '',
+    headers: [
+      {
+        title: 'Job',
+        show: true,
+        flex_grow: 1,
+        min_width: '100px',
+        sort: 'default',
+        sort_key: 'job_definition_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'State',
+        show: true,
+        min_width: '125px',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Duration',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Requirements',
+        show: true,
+        min_width: '150px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created By',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: '',
+        show: true,
+        min_width: '40px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: '',
+        show: true,
+        min_width: '40px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+    ],
+    settings: {
+      search_key: 'job_definition_name',
+      row_height: 32,
+    },
+    callbacks: {
+      openModal: row => this.openModal(row),
+    },
   };
 
   componentDidMount() {
@@ -478,7 +540,6 @@ class JobsPage extends PureComponent {
     try {
       await setLoadingAction(true);
       await getJobs({ project_id }); // TODO: integrate days & state
-      await this.createColumns();
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
@@ -487,23 +548,27 @@ class JobsPage extends PureComponent {
   };
 
   onSearch = e => {
-    this.setState({ search: e.target.value });
+    this.setState({ search_string: e.target.value });
   };
 
-  handleColChange = (value, index, checked) => {
-    const { viewColumns } = this.state;
-    const filtered = [];
-    const viewColumnsNew = [];
-    viewColumns.forEach(column => {
-      if (value !== column.name) {
-        viewColumnsNew.push(column);
-      } else {
-        column.options.display = checked;
-        viewColumnsNew.push(column);
-      }
-    });
+  handleOnColumnCheck = item => {
+    const { headers, columns } = this.state;
+    const index = columns.indexOf(item.title);
+    let new_columns = [...columns];
 
-    this.setState({ viewColumns: viewColumnsNew });
+    if (index === -1) {
+      new_columns = [...new_columns, item.title];
+    } else {
+      new_columns.splice(index, 1);
+    }
+
+    const new_headers = headers.map(header => ({
+      ...header,
+      show: !new_columns.includes(header.title),
+    }));
+
+    // Setting both the columns and headers
+    this.setState({ columns: new_columns, headers: new_headers });
   };
 
   handleCloseBatch = () => {
@@ -525,24 +590,12 @@ class JobsPage extends PureComponent {
     this.setState({ open: false, batchName: '', jobId: '' });
   };
 
-  openDetailPage = id => {
-    const { history, location } = this.props;
-    const [, , project_id] = location.pathname.split('/');
-    history.push(`/projects/${project_id}/jobs/${id}/job`);
-  };
-
-  openBatch = id => {
-    const { jobs } = this.props;
-    let batch = '';
-    if (jobs.length > 0) {
-      batch = jobs.filter(filter => filter.job_id === Number(id))[0].batch_name;
-    }
-    this.setState({ jobId: id, open: true, batchName: batch });
-  };
-
-  createColumns = () => {
-    const columns = configureColumns(this.openDetailPage, this.openBatch);
-    this.setState({ columns, viewColumns: columns });
+  openModal = row => {
+    this.setState({
+      open: true,
+      jobId: row.job_id,
+      batchName: row.batch_name,
+    });
   };
 
   logout = () => {
@@ -600,16 +653,16 @@ class JobsPage extends PureComponent {
                 <CustomizedInputBase onSearch={this.onSearch} />
               </div>
               <div className={cn.iconContainer}>
-                <Popover
-                  trigger={<FontAwesomeIcon icon="cog" color="#818fa3" />}
-                  content={
-                    <TableViewCol
-                      data={result.data}
-                      columns={viewColumns}
-                      options={this.options}
-                      handleColChange={this.handleColChange}
-                    />
-                  }
+                <DropdownMulti
+                  rows={this.state.headers.filter(
+                    header => !!header.title && !header.flex_grow,
+                  )}
+                  checked={this.state.columns}
+                  checked_key="title"
+                  row_key="title"
+                  icon={['fas', 'cog']}
+                  inner_title="Hide Columns"
+                  handleOnSelect={this.handleOnColumnCheck}
                 />
               </div>
               <div className={cn.logout} onClick={this.logout}>
@@ -618,59 +671,25 @@ class JobsPage extends PureComponent {
             </div>
           </Toolbar>
         </CustomAppBar>
-        {columns.length > 0 && (
-          <TableContainer>
-            <TableContent
-              tableData={
-                search.length > 0
-                  ? result.data.filter(item =>
-                      item.jobname.toLowerCase().includes(search),
-                    )
-                  : result.data
-              }
-              tableOptions={this.options}
-              columns={viewColumns}
-              styles={{
-                MuiTableCell: {
-                  root: {
-                    border: '1px solid #dde3ee',
-                    borderBottom: '1px solid #dde3ee',
-                  },
-                  body: {
-                    fontSize: '13px',
-                    fontWeight: 300,
-                    lineHeight: '1',
-                    padding: '5px !important',
-                    '&:nth-child(4)': {
-                      width: 114,
-                    },
-                    '&:nth-child(6)': {
-                      width: 114,
-                    },
-                    '&:nth-child(8)': {
-                      width: 114,
-                    },
-                    '&:nth-child(10)': {
-                      width: 114,
-                    },
-                    '&:nth-child(12)': {
-                      width: 124,
-                    },
-                    '&:nth-child(14)': {
-                      width: 39,
-                    },
-                    '&:nth-child(16)': {
-                      width: 39,
-                    },
-                  },
-                  head: {
-                    fontSize: '1rem',
-                  },
-                },
-              }}
-            />
-          </TableContainer>
-        )}
+        <div className={cn.contentWrapper}>
+          <Table
+            rows={result.data}
+            headers={this.state.headers}
+            cell_components={[
+              JobCell,
+              StateCell,
+              DurationCell,
+              RequirementsCell,
+              CreatedByCell,
+              CreatedCell,
+              EditBatchCell,
+              RunJobCell,
+            ]}
+            search_input={this.state.search_string}
+            settings={this.state.settings}
+            callbacks={this.state.callbacks}
+          />
+        </div>
         <BatchModal
           handleCloseBatch={this.handleCloseBatch}
           open={open}

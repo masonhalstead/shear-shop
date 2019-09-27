@@ -56,7 +56,7 @@ class DefinitionPage extends PureComponent {
     changes: false,
     parameters: [],
     callbacks: {
-      saveName: (value, id) => this.saveName(value, id),
+      saveParameterName: (row, value) => this.saveParameterName(row, value),
       changeRequired: id => this.changeRequired(id),
       saveDefault: (value, id) => this.saveDefault(value, id),
       saveDescription: (value, id) => this.saveDescription(value, id),
@@ -78,6 +78,7 @@ class DefinitionPage extends PureComponent {
             parameter_name: '',
             description: '',
             parameter_direction_id: 1,
+            parameter_method_name: 'Command Line',
             parameter_method_id: 1,
             modified: false,
             saved: false,
@@ -87,6 +88,7 @@ class DefinitionPage extends PureComponent {
             parameter_name: '',
             description: '',
             parameter_direction_id: 2,
+            parameter_method_name: 'Command Line',
             parameter_method_id: 1,
             modified: false,
             saved: false,
@@ -120,12 +122,14 @@ class DefinitionPage extends PureComponent {
     this.setState({ ...input, changes: true });
   };
 
-  saveName = (name, id) => {
+  saveParameterName = (row, value) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters[index] = {
       ...parameters[index],
-      parameter_name: name,
+      parameter_name: value,
       modified: true,
     };
     this.setState(
@@ -137,9 +141,11 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  changeRequired = id => {
+  changeRequired = row => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters[index] = {
       ...parameters[index],
       is_required: !parameters[index].is_required,
@@ -154,9 +160,11 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  handleMethod = (item, id) => {
+  handleMethod = (row, item) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters[index] = {
       ...parameters[index],
       parameter_method_id: item.parameter_method_id,
@@ -177,9 +185,11 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  handleReference = (item, id) => {
+  handleReference = (row, item) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
 
     parameters[index] = {
       ...parameters[index],
@@ -197,9 +207,11 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  saveDefault = (value, id) => {
+  saveDefault = (row, value) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters[index] = {
       ...parameters[index],
       parameter_value: value,
@@ -214,9 +226,11 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  saveDescription = (value, id) => {
+  saveDescription = (row, value) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters[index] = {
       ...parameters[index],
       description: value,
@@ -231,9 +245,11 @@ class DefinitionPage extends PureComponent {
     );
   };
 
-  deleteRow = id => {
+  deleteRow = row => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters.splice(index, 1);
     this.setState(
       {
@@ -458,7 +474,7 @@ class DefinitionPage extends PureComponent {
           {tab === 1 && (
             <InputsTab
               callbacks={callbacks}
-              parameters={parameters.filter(
+              rows={parameters.filter(
                 parameter => parameter.parameter_direction_id === 1,
               )}
             />
@@ -466,7 +482,7 @@ class DefinitionPage extends PureComponent {
           {tab === 2 && (
             <OutputsTab
               callbacks={callbacks}
-              parameters={parameters.filter(
+              rows={parameters.filter(
                 parameter => parameter.parameter_direction_id === 2,
               )}
             />

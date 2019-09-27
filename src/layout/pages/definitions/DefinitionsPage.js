@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TableContainer } from 'components/table-view/TableContainer';
-import { TableContent } from 'components/table-view/TableContent';
 import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
@@ -11,19 +9,29 @@ import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_
 import * as Sentry from '@sentry/browser';
 import { CustomizedInputBase } from 'components/search/SearchInput';
 import { logoutUser, setLoading } from 'ducks/actions';
-import Popover from 'components/popover/Popover';
-import TableViewCol from 'components/view-column/ViewColumn';
 import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
+import { Table } from 'components/table/Table';
+import uuid from 'uuid';
+import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
 import cn from './Definitions.module.scss';
-import { configureColumns } from './columns';
+import {
+  JobCell,
+  RequirementsCell,
+  LocationCell,
+  TimeoutCell,
+  ResultMethodCell,
+  CreatedByCell,
+  CreatedCell,
+  RunCell,
+} from './DefinitionCells';
 
 class DefinitionsPage extends PureComponent {
   static propTypes = {
     getJobDefinitions: PropTypes.func,
     setLoadingAction: PropTypes.func,
     hamburger: PropTypes.object,
-    jobDefinitions: PropTypes.array,
+    definitions: PropTypes.array,
     history: PropTypes.object,
     location: PropTypes.object,
     lookups: PropTypes.object,
@@ -40,27 +48,83 @@ class DefinitionsPage extends PureComponent {
     return state;
   }
 
-  options = {
-    filterType: 'textField',
-    selectableRows: 'none',
-    search: false,
-    pagination: false,
-    filter: false,
-    download: false,
-    viewColumns: false,
-    print: false,
-  };
-
   state = {
     label: 'Unarchived',
     run: false,
     title: '',
-    search: '',
     jobName: '',
-    columns: [],
-    viewColumns: [],
     open: false,
     id: '',
+    columns: [],
+    search_string: '',
+    headers: [
+      {
+        title: 'Job',
+        show: true,
+        flex_grow: 1,
+        min_width: '100px',
+        sort: 'default',
+        sort_key: 'job_definition_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Requirements',
+        show: true,
+        min_width: '175px',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Location',
+        show: true,
+        min_width: '175px',
+        sort: 'default',
+        sort_key: 'location_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Timeout',
+        show: true,
+        min_width: '125px',
+        sort: 'default',
+        sort_key: 'timeout_seconds',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Method',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created By',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: '',
+        show: true,
+        min_width: '40px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+    ],
+    settings: {
+      search_key: 'job_definition_name',
+      row_height: 33,
+    },
+    callbacks: {
+      openModal: row => this.openModal(row),
+    },
   };
 
   componentDidMount() {
@@ -74,7 +138,6 @@ class DefinitionsPage extends PureComponent {
     try {
       await setLoadingAction(true);
       await getJobDefinitions(project_id);
-      await this.createColumns();
       setLoadingAction(false);
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
@@ -95,8 +158,12 @@ class DefinitionsPage extends PureComponent {
     this.setState({ open: false });
   };
 
-  openModal = (title, id) => {
-    this.setState({ run: true, title, id });
+  openModal = row => {
+    this.setState({
+      run: true,
+      id: row.job_definition_id,
+      title: row.job_definition_name,
+    });
   };
 
   openDefinition = id => {
@@ -105,33 +172,32 @@ class DefinitionsPage extends PureComponent {
     history.push(`/projects/${project_id}/definitions/${id}/definition`);
   };
 
-  onSearch = e => {
-    this.setState({ search: e.target.value });
-  };
-
-  createColumns = () => {
-    const columns = configureColumns(this.openModal, this.openDefinition);
-    this.setState({ columns, viewColumns: columns });
+  handleTableSearch = e => {
+    this.setState({ search_string: e.target.value });
   };
 
   changeJobName = name => {
     this.setState({ jobName: name });
   };
 
-  handleColChange = (value, index, checked) => {
-    const { viewColumns } = this.state;
-    const filtered = [];
-    const viewColumnsNew = [];
-    viewColumns.forEach(column => {
-      if (value !== column.name) {
-        viewColumnsNew.push(column);
-      } else {
-        column.options.display = checked;
-        viewColumnsNew.push(column);
-      }
-    });
+  handleOnColumnCheck = item => {
+    const { headers, columns } = this.state;
+    const index = columns.indexOf(item.title);
+    let new_columns = [...columns];
 
-    this.setState({ viewColumns: viewColumnsNew });
+    if (index === -1) {
+      new_columns = [...new_columns, item.title];
+    } else {
+      new_columns.splice(index, 1);
+    }
+
+    const new_headers = headers.map(header => ({
+      ...header,
+      show: !new_columns.includes(header.title),
+    }));
+
+    // Setting both the columns and headers
+    this.setState({ columns: new_columns, headers: new_headers });
   };
 
   logout = () => {
@@ -214,24 +280,14 @@ class DefinitionsPage extends PureComponent {
   render() {
     const {
       hamburger,
-      jobDefinitions,
+      definitions,
       history,
       lookups,
       settings: { project },
       projects,
       location,
     } = this.props;
-    const {
-      label,
-      run,
-      title,
-      search,
-      columns,
-      viewColumns,
-      open,
-      jobName,
-      id,
-    } = this.state;
+    const { label, run, title, open, jobName, id } = this.state;
 
     const projectId = location.pathname.split('/')[2];
 
@@ -268,19 +324,19 @@ class DefinitionsPage extends PureComponent {
             </Breadcrumbs>
             <div className={cn.actionWrapper}>
               <div className={cn.searchContainer}>
-                <CustomizedInputBase onSearch={this.onSearch} />
+                <CustomizedInputBase onSearch={this.handleTableSearch} />
               </div>
               <div className={cn.iconContainer}>
-                <Popover
-                  trigger={<FontAwesomeIcon icon="cog" color="#818fa3" />}
-                  content={
-                    <TableViewCol
-                      data={jobDefinitions}
-                      columns={viewColumns}
-                      options={this.options}
-                      handleColChange={this.handleColChange}
-                    />
-                  }
+                <DropdownMulti
+                  rows={this.state.headers.filter(
+                    header => !!header.title && !header.flex_grow,
+                  )}
+                  checked={this.state.columns}
+                  checked_key="title"
+                  row_key="title"
+                  icon={['fas', 'cog']}
+                  inner_title="Hide Columns"
+                  handleOnSelect={this.handleOnColumnCheck}
                 />
               </div>
               <div
@@ -295,21 +351,25 @@ class DefinitionsPage extends PureComponent {
             </div>
           </Toolbar>
         </CustomAppBar>
-        {columns.length > 0 && (
-          <TableContainer>
-            <TableContent
-              tableData={
-                search.length > 0
-                  ? jobDefinitions.filter(item =>
-                      item.job_definition_name.toLowerCase().includes(search),
-                    )
-                  : jobDefinitions
-              }
-              tableOptions={this.options}
-              columns={viewColumns}
-            />
-          </TableContainer>
-        )}
+        <div className={cn.contentWrapper}>
+          <Table
+            rows={definitions}
+            headers={this.state.headers}
+            cell_components={[
+              JobCell,
+              RequirementsCell,
+              LocationCell,
+              TimeoutCell,
+              ResultMethodCell,
+              CreatedByCell,
+              CreatedCell,
+              RunCell,
+            ]}
+            search_input={this.state.search_string}
+            settings={this.state.settings}
+            callbacks={this.state.callbacks}
+          />
+        </div>
         {run && (
           <RunDefinition
             opened={run}
@@ -336,7 +396,7 @@ class DefinitionsPage extends PureComponent {
 
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
-  jobDefinitions: state.jobDefinitions,
+  definitions: state.definitions,
   lookups: state.lookups,
   settings: state.settings,
   projects: state.projects,
