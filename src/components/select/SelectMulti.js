@@ -9,9 +9,11 @@ export const SelectMulti = ({
   checked_key,
   row_key,
   empty_text,
+  inner_title,
   handleMultiSelect,
 }) => (
   <div className={cn.selectMultiWrapper}>
+    {inner_title && <p className={cn.innerTitle}>{inner_title}</p>}
     {rows.length > 0 &&
       rows.map((row, index) => (
         <CheckboxAlt

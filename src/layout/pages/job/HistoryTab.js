@@ -1,35 +1,88 @@
-import { TableContainer } from 'components/table-view/TableContainer';
-import cn from './Job.module.scss';
-import { TableContent } from 'components/table-view/TableContent';
-import { data as dataHistory, configureHistoryColumns } from './historyColumns';
-import React from 'react';
+import React, { Component } from 'react';
+import { Table } from 'components/table/Table';
+import uuid from 'uuid';
+import { HistoryStateCell, HistoryTimestampCell } from './JobCells';
 
-export const HistoryTab = ({ options }) => (
-  <TableContainer style={cn.tableContainerWrapper}>
-    <TableContent
-      tableData={dataHistory}
-      tableOptions={options}
-      columns={configureHistoryColumns()}
-      styles={{
-        MuiTableCell: {
-          root: {
-            border: '1px solid #dde3ee',
-            borderBottom: '1px solid #dde3ee',
-          },
-          body: {
-            fontSize: '13px',
-            fontWeight: 300,
-            lineHeight: '1',
-            padding: '5px !important',
-            '&:nth-child(2)': {
-              width: 489,
-            },
-          },
-          head: {
-            fontSize: '1rem',
-          },
-        },
-      }}
-    />
-  </TableContainer>
-);
+const data = [
+  {
+    state: '344523 Assigned to server',
+    timestamp: '8/13/2019 23:03:32',
+    id: 1,
+    type: 'run',
+  },
+  {
+    state: '344523 Assigned to server',
+    timestamp: '8/13/2019 23:03:32',
+    type: 'run',
+
+    id: 1,
+  },
+  {
+    state: '344523 Assigned to server',
+    timestamp: '8/13/2019 23:03:32',
+    type: 'run',
+
+    id: 1,
+  },
+  {
+    state: '344523 Assigned to server',
+    timestamp: '8/13/2019 23:03:32',
+    type: 'run',
+
+    id: 1,
+  },
+  {
+    state: '344523 Assigned to server',
+    timestamp: '8/13/2019 23:03:32',
+    type: 'run',
+
+    id: 1,
+  },
+  {
+    state: '344523 Assigned to server',
+    timestamp: '8/13/2019 23:03:32',
+    type: 'run',
+
+    id: 1,
+  },
+  {
+    state: '344523 Assigned to server',
+    timestamp: '8/13/2019 23:03:32',
+    type: 'run',
+
+    id: 1,
+  },
+];
+export class HistoryTab extends Component {
+  state = {
+    headers: [
+      {
+        title: 'State',
+        show: true,
+        min_width: '225px',
+        flex_grow: 1,
+        sort: 'default',
+        sort_key: 'parameter_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Timestamp',
+        show: true,
+        min_width: '225px',
+        flex_grow: 1,
+        sort: false,
+        uuid: uuid.v1(),
+      },
+    ],
+  };
+
+  render() {
+    return (
+      <Table
+        rows={data}
+        headers={this.state.headers}
+        cell_components={[HistoryStateCell, HistoryTimestampCell]}
+      />
+    );
+  }
+}

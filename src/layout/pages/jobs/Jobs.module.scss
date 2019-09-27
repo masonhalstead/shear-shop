@@ -1,5 +1,60 @@
 @import "src/scss/styles";
 
+.contentWrapper {
+  margin-top: 46px; // matches toolbar height
+  padding: 20px;
+}
+.cell {
+  padding: 0px 5px;
+  color: #62738d;
+  font-weight: 300;
+  font-size: 13px;
+  align-self: center;
+  margin: 0px;
+  width: 100%;
+}
+.overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
+.jobCell {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 5px;
+  align-self: center;
+  margin: 0px;
+  width: 100%;
+}
+.description {
+  color: #62738d;
+  font-size: 11px;
+}
+.actionCell {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #818fa3;
+  font-size: 13px;
+  align-items: center;
+  margin-bottom: 0px;
+}
+.actionCell:hover {
+  color: #3e96ed;
+}
+.textCenter {
+  text-align: center;
+  justify-content: center;
+}
+.textRight {
+  text-align: right;
+  justify-content: flex-end;
+}
+
+
 .flexGrow {
   flex-grow: 1;
 }
@@ -66,33 +121,36 @@
 
 .stateRed {
   background-color: $color-13;
-  padding: 5px;
+  padding: 4px 5px;
   width: 90px;
   margin: 0 auto;
   border-radius: 3px;
   color: white;
   font-weight: 400;
   font-size: 12px;
+  text-transform: uppercase;
 }
 .stateGreen {
   background-color: $color-12;
-  padding: 5px;
+  padding: 4px 5px;
   width: 90px;
   margin: 0 auto;
   border-radius: 3px;
   color: white;
   font-weight: 400;
   font-size: 12px;
+  text-transform: uppercase;
 }
 .stateGrey {
   background-color: $color-11;
-  padding: 5px;
+  padding: 4px 5px;
   width: 90px;
   margin: 0 auto;
   border-radius: 3px;
   color: white;
   font-weight: 400;
   font-size: 12px;
+  text-transform: uppercase;
 }
 
 .textColor {

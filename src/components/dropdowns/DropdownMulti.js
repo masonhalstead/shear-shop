@@ -13,6 +13,7 @@ export class DropdownMulti extends Component {
     row_key: PropTypes.string,
     checked: PropTypes.array,
     checked_key: PropTypes.string,
+    inner_title: PropTypes.string,
     handleOnSelect: PropTypes.func,
   };
 
@@ -34,6 +35,7 @@ export class DropdownMulti extends Component {
       row_key,
       checked,
       checked_key,
+      inner_title,
     } = this.props;
 
     return (
@@ -52,6 +54,7 @@ export class DropdownMulti extends Component {
           checked,
           checked_key,
           row_key,
+          inner_title,
         }}
       />
     );

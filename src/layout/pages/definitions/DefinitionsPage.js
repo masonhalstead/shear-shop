@@ -120,6 +120,7 @@ class DefinitionsPage extends PureComponent {
     ],
     settings: {
       search_key: 'job_definition_name',
+      row_height: 33,
     },
     callbacks: {
       openModal: row => this.openModal(row),
@@ -334,6 +335,7 @@ class DefinitionsPage extends PureComponent {
                   checked_key="title"
                   row_key="title"
                   icon={['fas', 'cog']}
+                  inner_title="Hide Columns"
                   handleOnSelect={this.handleOnColumnCheck}
                 />
               </div>

@@ -15,43 +15,42 @@ import { InputTab } from './InputTab';
 import { OutputTab } from './OutputTab';
 import { HistoryTab } from './HistoryTab';
 
-const data =
-  {
-    job_id: 389946,
-    project_id: 37,
-    project_name: 'Lynx (Prod)',
-    organization_id: 1,
-    organization_name: 'Cognitiv',
-    job_state_id: 2,
-    job_state_name: '02 - Starting',
-    created_by: 'Lynx User',
-    start_datetime_utc: '2019-09-26T01:22:29.139083+00:00',
-    finish_datetime_utc: null,
-    duration_seconds: 4.079993,
-    docker_image:
-      '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-    startup_command:
-      'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-    required_cpu: 1,
-    required_gpu: 0,
-    required_memory_gb: 4,
-    required_storage_gb: 1,
-    timeout_seconds: 3600,
-    region_endpoint_hint: null,
-    description: null,
-    result_method_id: 3,
-    result_method_name: 'STDOUT JSON',
-    stdout_success_text: null,
-    retries: 0,
-    max_retries: 0,
-    job_definition_id: 1372,
-    job_definition_name: 'Unique User Map',
-    batch_id: 233192,
-    batch_name: 'Batch 233192',
-    batch_descriptor: null,
-    location_id: 11,
-    location_name: 'Umbra (Prod) VPC - 1c',
-  };
+const data = {
+  job_id: 389946,
+  project_id: 37,
+  project_name: 'Lynx (Prod)',
+  organization_id: 1,
+  organization_name: 'Cognitiv',
+  job_state_id: 2,
+  job_state_name: '02 - Starting',
+  created_by: 'Lynx User',
+  start_datetime_utc: '2019-09-26T01:22:29.139083+00:00',
+  finish_datetime_utc: null,
+  duration_seconds: 4.079993,
+  docker_image:
+    '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
+  startup_command:
+    'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
+  required_cpu: 1,
+  required_gpu: 0,
+  required_memory_gb: 4,
+  required_storage_gb: 1,
+  timeout_seconds: 3600,
+  region_endpoint_hint: null,
+  description: null,
+  result_method_id: 3,
+  result_method_name: 'STDOUT JSON',
+  stdout_success_text: null,
+  retries: 0,
+  max_retries: 0,
+  job_definition_id: 1372,
+  job_definition_name: 'Unique User Map',
+  batch_id: 233192,
+  batch_name: 'Batch 233192',
+  batch_descriptor: null,
+  location_id: 11,
+  location_name: 'Umbra (Prod) VPC - 1c',
+};
 
 const tabStyle = {
   width: '300px',
@@ -83,17 +82,6 @@ class JobPage extends PureComponent {
 
     return state;
   }
-
-  options = {
-    filterType: 'textField',
-    selectableRows: 'none',
-    search: false,
-    pagination: false,
-    filter: false,
-    download: false,
-    viewColumns: false,
-    print: false,
-  };
 
   state = {
     tab: 0,
@@ -148,28 +136,28 @@ class JobPage extends PureComponent {
       content = <STDOutTab />;
     }
     if (tab === 1) {
-      content = <InputTab options={this.options} />;
-      contentInside = <TopPanel data={data}/>;
+      content = <InputTab rows={[]} />;
+      contentInside = <TopPanel data={data} />;
     }
     if (tab === 2) {
       content = <OutputTab options={this.options} />;
     }
 
     if (tab === 3) {
-      content = <HistoryTab options={this.options}/>;
+      content = <HistoryTab options={this.options} />;
     }
 
-    let projectName = '';
-    if (projects.length > 0) {
-      if (!Object(project).hasOwnProperty('project_id')) {
-        const projectId = location.pathname.split('/')[2];
-        projectName = projects.filter(
-          project => project.project_id === Number(projectId),
-        )[0].project_name;
-      } else {
-        projectName = project.project_name;
-      }
-    }
+    const projectName = '';
+    // if (projects.length > 0) {
+    //   if (!Object(project).hasOwnProperty('project_id')) {
+    //     const projectId = location.pathname.split('/')[2];
+    //     projectName = projects.filter(
+    //       project => project.project_id === Number(projectId),
+    //     )[0].project_name;
+    //   } else {
+    //     projectName = project.project_name;
+    //   }
+    // }
 
     return (
       <>
@@ -215,7 +203,9 @@ class JobPage extends PureComponent {
             <div className={cn.textColor}>{data.job_state_name}</div>
           </div>
           <div className={cn.firstRow}>
-            <div className={cn.textMargin}>{`Parse Logs: ${new Date(data.start_datetime_utc).toLocaleDateString("en-US")}`}</div>
+            <div className={cn.textMargin}>{`Parse Logs: ${new Date(
+              data.start_datetime_utc,
+            ).toLocaleDateString('en-US')}`}</div>
             <div className={cn.textMargin}>16h 32m 12s</div>
           </div>
           <div className={cn.firstRow}>
@@ -224,7 +214,11 @@ class JobPage extends PureComponent {
           </div>
         </Paper>
         <Paper className={cn.contentAlignSecond}>
-          <JobTabs tab={tab} tabStyle={tabStyle} handleChangeTab={this.handleChangeTab}/>
+          <JobTabs
+            tab={tab}
+            tabStyle={tabStyle}
+            handleChangeTab={this.handleChangeTab}
+          />
           {tab === 0 && <div className={cn.tabValueFirst}>{content}</div>}
           {tab === 1 && (
             <div className={cn.tabValueSecond}>{contentInside}</div>
