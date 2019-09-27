@@ -1,5 +1,5 @@
 import React from 'react';
-export const configureColumnsInput = ()=> [
+export const configureColumnsInput = () => [
   {
     name: 'name',
     label: 'Name',

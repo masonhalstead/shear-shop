@@ -1,6 +1,6 @@
 import React from 'react';
 import cn from './Job.module.scss';
-export const configureHistoryColums = ()=> [
+export const configureHistoryColumns = ()=> [
   {
     name: 'state',
     label: 'State',
