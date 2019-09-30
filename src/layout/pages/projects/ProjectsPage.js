@@ -1,13 +1,14 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { setProject as setProjectAction, logoutUser } from 'ducks/actions';
+import {
+  setProject as setProjectAction,
+  toggleModal as toggleModalAction,
+} from 'ducks/actions';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Toolbar } from '@material-ui/core';
 import { CreateProjectModal } from 'layout/components/modals/project-modal/CreateProject';
 
-import { CustomAppBar } from 'components/app-bar/AppBar';
 import {
   getProjects as getProjectsAction,
   addProject as addProjectAction,
@@ -20,7 +21,6 @@ class ProjectsPage extends PureComponent {
   static propTypes = {
     getProjects: PropTypes.func,
     logoutUserProps: PropTypes.func,
-    hamburger: PropTypes.object,
     projects: PropTypes.array,
     history: PropTypes.object,
   };
@@ -39,15 +39,9 @@ class ProjectsPage extends PureComponent {
     projectName: '',
   };
 
-  logout = () => {
-    const { logoutUserProps, history } = this.props;
-    logoutUserProps();
-    localStorage.clear();
-    history.push('/login');
-  };
-
   handleCloseProject = () => {
-    this.setState({ open: false });
+    const { toggleModal } = this.props;
+    toggleModal({ project: false });
   };
 
   changeProjectName = name => {
@@ -56,39 +50,27 @@ class ProjectsPage extends PureComponent {
 
   createProject = async () => {
     const { projectName } = this.state;
-    const { addProject, getProjects } = this.props;
+    const { addProject, getProjects, toggleModal, setProject } = this.props;
     const projectId = await addProject({ project_name: projectName });
     await getProjects();
-    this.setState({ open: false, project_name: '' });
+    toggleModal({ project: false });
+    this.setState({ project_name: '' });
+    setProject({ project_id: projectId, project_name: projectName });
     this.goToJobsPage({ project_id: projectId, project_name: projectName });
   };
 
   goToJobsPage = project => {
     const { setProject, history } = this.props;
+    console.log(project);
     setProject(project);
     history.push(`/projects/${project.project_id}/jobs/24`);
   };
 
   render() {
-    const { open, projectName } = this.state;
-    const { hamburger, projects } = this.props;
+    const { projectName } = this.state;
+    const { projects, settings } = this.props;
     return (
       <>
-        <CustomAppBar hamburger={hamburger.open}>
-          <Toolbar className={cn.toolbar}>
-            <div className={cn.header}>Projects</div>
-            <div className={cn.flexGrow} />
-            <div
-              className={cn.iconContainer}
-              onClick={() => this.setState({ open: true })}
-            >
-              <FontAwesomeIcon icon="plus" color="#818fa3" />
-            </div>
-            <div className={cn.logout} onClick={this.logout}>
-              <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
-            </div>
-          </Toolbar>
-        </CustomAppBar>
         <div className={cn.contentAlign}>
           <div
             className={cn.projectItemAdd}
@@ -120,7 +102,7 @@ class ProjectsPage extends PureComponent {
         </div>
         <CreateProjectModal
           handleCloseProject={this.handleCloseProject}
-          open={open}
+          open={settings.modals.project}
           projectName={projectName}
           changeProjectName={this.changeProjectName}
           createProject={this.createProject}
@@ -131,15 +113,15 @@ class ProjectsPage extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  hamburger: state.hamburger,
   projects: state.projects,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = {
   getProjects: getProjectsAction,
-  logoutUserProps: logoutUser,
   addProject: addProjectAction,
   setProject: setProjectAction,
+  toggleModal: toggleModalAction,
 };
 
 export default connect(
