@@ -437,93 +437,10 @@ class JobsPage extends PureComponent {
     location: PropTypes.object,
   };
 
-  static getDerivedStateFromProps(props, state) {
-    const filter = props.location.pathname.split('/');
-    let label = 'Last 24 Hours';
-
-    if (filter[4] === '7') {
-      label = 'Last 7 Days';
-    }
-    if (filter[4] !== '24' && filter[4] !== '7') {
-      label = filter[4].charAt(0).toUpperCase() + filter[4].slice(1);
-    }
-    if (state.label !== label) {
-      return { label };
-    }
-
-    return state;
-  }
-
   state = {
-    label: 'Last 24 Hours',
     open: false,
     jobId: '',
     batchName: '',
-    columns: [],
-    search_string: '',
-    headers: [
-      {
-        title: 'Job',
-        show: true,
-        flex_grow: 1,
-        min_width: '100px',
-        sort: 'default',
-        sort_key: 'job_definition_name',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'State',
-        show: true,
-        min_width: '125px',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Duration',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Requirements',
-        show: true,
-        min_width: '150px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created By',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: '',
-        show: true,
-        min_width: '40px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: '',
-        show: true,
-        min_width: '40px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-    ],
-    settings: {
-      search_key: 'job_definition_name',
-      row_height: 32,
-    },
     callbacks: {
       openModal: row => this.openModal(row),
     },
@@ -545,30 +462,6 @@ class JobsPage extends PureComponent {
       Sentry.captureException(err);
     }
     setLoadingAction(false);
-  };
-
-  onSearch = e => {
-    this.setState({ search_string: e.target.value });
-  };
-
-  handleOnColumnCheck = item => {
-    const { headers, columns } = this.state;
-    const index = columns.indexOf(item.title);
-    let new_columns = [...columns];
-
-    if (index === -1) {
-      new_columns = [...new_columns, item.title];
-    } else {
-      new_columns.splice(index, 1);
-    }
-
-    const new_headers = headers.map(header => ({
-      ...header,
-      show: !new_columns.includes(header.title),
-    }));
-
-    // Setting both the columns and headers
-    this.setState({ columns: new_columns, headers: new_headers });
   };
 
   handleCloseBatch = () => {
@@ -598,83 +491,17 @@ class JobsPage extends PureComponent {
     });
   };
 
-  logout = () => {
-    const { logoutUserProps, history } = this.props;
-    logoutUserProps();
-    localStorage.clear();
-    history.push('/login');
-  };
-
   render() {
+    const { open, batchName } = this.state;
     const {
-      hamburger,
-      projects,
-      history,
-      location,
-      settings: { project },
+      settings: { jobs },
     } = this.props;
-    const { label, search, viewColumns, columns, open, batchName } = this.state;
-    let projectName = '';
-    if (projects.length > 0) {
-      if (!Object(project).hasOwnProperty('project_id')) {
-        const projectId = location.pathname.split('/')[2];
-        projectName = projects.filter(
-          project => project.project_id === Number(projectId),
-        )[0].project_name;
-      } else {
-        projectName = project.project_name;
-      }
-    }
     return (
       <>
-        <CustomAppBar hamburger={hamburger.open}>
-          <Toolbar className={cn.toolbar}>
-            <Breadcrumbs
-              separator={
-                <FontAwesomeIcon icon="chevron-right" color="#818fa3" />
-              }
-              aria-label="breadcrumb"
-              classes={{ separator: cn.separator, root: cn.text }}
-            >
-              {' '}
-              <div
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  history.push(`/projects`);
-                }}
-              >
-                {projectName}
-              </div>
-              <div>{label}</div>
-            </Breadcrumbs>
-            <div className={cn.flexGrow} />
-            <div className={cn.actionWrapper}>
-              <div className={cn.searchContainer}>
-                <CustomizedInputBase onSearch={this.onSearch} />
-              </div>
-              <div className={cn.iconContainer}>
-                <DropdownMulti
-                  rows={this.state.headers.filter(
-                    header => !!header.title && !header.flex_grow,
-                  )}
-                  checked={this.state.columns}
-                  checked_key="title"
-                  row_key="title"
-                  icon={['fas', 'cog']}
-                  inner_title="Hide Columns"
-                  handleOnSelect={this.handleOnColumnCheck}
-                />
-              </div>
-              <div className={cn.logout} onClick={this.logout}>
-                <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
-              </div>
-            </div>
-          </Toolbar>
-        </CustomAppBar>
         <div className={cn.contentWrapper}>
           <Table
             rows={result.data}
-            headers={this.state.headers}
+            headers={jobs.headers}
             cell_components={[
               JobCell,
               StateCell,
@@ -685,8 +512,8 @@ class JobsPage extends PureComponent {
               EditBatchCell,
               RunJobCell,
             ]}
-            search_input={this.state.search_string}
-            settings={this.state.settings}
+            search_input={jobs.search_string}
+            settings={jobs.settings}
             callbacks={this.state.callbacks}
           />
         </div>

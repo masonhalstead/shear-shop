@@ -204,7 +204,6 @@ class RunDefinition extends PureComponent {
     const timeOut = timeout.split(':');
 
     const params = [...parameters, ...additionalParameters];
-    console.log(params);
 
     const post_data = {
       project_id: Number(projectId),

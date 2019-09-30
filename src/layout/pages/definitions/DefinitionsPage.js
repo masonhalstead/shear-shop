@@ -1,19 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Toolbar, Breadcrumbs } from '@material-ui/core';
-import { CustomAppBar } from 'components/app-bar/AppBar';
 import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
 import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
-import { CustomizedInputBase } from 'components/search/SearchInput';
-import { logoutUser, setLoading } from 'ducks/actions';
+import { logoutUser, setLoading, toggleModal as toggleModalAction } from 'ducks/actions';
 import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
 import { Table } from 'components/table/Table';
-import uuid from 'uuid';
-import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
 import cn from './Definitions.module.scss';
 import {
   JobCell,
@@ -37,91 +31,12 @@ class DefinitionsPage extends PureComponent {
     lookups: PropTypes.object,
   };
 
-  static getDerivedStateFromProps(props, state) {
-    const filter = props.location.pathname.split('/');
-    const label = filter[4].charAt(0).toUpperCase() + filter[4].slice(1);
-
-    if (state.label !== label) {
-      return { label };
-    }
-
-    return state;
-  }
-
   state = {
-    label: 'Unarchived',
     run: false,
     title: '',
     jobName: '',
     open: false,
     id: '',
-    columns: [],
-    search_string: '',
-    headers: [
-      {
-        title: 'Job',
-        show: true,
-        flex_grow: 1,
-        min_width: '100px',
-        sort: 'default',
-        sort_key: 'job_definition_name',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Requirements',
-        show: true,
-        min_width: '175px',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Location',
-        show: true,
-        min_width: '175px',
-        sort: 'default',
-        sort_key: 'location_name',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Timeout',
-        show: true,
-        min_width: '125px',
-        sort: 'default',
-        sort_key: 'timeout_seconds',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Method',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created By',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: '',
-        show: true,
-        min_width: '40px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-    ],
-    settings: {
-      search_key: 'job_definition_name',
-      row_height: 33,
-    },
     callbacks: {
       openModal: row => this.openModal(row),
     },
@@ -155,7 +70,8 @@ class DefinitionsPage extends PureComponent {
   };
 
   handleCloseDefinition = () => {
-    this.setState({ open: false });
+    const { toggleModal } = this.props;
+    toggleModal({ definitions: false });
   };
 
   openModal = row => {
@@ -172,39 +88,8 @@ class DefinitionsPage extends PureComponent {
     history.push(`/projects/${project_id}/definitions/${id}/definition`);
   };
 
-  handleTableSearch = e => {
-    this.setState({ search_string: e.target.value });
-  };
-
   changeJobName = name => {
     this.setState({ jobName: name });
-  };
-
-  handleOnColumnCheck = item => {
-    const { headers, columns } = this.state;
-    const index = columns.indexOf(item.title);
-    let new_columns = [...columns];
-
-    if (index === -1) {
-      new_columns = [...new_columns, item.title];
-    } else {
-      new_columns.splice(index, 1);
-    }
-
-    const new_headers = headers.map(header => ({
-      ...header,
-      show: !new_columns.includes(header.title),
-    }));
-
-    // Setting both the columns and headers
-    this.setState({ columns: new_columns, headers: new_headers });
-  };
-
-  logout = () => {
-    const { logoutUserProps, history } = this.props;
-    logoutUserProps();
-    localStorage.clear();
-    history.push('/login');
   };
 
   createDefinition = async () => {
@@ -279,82 +164,18 @@ class DefinitionsPage extends PureComponent {
 
   render() {
     const {
-      hamburger,
       definitions,
-      history,
       lookups,
-      settings: { project },
-      projects,
-      location,
+      settings: { definitions: reduxDefinitions, project, modals },
     } = this.props;
-    const { label, run, title, open, jobName, id } = this.state;
+    const { run, title, open, jobName, id } = this.state;
 
-    const projectId = location.pathname.split('/')[2];
-
-    let projectName = '';
-    if (projects.length > 0) {
-      if (!Object(project).hasOwnProperty('project_id')) {
-        projectName = projects.filter(
-          project => project.project_id === Number(projectId),
-        )[0].project_name;
-      } else {
-        projectName = project.project_name;
-      }
-    }
     return (
       <>
-        <CustomAppBar hamburger={hamburger.open}>
-          <Toolbar className={cn.toolbar}>
-            <Breadcrumbs
-              separator={
-                <FontAwesomeIcon icon="chevron-right" color="#818fa3" />
-              }
-              aria-label="breadcrumb"
-              classes={{ separator: cn.separator, root: cn.text }}
-            >
-              <div
-                className={cn.text}
-                onClick={() => {
-                  history.push(`/projects`);
-                }}
-              >
-                {projectName}
-              </div>
-              <div>{label}</div>
-            </Breadcrumbs>
-            <div className={cn.actionWrapper}>
-              <div className={cn.searchContainer}>
-                <CustomizedInputBase onSearch={this.handleTableSearch} />
-              </div>
-              <div className={cn.iconContainer}>
-                <DropdownMulti
-                  rows={this.state.headers.filter(
-                    header => !!header.title && !header.flex_grow,
-                  )}
-                  checked={this.state.columns}
-                  checked_key="title"
-                  row_key="title"
-                  icon={['fas', 'cog']}
-                  inner_title="Hide Columns"
-                  handleOnSelect={this.handleOnColumnCheck}
-                />
-              </div>
-              <div
-                className={cn.iconContainer}
-                onClick={() => this.setState({ open: true })}
-              >
-                <FontAwesomeIcon icon="plus" color="#818fa3" />
-              </div>
-              <div className={cn.logout} onClick={this.logout}>
-                <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
-              </div>
-            </div>
-          </Toolbar>
-        </CustomAppBar>
         <div className={cn.contentWrapper}>
           <Table
             rows={definitions}
-            headers={this.state.headers}
+            headers={reduxDefinitions.headers}
             cell_components={[
               JobCell,
               RequirementsCell,
@@ -365,8 +186,8 @@ class DefinitionsPage extends PureComponent {
               CreatedCell,
               RunCell,
             ]}
-            search_input={this.state.search_string}
-            settings={this.state.settings}
+            search_input={reduxDefinitions.search_string}
+            settings={reduxDefinitions.settings}
             callbacks={this.state.callbacks}
           />
         </div>
@@ -379,12 +200,12 @@ class DefinitionsPage extends PureComponent {
             title={title}
             id={id}
             locations={lookups.locations}
-            projectId={projectId}
+            projectId={project.project_id}
           />
         )}
         <CreateJobDefinition
           handleCloseDefinition={this.handleCloseDefinition}
-          open={open}
+          open={modals.definitions}
           jobName={jobName}
           changeJobName={this.changeJobName}
           createDefinition={this.createDefinition}
@@ -407,6 +228,7 @@ const mapDispatchToProps = {
   addJobDefinition: addJobDefinitionAction,
   setLoadingAction: setLoading,
   logoutUserProps: logoutUser,
+  toggleModal: toggleModalAction,
 };
 
 export default connect(

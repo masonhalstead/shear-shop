@@ -1,12 +1,14 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getJobConfig as getJobConfigAction } from 'ducks/operators/job';
 import * as Sentry from '@sentry/browser';
-import { Toolbar, Breadcrumbs, Paper } from '@material-ui/core';
-import { CustomAppBar } from 'components/app-bar/AppBar';
-import { logoutUser, setLoading } from 'ducks/actions';
+import { Paper } from '@material-ui/core';
+import {
+  logoutUser,
+  setLoading,
+  setCurrentJob as setCurrentJobAction,
+} from 'ducks/actions';
 import cn from './Job.module.scss';
 import { JobTabs } from './JobTabs';
 import { TopPanel } from './TopPanel';
@@ -14,6 +16,7 @@ import { STDOutTab } from './STDOutTab';
 import { InputTab } from './InputTab';
 import { OutputTab } from './OutputTab';
 import { HistoryTab } from './HistoryTab';
+import socketIOClient from 'socket.io-client';
 
 const data = {
   job_id: 389946,
@@ -65,9 +68,7 @@ const tabStyle = {
 class JobPage extends PureComponent {
   static propTypes = {
     getProjects: PropTypes.func,
-    hamburger: PropTypes.object,
     projects: PropTypes.array,
-    lookups: PropTypes.object,
     history: PropTypes.object,
     location: PropTypes.object,
   };
@@ -83,25 +84,46 @@ class JobPage extends PureComponent {
     return state;
   }
 
-  state = {
-    tab: 0,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: 0,
+      endpoint: 'http://127.0.0.1:4001',
+      stdOutData: [],
+    };
+    this.socket = socketIOClient(this.state.endpoint);
+  }
 
   componentDidMount() {
     this.setInitialData();
   }
 
   componentWillUnmount() {
+    this.socket.disconnect();
     this.setState({ changes: false });
   }
 
   setInitialData = async () => {
-    const { getJobConfig, setLoadingAction, location } = this.props;
+    const {
+      getJobConfig,
+      setLoadingAction,
+      location,
+      setCurrentJob,
+    } = this.props;
+    const { stdOutData } = this.state;
     const [, , , , job_id] = location.pathname.split('/');
+
+    this.socket.on('FromAPI', data => {
+      stdOutData.push(data);
+      this.setState({ stdOutData: [...stdOutData] });
+    });
+
+    setCurrentJob({ job_id, jobName: data.job_definition_name });
 
     try {
       await setLoadingAction(true);
-      await getJobConfig(job_id);
+      const job = await getJobConfig(job_id);
+      // setCurrentJob({ job_id, jobName: job.job_definition_name });
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
@@ -113,27 +135,12 @@ class JobPage extends PureComponent {
     this.setState({ tab: newValue });
   };
 
-  logout = () => {
-    const { logoutUserProps, history } = this.props;
-    logoutUserProps();
-    localStorage.clear();
-    history.push('/login');
-  };
-
   render() {
-    const {
-      hamburger,
-      history,
-      projects,
-      settings: { project },
-      location,
-    } = this.props;
-    const { tab } = this.state;
-    const id = 1;
+    const { tab, stdOutData } = this.state;
     let content = '';
     let contentInside = '';
     if (tab === 0) {
-      content = <STDOutTab />;
+      content = <STDOutTab stdOutData={stdOutData} />;
     }
     if (tab === 1) {
       content = <InputTab rows={[]} />;
@@ -147,53 +154,8 @@ class JobPage extends PureComponent {
       content = <HistoryTab options={this.options} />;
     }
 
-    const projectName = '';
-    // if (projects.length > 0) {
-    //   if (!Object(project).hasOwnProperty('project_id')) {
-    //     const projectId = location.pathname.split('/')[2];
-    //     projectName = projects.filter(
-    //       project => project.project_id === Number(projectId),
-    //     )[0].project_name;
-    //   } else {
-    //     projectName = project.project_name;
-    //   }
-    // }
-
     return (
       <>
-        <CustomAppBar hamburger={hamburger.open}>
-          <Toolbar className={cn.toolbar}>
-            <Breadcrumbs
-              separator={
-                <FontAwesomeIcon icon="chevron-right" color="#818fa3" />
-              }
-              aria-label="breadcrumb"
-              classes={{ separator: cn.separator, root: cn.text }}
-            >
-              <div
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  history.push(`/projects`);
-                }}
-              >
-                {projectName}
-              </div>
-              <div
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  history.push(`/projects/${id}/jobs/24`);
-                }}
-              >
-                Jobs
-              </div>
-              <div>{data.job_definition_name}</div>
-            </Breadcrumbs>
-            <div className={cn.flex} />
-            <div className={cn.logout} onClick={this.logout}>
-              <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
-            </div>
-          </Toolbar>
-        </CustomAppBar>
         <Paper className={cn.contentAlignHeader}>
           <div className={cn.firstRow}>
             <div className={cn.textMarginBig}>
@@ -231,8 +193,6 @@ class JobPage extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  hamburger: state.hamburger,
-  lookups: state.lookups,
   projects: state.projects,
   settings: state.settings,
 });
@@ -241,6 +201,7 @@ const mapDispatchToProps = {
   getJobConfig: getJobConfigAction,
   logoutUserProps: logoutUser,
   setLoadingAction: setLoading,
+  setCurrentJob: setCurrentJobAction,
 };
 
 export default connect(

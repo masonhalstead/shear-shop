@@ -119,7 +119,27 @@ export const setProject = project => ({
   payload: project,
 });
 
+export const setCurrentJob = job => ({
+  type: constants.SET_CURRENT_JOB,
+  payload: job,
+});
+
 export const toggleAlertAction = open => ({
   type: constants.SHOW_ALERT,
   payload: open,
+});
+
+export const toggleModal = modal => ({
+  type: constants.TOGGLE_MODAL,
+  payload: modal,
+});
+
+export const setCurrentJobs = jobs => ({
+  type: constants.SET_CURRENT_JOBS,
+  payload: jobs,
+});
+
+export const setCurrentDefinitions = definitions => ({
+  type: constants.SET_CURRENT_DEFINITIONS,
+  payload: definitions,
 });
