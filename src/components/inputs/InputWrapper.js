@@ -15,6 +15,7 @@ export class InputWrapper extends Component {
     disabled: PropTypes.bool,
     value: PropTypes.any,
     bulk: PropTypes.bool,
+    data_mask: PropTypes.any,
     margin: PropTypes.string,
     handleOnKeyDown: PropTypes.func,
     handleClose: PropTypes.func,
@@ -28,6 +29,7 @@ export class InputWrapper extends Component {
     value: '',
     placeholder: '',
     disabled: false,
+    data_mask: false,
     left_icon: false,
     right_icon: false,
     type: 'text',
@@ -40,9 +42,21 @@ export class InputWrapper extends Component {
     handleOnKeyDown() {},
   };
 
-  handleOnChange = e => {
+  handleDataMask = input => {
     const { handleOnChange } = this.props;
-    handleOnChange({ value: e.target.value });
+    handleOnChange({
+      value: input.value,
+      masked: input.formattedValue,
+      raw: input.floatValue,
+    });
+  };
+
+  handleOnChange = e => {
+    const { handleOnChange, data_mask } = this.props;
+    if (data_mask === 'timeout') {
+      return this.handleDataMask(e);
+    }
+    return handleOnChange({ value: e.target.value });
   };
 
   render() {

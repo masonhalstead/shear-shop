@@ -185,6 +185,45 @@ class DefinitionPage extends PureComponent {
     );
   };
 
+  handleOnSelectLocation = item => {
+    if (item.location_id === null) {
+      this.setState({
+        location_id: null,
+        location_name: '',
+      });
+      return;
+    }
+    this.setState({
+      location_id: item.location_id,
+      location_name: item.location_name,
+      region_endpoint_hint: null,
+    });
+  };
+
+  handleOnSelectRegion = item => {
+    if (item.location_id === null) {
+      this.setState({ region_endpoint_hint: null });
+      return;
+    }
+    this.setState({
+      location_id: null,
+      location_name: null,
+      region_endpoint_hint: item.location_name,
+    });
+  };
+
+  handleOnSelectMethod = item => {
+    let { stdout_success_text } = this.state;
+    if (item.result_method_id !== 2) {
+      stdout_success_text = '';
+    }
+    this.setState({
+      result_method_id: item.result_method_id,
+      result_method_name: item.result_method_name,
+      stdout_success_text,
+    });
+  };
+
   handleReference = (row, item) => {
     const { parameters } = this.state;
     const index = parameters.findIndex(
@@ -391,9 +430,11 @@ class DefinitionPage extends PureComponent {
       max_retries,
       gpu,
       stdout_success_text,
+      location_name,
       location_id,
+      region_endpoint_hint,
+      result_method_name,
       result_method_id,
-      region,
       memory_gb,
       parameters,
       callbacks,
@@ -464,10 +505,15 @@ class DefinitionPage extends PureComponent {
               max_retries={max_retries}
               gpu={gpu}
               stdout_success_text={stdout_success_text}
-              location={location_id}
+              location_name={location_name}
+              location_id={location_id}
+              result_method_name={result_method_name}
               result_method_id={result_method_id}
-              region={region}
+              region_endpoint_hint={region_endpoint_hint}
               memory_gb={memory_gb}
+              handleOnSelectLocation={this.handleOnSelectLocation}
+              handleOnSelectRegion={this.handleOnSelectRegion}
+              handleOnSelectMethod={this.handleOnSelectMethod}
               handleDefinitionTabs={this.handleDefinitionTabs}
             />
           )}
