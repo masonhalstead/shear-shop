@@ -1,10 +1,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper } from '@material-ui/core';
-import {
-  CustomInput,
-  CustomInputTextArea,
-} from 'components/material-input/CustomInput';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
+import { TextAreaWrapper } from 'components/textarea/TextAreaWrapper';
 import classNames from 'classnames';
 import cn from './Definition.module.scss';
 
@@ -29,64 +28,42 @@ export class DefinitionBlock extends PureComponent {
       <Paper className={cn.contentAlign}>
         <div className={cn.containerRow}>
           <div className={classNames(cn.container, cn.inputSmall)}>
-            <div className={cn.label}>Job Definition</div>
-            <CustomInput
+            <InputWrapper
               label="Job Definition"
-              value={job_definition_name || ''}
-              name="Job Definition"
-              onChange={e =>
-                handleDefinitionBlock({
-                  job_definition_name: e.target.value,
-                })
+              value={job_definition_name}
+              component={Input}
+              handleOnChange={input =>
+                handleDefinitionBlock({ job_definition_name: input.value })
               }
-              inputStyles={{ input: cn.inputStyles }}
             />
           </div>
           <div className={classNames(cn.containerLast, cn.inputMedium)}>
-            <div className={cn.label}>Docker Image</div>
-            <CustomInput
+            <InputWrapper
               label="Docker Image"
-              value={docker_image || ''}
-              name="Docker Image"
-              onChange={e =>
-                handleDefinitionBlock({
-                  docker_image: e.target.value,
-                })
+              value={docker_image}
+              component={Input}
+              handleOnChange={input =>
+                handleDefinitionBlock({ docker_image: input.value })
               }
-              inputStyles={{ input: cn.inputStyles }}
             />
           </div>
         </div>
         <div className={cn.containerLast}>
-          <div className={cn.label}>Startup Command</div>
-          <CustomInputTextArea
-            multiline
+          <TextAreaWrapper
             label="Startup Command"
-            value={startup_command || ''}
-            name="Startup Command"
-            onChange={e =>
-              handleDefinitionBlock({
-                startup_command: e.target.value,
-              })
+            value={startup_command}
+            handleOnChange={input =>
+              handleDefinitionBlock({ startup_command: input.value })
             }
-            inputStyles={{ input: cn.inputStyles }}
-            className={cn.top}
           />
         </div>
         <div className={classNames(cn.containerLast, cn.topItem)}>
-          <div className={cn.label}>Description</div>
-          <CustomInputTextArea
-            multiline
+          <TextAreaWrapper
             label="Description"
-            value={description || ''}
-            name="description"
-            onChange={e =>
-              handleDefinitionBlock({
-                description: e.target.value,
-              })
+            value={description}
+            handleOnChange={input =>
+              handleDefinitionBlock({ description: input.value })
             }
-            inputStyles={{ input: cn.inputStyles }}
-            className={cn.top}
           />
         </div>
       </Paper>

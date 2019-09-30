@@ -1,15 +1,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FormControl, NativeSelect } from '@material-ui/core';
-import {
-  CustomInput,
-  CustomInputBack,
-} from 'components/material-input/CustomInput';
-import {
-  BootstrapInput,
-  BootstrapInputDisabled,
-} from 'components/bootsrap-input/BootstrapInput';
+import { FormControl } from '@material-ui/core';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
+import { InputTimeout } from 'components/inputs/InputTimeout';
+import { Dropdown } from 'components/dropdowns/Dropdown';
+import uuid from 'uuid';
 import cn from './Definition.module.scss';
 
 export class ConnectedConfigTab extends PureComponent {
@@ -19,12 +16,16 @@ export class ConnectedConfigTab extends PureComponent {
     max_retries: PropTypes.number,
     gpu: PropTypes.number,
     stdout_success_text: PropTypes.string,
-    location: PropTypes.number,
+    location_name: PropTypes.any,
+    region_endpoint_hint: PropTypes.any,
     locations: PropTypes.array,
     result_method_id: PropTypes.number,
-    region: PropTypes.any,
+    result_method_name: PropTypes.any,
     memory_gb: PropTypes.number,
     result_methods: PropTypes.array,
+    handleOnSelectRegion: PropTypes.func,
+    handleOnSelectMethod: PropTypes.func,
+    handleOnSelectLocation: PropTypes.func,
     handleDefinitionTabs: PropTypes.func,
   };
 
@@ -35,179 +36,141 @@ export class ConnectedConfigTab extends PureComponent {
       max_retries,
       gpu,
       stdout_success_text,
-      location,
+      location_name,
       locations,
+      result_method_name,
       result_method_id,
-      region,
+      region_endpoint_hint,
       memory_gb,
       result_methods,
       handleDefinitionTabs,
+      handleOnSelectRegion,
+      handleOnSelectMethod,
+      handleOnSelectLocation,
     } = this.props;
 
     return (
       <div className={cn.tabValue}>
         <div className={cn.containerRow}>
           <div className={cn.containerLeft}>
-            <div className={cn.label}>CPU</div>
-            <CustomInput
-              className={cn.rowPadding}
-              type="number"
+            <InputWrapper
               label="CPU"
-              value={cpu || ''}
-              name="cpu"
-              onChange={e => handleDefinitionTabs({ cpu: e.target.value })}
-              inputStyles={{ input: cn.inputStyles }}
+              value={cpu}
+              type="number"
+              min={0}
+              component={Input}
+              handleOnChange={input =>
+                handleDefinitionTabs({ cpu: input.value })
+              }
             />
           </div>
           <div className={cn.containerMiddle}>
-            <div className={cn.label}>Timeout</div>
-            <CustomInput
-              type="time"
-              className={cn.rowPadding}
+            <InputWrapper
               label="Timeout"
-              value={timeout || ''}
-              name="dockerImage"
-              onChange={e => handleDefinitionTabs({ timeout: e.target.value })}
-              inputStyles={{ input: cn.inputStyles }}
+              value={timeout}
+              data_mask="timeout"
+              placeholder="hh:mm"
+              component={InputTimeout}
+              handleOnChange={input =>
+                handleDefinitionTabs({ timeout: input.value })
+              }
             />
           </div>
           <div className={cn.containerRight}>
-            <div className={cn.label}>Max Retries</div>
-            <CustomInput
-              className={cn.rowPadding}
-              type="number"
+            <InputWrapper
               label="Max Retries"
-              value={max_retries || ''}
-              name="max_retries"
-              onChange={e =>
-                handleDefinitionTabs({ max_retries: e.target.value })
+              value={max_retries}
+              type="number"
+              component={Input}
+              handleOnChange={input =>
+                handleDefinitionTabs({ max_retries: input.value })
               }
-              inputStyles={{ input: cn.inputStyles }}
             />
           </div>
         </div>
         <div className={cn.containerRow}>
           <div className={cn.containerLeft}>
-            <div className={cn.label}>GPU</div>
-            <CustomInput
-              className={cn.rowPadding}
+            <InputWrapper
               label="GPU"
+              value={gpu}
               type="number"
-              value={gpu || ''}
-              name="gpu"
-              onChange={e => handleDefinitionTabs({ gpu: e.target.value })}
-              inputStyles={{ input: cn.inputStyles }}
+              min={0}
+              component={Input}
+              handleOnChange={input =>
+                handleDefinitionTabs({ gpu: input.value })
+              }
             />
           </div>
           <FormControl className={cn.containerMiddle}>
-            <div className={cn.label}>Location</div>
-            <NativeSelect
-              disabled={region !== 'empty'}
-              value={location || undefined}
-              onChange={e => handleDefinitionTabs({ location: e.target.value })}
-              input={
-                region !== 'empty' ? (
-                  <BootstrapInputDisabled name="location" id="location" />
-                ) : (
-                  <BootstrapInput name="location" id="location" />
-                )
-              }
-            >
-              <option key="empty" value="empty" />
-              {locations.map(item => (
-                <option key={item.uuid} value={item.location_id}>
-                  {item.location_name}
-                </option>
-              ))}
-            </NativeSelect>
+            <Dropdown
+              rows={locations}
+              extended={[
+                {
+                  location_name: 'Remove Location',
+                  location_id: null,
+                  uuid: uuid.v1(),
+                },
+              ]}
+              row_key="location_name"
+              value={location_name}
+              label="Location"
+              disabled={!!region_endpoint_hint}
+              right_icon="chevron-down"
+              handleOnSelect={handleOnSelectLocation}
+            />
           </FormControl>
           <FormControl className={cn.containerRight}>
-            <div className={cn.label}>Result Method</div>
-            <NativeSelect
-              value={result_method_id || undefined}
-              onChange={e =>
-                handleDefinitionTabs({ result_method_id: e.target.value })
-              }
-              input={
-                <BootstrapInput name="result_method_id" id="result_method_id" />
-              }
-            >
-              <option key="empty" value="empty" />
-              {result_methods.map(item => (
-                <option key={item.uuid} value={item.result_method_id}>
-                  {item.result_method_name}
-                </option>
-              ))}
-            </NativeSelect>
+            <Dropdown
+              rows={result_methods}
+              row_key="result_method_name"
+              value={result_method_name}
+              label="Result Method"
+              right_icon="chevron-down"
+              handleOnSelect={handleOnSelectMethod}
+            />
           </FormControl>
         </div>
         <div className={cn.containerRow}>
           <div className={cn.containerLeft}>
-            <div className={cn.label}>Memory GB</div>
-            <CustomInput
-              className={cn.rowPadding}
+            <InputWrapper
               label="Memory GB"
+              value={memory_gb}
               type="number"
-              value={memory_gb || ''}
-              name="memory_gb"
-              onChange={e =>
-                handleDefinitionTabs({ memory_gb: e.target.value })
+              min={0}
+              component={Input}
+              handleOnChange={input =>
+                handleDefinitionTabs({ memory_gb: input.value })
               }
-              inputStyles={{ input: cn.inputStyles }}
             />
           </div>
           <FormControl className={cn.containerMiddle}>
-            <div className={cn.label}>Region Hint</div>
-            <NativeSelect
-              disabled={location !== 'empty'}
-              value={region || undefined}
-              onChange={e => handleDefinitionTabs({ region: e.target.value })}
-              input={
-                location !== 'empty' ? (
-                  <BootstrapInputDisabled name="region" id="region" />
-                ) : (
-                  <BootstrapInput name="region" id="region" />
-                )
-              }
-            >
-              <option key="empty" value="empty" />
-              {locations.map(item => (
-                <option key={item.uuid} value={item.location_id}>
-                  {item.location_name}
-                </option>
-              ))}
-            </NativeSelect>
+            <Dropdown
+              rows={locations}
+              extended={[
+                {
+                  location_name: 'Remove Region Hint',
+                  location_id: null,
+                  uuid: uuid.v1(),
+                },
+              ]}
+              row_key="location_name"
+              value={region_endpoint_hint}
+              disabled={!!location_name}
+              label="Region Hint"
+              right_icon="chevron-down"
+              handleOnSelect={handleOnSelectRegion}
+            />
           </FormControl>
           <div className={cn.containerRight}>
-            <div className={cn.label}>Success Text</div>
-            {Number(result_method_id) === 2 ? (
-              <CustomInput
-                className={cn.rowPadding}
-                label="Success Text"
-                value={stdout_success_text || ''}
-                name="stdout_success_text"
-                onChange={e =>
-                  handleDefinitionTabs({ stdout_success_text: e.target.value })
-                }
-                inputStyles={{
-                  input: cn.inputStyles,
-                }}
-              />
-            ) : (
-              <CustomInputBack
-                disabled
-                className={cn.rowPadding}
-                label="Success Text"
-                value={stdout_success_text || ''}
-                name="stdout_success_text"
-                onChange={e =>
-                  handleDefinitionTabs({ stdout_success_text: e.target.value })
-                }
-                inputStyles={{
-                  input: cn.inputStyles,
-                }}
-              />
-            )}
+            <InputWrapper
+              label="Success Text"
+              value={stdout_success_text}
+              disabled={result_method_id !== 2}
+              component={Input}
+              handleOnChange={input =>
+                handleDefinitionTabs({ stdout_success_text: input.value })
+              }
+            />
           </div>
         </div>
       </div>

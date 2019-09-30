@@ -1,0 +1,48 @@
+@import 'scss/common';
+
+.textAreaWrapper {
+  overflow: hidden;
+  width: 100%;
+}
+.textAreaContainer {
+  display: flex;
+  align-items: stretch;
+  cursor: pointer;
+  justify-content: center;
+  border: 1px solid #cfd7e6;
+  border-radius: 5px;
+  min-height: 40px;
+}
+.textAreaDisabled {
+  background: #eeeeee !important;
+}
+.textAreaBulk {
+  border: none;
+  border-radius: 0px;
+}
+.textAreaLabel {
+  margin: 0px 0px 4px 0px;
+  font-weight: 400;
+  color: #62738d;
+  font-size: 13px;
+}
+.textAreaCustom {
+  background: transparent;
+  cursor: text;
+  border: none;
+  padding: 5px;
+  font-size: 13px;
+  color: #444;
+  flex-grow: 1;
+  width: 100%;
+  min-height: 40px;
+  align-self: stretch;
+}
+.textAreaCustom:focus {
+  background: transparent;
+  outline: 0;
+}
+.textAreaCustom::placeholder {
+  font-weight: 300;
+  color: lighten(#62738d,20);
+}

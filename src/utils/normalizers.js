@@ -6,18 +6,14 @@ export function normalizeWithUUID(array) {
     uuid: uuid.v1(),
   }));
 }
-export function normalizeDefinition(data, locations = []) {
-  const region = locations.filter(
-    filter => filter.location_name === data.region_endpoint_hint,
-  );
+export function normalizeDefinition(data) {
   return {
     ...data,
     timeout: new Date(data.timeout_seconds * 1000)
       .toUTCString()
       .match(/(\d\d:\d\d)/)[0],
-    region: region.length > 0 ? region[0].location_id : 'empty',
-    location_id:
-      data.location_id === null ? 'empty' : data.location_id,
+    region_endpoint_hint:
+      data.region_endpoint_hint === 'empty' ? null : data.region_endpoint_hint,
     uuid: uuid.v1(),
   };
 }
