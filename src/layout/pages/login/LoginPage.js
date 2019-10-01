@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { CustomInput } from 'components/material-input/CustomInput';
 import { login as loginUserAction } from 'ducks/operators/user';
 import { selectIsAuthenticated } from 'ducks/selectors';
 import { routes } from 'layout/routes';
@@ -9,6 +8,8 @@ import * as Sentry from '@sentry/browser';
 import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import cn from './Login.module.scss';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
 const { PUBLIC_URL } = process.env;
 
 export class ConnectedLoginWrapper extends React.PureComponent {
@@ -58,8 +59,8 @@ export class ConnectedLoginWrapper extends React.PureComponent {
     }
   };
 
-  handleOnInput = e =>
-    this.setState({ [e.target.name]: e.target.value, error: null });
+  handleOnInput = (type, value) =>
+    this.setState({ [type]: value, error: null });
 
   render() {
     const { error, email_address, password } = this.state;
@@ -79,21 +80,24 @@ export class ConnectedLoginWrapper extends React.PureComponent {
             <form className={cn.loginContainer} onSubmit={this.handleSubmit}>
               <p className={cn.publicSubTitle}>Cognitiv Login</p>
               <div className={cn.formGroup}>
-                <CustomInput
-                  type="email"
-                  value={email_address}
-                  name="email_address"
+                <InputWrapper
                   placeholder="Email Address"
-                  onChange={this.handleOnInput}
+                  value={email_address}
+                  component={Input}
+                  handleOnChange={input =>
+                    this.handleOnInput('email_address', input.value)
+                  }
                 />
               </div>
               <div className={cn.formGroup}>
-                <CustomInput
-                  type="password"
-                  name="password"
-                  value={password}
+                <InputWrapper
                   placeholder="Password"
-                  onChange={this.handleOnInput}
+                  type="password"
+                  value={password}
+                  component={Input}
+                  handleOnChange={input =>
+                    this.handleOnInput('password', input.value)
+                  }
                 />
               </div>
               <button

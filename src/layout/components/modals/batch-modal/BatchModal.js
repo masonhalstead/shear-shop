@@ -5,9 +5,10 @@ import {
   DialogContent,
   DialogTitle,
 } from 'components/dialogs/Dialogs';
-import { CustomInput } from 'components/material-input/CustomInput';
 import classNames from 'classnames';
 import React from 'react';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
 
 export const BatchModal = ({
   handleCloseBatch,
@@ -27,11 +28,13 @@ export const BatchModal = ({
     </DialogTitle>
     <DialogContent>
       <div className={cn.container}>
-        <div className={cn.label}>Batch Name</div>
-        <CustomInput
+        <InputWrapper
+          label="Batch Name"
           value={batchName}
-          name="batchName"
-          onChange={e => changeBatchName(e.target.value)}
+          component={Input}
+          handleOnChange={input =>
+            changeBatchName(input.value)
+          }
         />
       </div>
     </DialogContent>
