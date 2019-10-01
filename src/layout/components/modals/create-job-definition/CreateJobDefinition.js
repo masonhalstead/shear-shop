@@ -7,8 +7,9 @@ import {
   DialogContent,
   DialogTitle,
 } from 'components/dialogs/Dialogs';
-import { CustomInput } from 'components/material-input/CustomInput';
 import classNames from 'classnames';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
 
 export const CreateJobDefinition = ({
   handleCloseDefinition,
@@ -28,11 +29,13 @@ export const CreateJobDefinition = ({
     </DialogTitle>
     <DialogContent>
       <div className={cn.container}>
-        <div className={cn.label}>Job Definition Name</div>
-        <CustomInput
+        <InputWrapper
+          label="Job Definition Name"
           value={jobName}
-          name="jobName"
-          onChange={e => changeJobName(e.target.value)}
+          component={Input}
+          handleOnChange={input =>
+            changeJobName(input.value)
+          }
         />
       </div>
     </DialogContent>

@@ -3,8 +3,9 @@ import React from 'react';
 import { Button, Dialog } from '@material-ui/core';
 import cn from './CreateProject.module.scss';
 import { DialogActions, DialogContent, DialogTitle } from 'components/dialogs/Dialogs';
-import { CustomInput } from 'components/material-input/CustomInput';
 import classNames from 'classnames';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
 
 export const CreateProjectModal = ({handleCloseProject, open, projectName, changeProjectName, createProject }) => (
   <Dialog
@@ -21,11 +22,13 @@ export const CreateProjectModal = ({handleCloseProject, open, projectName, chang
     </DialogTitle>
     <DialogContent>
       <div className={cn.container}>
-        <div className={cn.label}>Project Name</div>
-        <CustomInput
+        <InputWrapper
+          label="Project Name"
           value={projectName}
-          name="projectName"
-          onChange={e => changeProjectName(e.target.value)}
+          component={Input}
+          handleOnChange={input =>
+            changeProjectName(input.value)
+          }
         />
       </div>
     </DialogContent>

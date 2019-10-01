@@ -12,6 +12,7 @@ import {
   toggleModal as toggleModalAction,
   setCurrentJobs as setCurrentJobsAction,
   setCurrentDefinitions as setCurrentDefinitionsAction,
+  logoutUser as logoutUserProps,
 } from 'ducks/actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -56,8 +57,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
   };
 
   logout = () => {
-    const { logoutUserProps, history } = this.props;
-    logoutUserProps();
+    const { logoutUser, history } = this.props;
+    logoutUser();
     localStorage.clear();
     history.push('/login');
   };
@@ -328,6 +329,7 @@ const mapDispatchToProps = {
   toggleModal: toggleModalAction,
   setCurrentJobs: setCurrentJobsAction,
   setCurrentDefinitions: setCurrentDefinitionsAction,
+  logoutUser: logoutUserProps,
 };
 
 export const StyledPrivateLayout = withStyles(styles, { withTheme: true })(
