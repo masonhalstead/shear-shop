@@ -1,49 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cn from './Input.module.scss';
+import cn from './TextArea.module.scss';
 
-export const Input = React.memo(
+export const TextArea = React.memo(
   ({
     value,
-    type,
-    min,
     placeholder,
     disabled,
     handleOpen,
     handleOnChange,
     handleOnKeyDown,
   }) => (
-    <input
-      className={cn.inputCustom}
+    <textarea
+      className={cn.textAreaCustom}
       disabled={disabled}
       spellCheck="false"
       autoComplete="none"
-      name="new-password"
       placeholder={placeholder}
       value={value}
-      type={type}
-      min={min}
       onChange={handleOnChange}
       onFocus={handleOpen}
       onKeyDown={handleOnKeyDown}
     />
   ),
 );
-Input.defaultProps = {
+TextArea.defaultProps = {
   placeholder: '',
   value: '',
-  type: 'text',
-  min: 0,
   disabled: false,
   handleOpen: () => {},
   handleOnChange: () => {},
   handleOnKeyDown: () => {},
 };
-Input.propTypes = {
+TextArea.propTypes = {
   disabled: PropTypes.any,
   value: PropTypes.any,
-  type: PropTypes.string,
-  min: PropTypes.number,
   placeholder: PropTypes.string,
   handleOpen: PropTypes.func,
   handleOnChange: PropTypes.func,
