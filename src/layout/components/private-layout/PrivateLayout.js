@@ -3,16 +3,14 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { Loading } from 'components/loading/Loading';
-import {
-  Toolbar,
-  Breadcrumbs,
-} from '@material-ui/core';
+import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import {
   setHamburger as setHamburgerAction,
   toggleModal as toggleModalAction,
   setCurrentJobs as setCurrentJobsAction,
   setCurrentDefinitions as setCurrentDefinitionsAction,
   logoutUser as logoutUserProps,
+  saveDefinition as saveDefinitionAction,
 } from 'ducks/actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -26,6 +24,69 @@ import { CustomAppBar } from 'components/app-bar/AppBar';
 import { CustomizedInputBase } from 'components/search/SearchInput';
 import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
 import { DrawerWrapper } from './Drawer';
+import {
+  ProjectBread,
+  JobFilterBread,
+  JobBread,
+  DefinitionFilter,
+  DefinitionsList,
+} from './BreadCramps';
+
+const filtersDefinition = [
+  {
+    name: 'unarchived',
+    id: 1,
+    uuid: 1,
+  },
+  {
+    name: 'archived',
+    id: 2,
+    uuid: 2,
+  },
+];
+
+const filtersJob = [
+  {
+    name: 24,
+    id: 1,
+    uuid: 1,
+  },
+  {
+    name: 7,
+    id: 2,
+    uuid: 2,
+  },
+  {
+    name: 'Queued',
+    id: 3,
+    uuid: 3,
+  },
+  {
+    name: 'Starting',
+    id: 4,
+    uuid: 4,
+  },
+  {
+    name: 'Running',
+    id: 5,
+    uuid: 5,
+  },
+  {
+    name: 'Complete',
+    id: 6,
+    uuid: 6,
+  },
+  {
+    name: 'Stopped',
+    id: 7,
+    uuid: 7,
+  },
+  {
+    name: 'Failed',
+    id: 8,
+    uuid: 8,
+  },
+];
 
 export class PrivateLayoutWrapper extends React.PureComponent {
   static propTypes = {
@@ -61,6 +122,50 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     logoutUser();
     localStorage.clear();
     history.push('/login');
+  };
+
+  handleOnSelectFilterJob = item => {
+    const { history, location } = this.props;
+    const route = location.pathname.split('/');
+
+    history.push(`/projects/${route[2]}/jobs/${item.name}`);
+  };
+
+  handleOnSelectFilterDefinition = item => {
+    const { history, location } = this.props;
+    const route = location.pathname.split('/');
+
+    history.push(`/projects/${route[2]}/definitions/${item.name}`);
+  };
+
+  handleOnSelectFilterOneJob = item => {
+    const { history, location } = this.props;
+    const route = location.pathname.split('/');
+
+    history.push(
+      `/projects/${route[2]}/jobs/${route[4]}/job/${item.job_definition_id}`,
+    );
+  };
+
+  handleOnSelectFilterDefinitionsList = item => {
+    const { history, location } = this.props;
+    const route = location.pathname.split('/');
+
+    history.push(
+      `/projects/${route[2]}/definitions/${route[4]}/definition/${item.job_definition_id}`,
+    );
+  };
+
+  handleOnSelectFilterProject = item => {
+    const { history, location } = this.props;
+    const route = location.pathname.split('/');
+    history.push(`/projects/${item.project_id}/jobs/${route[4]}`);
+  };
+
+  handleOnSelectFilterProjectDef = item => {
+    const { history, location } = this.props;
+    const route = location.pathname.split('/');
+    history.push(`/projects/${item.project_id}/definitions/${route[4]}`);
   };
 
   onSearch = e => {
@@ -114,8 +219,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     const {
       location,
       toggleModal,
-      settings: { project, job, jobs, definitions },
+      settings: { project, job, jobs, definitions, definitionChanged },
       history,
+      projects,
+      jobs: jobsData,
+      definitions: definitionsData,
+      saveDefinition,
     } = this.props;
     const route = location.pathname.split('/');
     if (route.length === 2) {
@@ -135,7 +244,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
         </>
       );
     }
-    if (route.length === 6 && route[5] === 'job') {
+    if (route.length === 7 && route[5] === 'job') {
       return (
         <>
           <Breadcrumbs
@@ -143,22 +252,19 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             aria-label="breadcrumb"
             classes={{ separator: cn.separator, root: cn.text }}
           >
-            <div
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                history.push(`/projects`);
-              }}
-            >
-              {project.project_name}
-            </div>
-            <div
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                history.push(`/projects/${project.project_id}/jobs/24`);
-              }}
-            >
-              Jobs
-            </div>
+            <ProjectBread
+              projects={projects}
+              handleOnSelectFilterProject={this.handleOnSelectFilterProject}
+              route={route}
+            />
+            <JobFilterBread
+              route={route}
+              filtersJob={filtersJob}
+              handleOnSelectFilterJob={this.handleOnSelectFilterJob}
+            />
+            <div>Jobs</div>
+            {/*fill work when api will be ready*/}
+            {/*<JobBread route={route} handleOnSelectFilterOneJob={this.handleOnSelectFilterOneJob} jobs={jobsData}/>*/}
             <div>{job.jobName}</div>
           </Breadcrumbs>
           <div className={cn.flex} />
@@ -168,15 +274,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
         </>
       );
     }
-    if (route.length === 5 && route[3] === 'jobs') {
-      let label = 'Last 24 Hours';
 
-      if (route[4] === '7') {
-        label = 'Last 7 Days';
-      }
-      if (route[4] !== '24' && route[4] !== '7') {
-        label = route[4].charAt(0).toUpperCase() + route[4].slice(1);
-      }
+    if (route.length === 5 && route[3] === 'jobs') {
       return (
         <>
           <Breadcrumbs
@@ -184,15 +283,16 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             aria-label="breadcrumb"
             classes={{ separator: cn.separator, root: cn.text }}
           >
-            <div
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                history.push(`/projects`);
-              }}
-            >
-              {project.project_name}
-            </div>
-            <div>{label}</div>
+            <ProjectBread
+              projects={projects}
+              handleOnSelectFilterProject={this.handleOnSelectFilterProject}
+              route={route}
+            />
+            <JobFilterBread
+              route={route}
+              filtersJob={filtersJob}
+              handleOnSelectFilterJob={this.handleOnSelectFilterJob}
+            />
           </Breadcrumbs>
           <div className={cn.flexGrow} />
           <div className={cn.actionWrapper}>
@@ -220,7 +320,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
       );
     }
     if (route.length === 5 && route[3] === 'definitions') {
-      const label = route[4].charAt(0).toUpperCase() + route[4].slice(1);
       return (
         <>
           <Breadcrumbs
@@ -228,15 +327,18 @@ export class PrivateLayoutWrapper extends React.PureComponent {
             aria-label="breadcrumb"
             classes={{ separator: cn.separator, root: cn.text }}
           >
-            <div
-              className={cn.text}
-              onClick={() => {
-                history.push(`/projects`);
-              }}
-            >
-              {project.project_name}
-            </div>
-            <div>{label}</div>
+            <ProjectBread
+              projects={projects}
+              handleOnSelectFilterProject={this.handleOnSelectFilterProjectDef}
+              route={route}
+            />
+            <DefinitionFilter
+              route={route}
+              filtersDefinition={filtersDefinition}
+              handleOnSelectFilterDefinition={
+                this.handleOnSelectFilterDefinition
+              }
+            />
           </Breadcrumbs>
           <div className={cn.actionWrapper}>
             <div className={cn.searchContainer}>
@@ -270,6 +372,43 @@ export class PrivateLayoutWrapper extends React.PureComponent {
         </>
       );
     }
+    if (route.length === 7 && route[5] === 'definition') {
+      return (
+        <>
+          <Breadcrumbs
+            separator={<FontAwesomeIcon icon="chevron-right" color="#818fa3" />}
+            aria-label="breadcrumb"
+            classes={{ separator: cn.separator, root: cn.text }}
+          >
+            <ProjectBread
+              projects={projects}
+              handleOnSelectFilterProject={this.handleOnSelectFilterProjectDef}
+              route={route}
+            />
+            <DefinitionFilter
+              route={route}
+              filtersDefinition={filtersDefinition}
+              handleOnSelectFilterDefinition={
+                this.handleOnSelectFilterDefinition
+              }
+            />
+            <div>Definition</div>
+            <DefinitionsList route={route} definitions={definitionsData} handleOnSelectFilterDefinitionsList={this.handleOnSelectFilterDefinitionsList} />
+          </Breadcrumbs>
+          <div className={cn.actionWrapperDefinition}>
+            <div className={cn.iconContainer} onClick={() => saveDefinition(true)}>
+            <FontAwesomeIcon
+            icon={['far', 'save']}
+            color={definitionChanged ? 'orange' : '#818fa3'}
+            />
+            </div>
+            <div className={cn.logout} onClick={this.logout}>
+              <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
+            </div>
+          </div>
+        </>
+      );
+    }
   };
 
   buildCustomToolbar = () => (
@@ -293,7 +432,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
 
     return (
       <div className={cn.cognBody}>
-        <DrawerWrapper open={open} classes={classes} handleDrawerOpen={this.handleDrawerOpen} history={history} id={id}/>
+        <DrawerWrapper
+          open={open}
+          classes={classes}
+          handleDrawerOpen={this.handleDrawerOpen}
+          history={history}
+          id={id}
+        />
         <main
           className={classNames(
             open ? classes.content : classes.contentClosed,
@@ -321,6 +466,9 @@ const mapStateToProps = state => ({
   settings: state.settings,
   loading: state.settings.loading,
   project: state.project,
+  projects: state.projects,
+  jobs: state.jobs,
+      definitions: state.definitions,
 });
 
 const mapDispatchToProps = {
@@ -328,6 +476,7 @@ const mapDispatchToProps = {
   getProjects: getProjectsAction,
   toggleModal: toggleModalAction,
   setCurrentJobs: setCurrentJobsAction,
+  saveDefinition: saveDefinitionAction,
   setCurrentDefinitions: setCurrentDefinitionsAction,
   logoutUser: logoutUserProps,
 };

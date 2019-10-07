@@ -1,9 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Toolbar, Breadcrumbs } from '@material-ui/core';
-import { CustomAppBar } from 'components/app-bar/AppBar';
 import { BatchModal } from 'layout/components/modals/batch-modal/BatchModal';
 import {
   getJobs as getJobsAction,
@@ -11,10 +8,7 @@ import {
 } from 'ducks/operators/jobs';
 import { logoutUser, setLoading } from 'ducks/actions';
 import * as Sentry from '@sentry/browser';
-import { CustomizedInputBase } from 'components/search/SearchInput';
-import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
 import { Table } from 'components/table/Table';
-import uuid from 'uuid';
 import {
   JobCell,
   StateCell,
@@ -495,12 +489,14 @@ class JobsPage extends PureComponent {
     const { open, batchName } = this.state;
     const {
       settings: { jobs },
+      location,
     } = this.props;
     return (
       <>
         <div className={cn.contentWrapper}>
           <Table
             rows={result.data}
+            path={location.pathname.split('/')}
             headers={jobs.headers}
             cell_components={[
               JobCell,

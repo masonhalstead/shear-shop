@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import cn from './Definitions.module.scss';
 
-export const JobCell = ({ row }) => (
+export const JobCell = ({ row, path }) => (
   <Link
     className={classNames(cn.jobCell, cn.overflow)}
-    to={`/projects/${row.project_id}/definitions/${row.job_definition_id}/definition`}
+    to={`/projects/${path[2]}/definitions/${path[4]}/definition/${row.job_definition_id}`}
   >
     {row.job_definition_name}
     {row.description && (

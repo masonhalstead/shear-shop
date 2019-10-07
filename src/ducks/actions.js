@@ -143,3 +143,13 @@ export const setCurrentDefinitions = definitions => ({
   type: constants.SET_CURRENT_DEFINITIONS,
   payload: definitions,
 });
+
+export const saveDefinition = definition => ({
+  type: constants.SAVE_DEFINITION,
+  payload: definition,
+});
+
+export const definitionChanged = definition => ({
+  type: constants.DEFINITION_CHANGED,
+  payload: definition,
+});

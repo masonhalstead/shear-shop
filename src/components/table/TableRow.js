@@ -31,7 +31,7 @@ export class TableRow extends Component {
   }
 
   render() {
-    const { headers, row, settings, callbacks, cell_components } = this.props;
+    const { headers, row, settings, callbacks, cell_components, path } = this.props;
 
     const row_styles = {
       minHeight: `${settings.row_height}px`,
@@ -49,6 +49,7 @@ export class TableRow extends Component {
           return (
             <Cell row={row} key={cell_key} header={headers[index]}>
               <ChildComponent
+                path={path}
                 row={row}
                 column_index={index}
                 header={headers[index]}

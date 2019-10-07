@@ -166,6 +166,12 @@
   width: 50%;
   align-self: stretch;
 }
+.actionWrapperDefinition {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: stretch;
+}
 
 .searchContainer {
   margin-right: 15px;

@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import cn from './Jobs.module.scss';
 
-export const JobCell = ({ row }) => (
+export const JobCell = ({ row, path }) => (
   <Link
     className={classNames(cn.jobCell, cn.overflow)}
-    to={`/projects/${row.project_id}/jobs/${row.job_id}/job`}
+    to={`/projects/${1}/jobs/${path[4]}/job/${row.job_id}`}
   >
     {row.job_id} {row.batch_descriptor && <span>: {row.batch_descriptor}</span>}
   </Link>

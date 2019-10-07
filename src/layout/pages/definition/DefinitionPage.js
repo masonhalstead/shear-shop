@@ -1,7 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { logoutUser, setLoading } from 'ducks/actions';
+import {
+  setLoading,
+  saveDefinition as saveDefinitionAction,
+  definitionChanged as definitionChangedAction,
+} from 'ducks/actions';
 import {
   getJobDefinition as getJobDefinitionAction,
   editDefinition as editDefinitionProps,
@@ -11,17 +15,13 @@ import {
   saveParameters as saveParametersProps,
 } from 'ducks/operators/parameters';
 import { handleError } from 'ducks/operators/settings';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as Sentry from '@sentry/browser';
-import { Toolbar, Breadcrumbs } from '@material-ui/core';
-import { CustomAppBar } from 'components/app-bar/AppBar';
 import uuid from 'uuid';
 import { DefinitionBlock } from './DefinitionBlock';
 import { DefinitionTabs } from './DefinitionTabs';
 import { ConfigTab } from './ConfigTab';
 import { InputsTab } from './InputsTab';
 import { OutputsTab } from './OutputsTab';
-import cn from './Definition.module.scss';
 
 class DefinitionPage extends PureComponent {
   static propTypes = {
@@ -41,6 +41,7 @@ class DefinitionPage extends PureComponent {
   };
 
   state = {
+    routeId: 0,
     description: '',
     cpu: '',
     timeout: '',
@@ -53,7 +54,6 @@ class DefinitionPage extends PureComponent {
     tab: 0,
     result_method_id: '',
     project_id: null,
-    changes: false,
     parameters: [],
     callbacks: {
       saveParameterName: (row, value) => this.saveParameterName(row, value),
@@ -67,7 +67,8 @@ class DefinitionPage extends PureComponent {
   };
 
   static getDerivedStateFromProps(props, state) {
-    const { job_definition, parameters } = props;
+    const { job_definition, parameters, location } = props;
+    const [, , , , , , id] = location.pathname.split('/');
     const { job_definition_id } = state;
     if (job_definition.job_definition_id !== job_definition_id) {
       return {
@@ -97,6 +98,16 @@ class DefinitionPage extends PureComponent {
         ],
       };
     }
+    if (Number(id) !== state.routeId) {
+      props.saveDefinition(false);
+      props.definitionChanged(false);
+      props.setLoadingAction(true);
+      props.getJobDefinition(id);
+      props.setLoadingAction(false);
+
+      return { routeId: Number(id) };
+    }
+
     return null;
   }
 
@@ -105,9 +116,18 @@ class DefinitionPage extends PureComponent {
   }
 
   componentWillUnmount() {
-    this.setState({
-      changes: false,
-    });
+    const { saveDefinition, definitionChanged } = this.props;
+    saveDefinition(false);
+    definitionChanged(false);
+  }
+
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if (nextProps.settings.saveDefinition === true) {
+      this.saveDefinitionFunc();
+      this.props.saveDefinition(false);
+    }
+
+    return true;
   }
 
   handleChangeTab = (e, value) => {
@@ -115,11 +135,15 @@ class DefinitionPage extends PureComponent {
   };
 
   handleDefinitionBlock = input => {
-    this.setState({ ...input, changes: true });
+    const { definitionChanged } = this.props;
+    definitionChanged(true);
+    this.setState({ ...input });
   };
 
   handleDefinitionTabs = input => {
-    this.setState({ ...input, changes: true });
+    const { definitionChanged } = this.props;
+    definitionChanged(true);
+    this.setState({ ...input});
   };
 
   saveParameterName = (row, value) => {
@@ -135,7 +159,6 @@ class DefinitionPage extends PureComponent {
     this.setState(
       {
         parameters: [...parameters],
-        changes: true,
       },
       () => this.handleRowManagement(),
     );
@@ -154,7 +177,6 @@ class DefinitionPage extends PureComponent {
     this.setState(
       {
         parameters: [...parameters],
-        changes: true,
       },
       () => this.handleRowManagement(),
     );
@@ -179,7 +201,6 @@ class DefinitionPage extends PureComponent {
     this.setState(
       {
         parameters: [...parameters],
-        changes: true,
       },
       () => this.handleRowManagement(),
     );
@@ -240,7 +261,6 @@ class DefinitionPage extends PureComponent {
     this.setState(
       {
         parameters: [...parameters],
-        changes: true,
       },
       () => this.handleRowManagement(),
     );
@@ -259,7 +279,6 @@ class DefinitionPage extends PureComponent {
     this.setState(
       {
         parameters: [...parameters],
-        changes: true,
       },
       () => this.handleRowManagement(),
     );
@@ -278,7 +297,6 @@ class DefinitionPage extends PureComponent {
     this.setState(
       {
         parameters: [...parameters],
-        changes: true,
       },
       () => this.handleRowManagement(),
     );
@@ -293,13 +311,14 @@ class DefinitionPage extends PureComponent {
     this.setState(
       {
         parameters: [...parameters],
-        changes: true,
       },
       () => this.handleRowManagement(),
     );
   };
 
   handleRowManagement = () => {
+    const { definitionChanged } = this.props;
+    definitionChanged(true);
     const { parameters } = this.state;
 
     const inputs = parameters.filter(
@@ -334,7 +353,7 @@ class DefinitionPage extends PureComponent {
 
   setInitialData = async () => {
     const { getJobDefinition, setLoadingAction, location } = this.props;
-    const [, , , , definition_id] = location.pathname.split('/');
+    const [, , , , , , definition_id] = location.pathname.split('/');
 
     try {
       await setLoadingAction(true);
@@ -346,7 +365,8 @@ class DefinitionPage extends PureComponent {
     setLoadingAction(false);
   };
 
-  saveDefinition = async () => {
+  saveDefinitionFunc = async () => {
+    console.log(333333);
     const {
       job_definition_name,
       description,
@@ -410,17 +430,8 @@ class DefinitionPage extends PureComponent {
     setLoadingAction(false);
   };
 
-  logout = () => {
-    const { logoutUserProps, history } = this.props;
-    logoutUserProps();
-    localStorage.clear();
-    history.push('/login');
-  };
-
   render() {
-    const { hamburger, history } = this.props;
     const {
-      changes,
       job_definition_name,
       docker_image,
       startup_command,
@@ -439,52 +450,10 @@ class DefinitionPage extends PureComponent {
       parameters,
       callbacks,
       tab,
-      project_id,
     } = this.state;
 
     return (
       <>
-        <CustomAppBar hamburger={hamburger.open}>
-          <Toolbar className={cn.toolbar}>
-            <Breadcrumbs
-              separator={
-                <FontAwesomeIcon icon="chevron-right" color="#818fa3" />
-              }
-              aria-label="breadcrumb"
-              classes={{ separator: cn.separator, root: cn.text }}
-            >
-              <div
-                className={cn.text}
-                onClick={() => {
-                  history.push(`/projects`);
-                }}
-              >
-                Lynx (Prod)
-              </div>
-              <div
-                className={cn.text}
-                onClick={() => {
-                  history.push(
-                    `/projects/${project_id}/definitions/unarchived`,
-                  );
-                }}
-              >
-                Job Definitions
-              </div>
-              <div>{job_definition_name}</div>
-            </Breadcrumbs>
-            <div className={cn.flex} />
-            <div className={cn.iconContainer} onClick={this.saveDefinition}>
-              <FontAwesomeIcon
-                icon={['far', 'save']}
-                color={changes ? 'orange' : '#818fa3'}
-              />
-            </div>
-            <div className={cn.logout} onClick={this.logout}>
-              <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
-            </div>
-          </Toolbar>
-        </CustomAppBar>
         <DefinitionBlock
           job_definition_name={job_definition_name}
           docker_image={docker_image}
@@ -544,6 +513,7 @@ const mapStateToProps = state => ({
   locations: state.lookups.locations,
   parameters: state.parameters,
   job_definition: state.job_definition,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = {
@@ -551,9 +521,10 @@ const mapDispatchToProps = {
   editDefinition: editDefinitionProps,
   editParameters: editParametersProps,
   saveParameters: saveParametersProps,
-  logoutUserProps: logoutUser,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
+  saveDefinition: saveDefinitionAction,
+  definitionChanged: definitionChangedAction,
 };
 
 export default connect(

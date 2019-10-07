@@ -68,6 +68,7 @@ export class Table extends Component {
     search_input: PropTypes.string,
     cell_components: PropTypes.array,
     settings: PropTypes.object,
+    location: PropTypes.object,
     rows: PropTypes.array,
   };
 
@@ -137,7 +138,7 @@ export class Table extends Component {
 
   render() {
     const { headers, rows, settings } = this.state;
-    const { callbacks, cell_components } = this.props;
+    const { callbacks, cell_components, path } = this.props;
     const { header, header_height } = settings;
 
     const headers_style = {
@@ -166,6 +167,7 @@ export class Table extends Component {
               <TableRow
                 key={row.uuid}
                 headers={headers}
+                path={path}
                 row={row}
                 settings={settings}
                 callbacks={callbacks}

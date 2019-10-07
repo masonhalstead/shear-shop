@@ -6,7 +6,9 @@ import {
   TOGGLE_MODAL,
   SET_CURRENT_JOB,
   SET_CURRENT_JOBS,
-  SET_CURRENT_DEFINITIONS
+  SET_CURRENT_DEFINITIONS,
+  SAVE_DEFINITION,
+  DEFINITION_CHANGED,
 } from 'ducks/types';
 import uuid from 'uuid';
 
@@ -14,6 +16,8 @@ const settingsState = {
   error_message: '',
   loading: false,
   alert: false,
+  definitionChanged: false,
+  saveDefinition: false,
   project: {},
   job: {},
   modals: {
@@ -155,7 +159,7 @@ const settingsState = {
       search_key: 'job_definition_name',
       row_height: 33,
     },
-  }
+  },
 };
 export const settingsReducer = (state = settingsState, action) => {
   switch (action.type) {
@@ -163,6 +167,10 @@ export const settingsReducer = (state = settingsState, action) => {
       return { ...state, error_message: action.payload };
     case SET_LOADING:
       return { ...state, loading: action.payload };
+    case SAVE_DEFINITION:
+      return { ...state, saveDefinition: action.payload };
+    case DEFINITION_CHANGED:
+      return { ...state, definitionChanged: action.payload };
     case TOGGLE_MODAL:
       return { ...state, modals: { ...state.modals, ...action.payload } };
     case SHOW_ALERT:
@@ -176,8 +184,11 @@ export const settingsReducer = (state = settingsState, action) => {
       return { ...state, job: action.payload };
     case SET_CURRENT_JOBS:
       return { ...state, jobs: { ...state.jobs, ...action.payload } };
-      case SET_CURRENT_DEFINITIONS:
-      return { ...state, definitions: { ...state.definitions, ...action.payload } };
+    case SET_CURRENT_DEFINITIONS:
+      return {
+        ...state,
+        definitions: { ...state.definitions, ...action.payload },
+      };
     default:
       return state;
   }

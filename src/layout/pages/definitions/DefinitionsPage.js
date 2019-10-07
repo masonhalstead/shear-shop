@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
 import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
 import * as Sentry from '@sentry/browser';
-import { logoutUser, setLoading, toggleModal as toggleModalAction } from 'ducks/actions';
+import {
+  logoutUser,
+  setLoading,
+  toggleModal as toggleModalAction,
+} from 'ducks/actions';
 import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
 import { Table } from 'components/table/Table';
@@ -31,11 +35,23 @@ class DefinitionsPage extends PureComponent {
     lookups: PropTypes.object,
   };
 
+  static getDerivedStateFromProps(props, state) {
+    const [, , project_id] = props.location.pathname.split('/');
+    if (state.projectId !== '' && Number(project_id) !== Number(state.projectId)) {
+      props.getJobDefinitions(project_id);
+
+      return { projectId: project_id };
+    }
+
+    return state;
+  }
+
   state = {
     run: false,
     title: '',
     jobName: '',
     open: false,
+    projectId: '',
     id: '',
     callbacks: {
       openModal: row => this.openModal(row),
@@ -49,6 +65,8 @@ class DefinitionsPage extends PureComponent {
   setInitialData = async () => {
     const { getJobDefinitions, setLoadingAction, location } = this.props;
     const [, , project_id] = location.pathname.split('/');
+
+    this.setState({ projectId: project_id });
 
     try {
       await setLoadingAction(true);
@@ -84,8 +102,8 @@ class DefinitionsPage extends PureComponent {
 
   openDefinition = id => {
     const { history, location } = this.props;
-    const [, , project_id] = location.pathname.split('/');
-    history.push(`/projects/${project_id}/definitions/${id}/definition`);
+    const [, , project_id, filter] = location.pathname.split('/');
+    history.push(`/projects/${project_id}/definitions/${filter}/definition/${id}`);
   };
 
   changeJobName = name => {
@@ -167,6 +185,7 @@ class DefinitionsPage extends PureComponent {
       definitions,
       lookups,
       settings: { definitions: reduxDefinitions, project, modals },
+      location,
     } = this.props;
     const { run, title, open, jobName, id } = this.state;
 
@@ -175,6 +194,7 @@ class DefinitionsPage extends PureComponent {
         <div className={cn.contentWrapper}>
           <Table
             rows={definitions}
+            path={location.pathname.split('/')}
             headers={reduxDefinitions.headers}
             cell_components={[
               JobCell,
