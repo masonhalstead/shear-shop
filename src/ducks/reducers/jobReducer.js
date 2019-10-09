@@ -1,7 +1,7 @@
 import { SET_JOB, CLEAR_JOB } from 'ducks/types';
 
 const initial_state = {
-  job_id: null,
+  job_id: 2891233,
   project_id: null,
   project_name: null,
   organization_id: null,

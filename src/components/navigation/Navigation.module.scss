@@ -1,5 +1,9 @@
 @import "src/scss/styles";
-
+.breadcrumbsContainer {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
 .navigationContainer {
     display: flex;
     align-items: center;
@@ -10,6 +14,7 @@
     border-bottom: 1px solid #cfd7e6;
     background: #fff;
 }
+
 
 .privateLayout {
     display: flex;
@@ -124,7 +129,9 @@
 }
 
 .header {
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     color: #62738d;
@@ -160,12 +167,13 @@
 }
 
 .separator {
-    margin-left: 40px !important;
-    margin-right: 40px !important;
+    margin-left: 30px !important;
+    margin-right: 30px !important;
 }
 
 
 .text {
+    flex-grow: 1;
     font-size: 14px !important;
     cursor: pointer !important;
     color: $color-6 !important;

@@ -26,7 +26,7 @@ const initial_state = {
   location_name: null,
   is_archived: null,
 };
-export const jobDefinitionReducer = (state = initial_state, action) => {
+export const definitionReducer = (state = initial_state, action) => {
   switch (action.type) {
     case SET_JOB_DEFINITION:
       return action.payload;
