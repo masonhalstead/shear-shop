@@ -10,6 +10,8 @@ import * as PropTypes from 'prop-types';
 import cn from './Login.module.scss';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
+import Footer from 'components/footer/Footer';
+
 const { PUBLIC_URL } = process.env;
 
 export class ConnectedLoginWrapper extends React.PureComponent {
@@ -117,6 +119,7 @@ export class ConnectedLoginWrapper extends React.PureComponent {
           </div>
         </div>
         {error && <p className={cn.error}>{error}</p>}
+        <Footer />
       </div>
     );
   }

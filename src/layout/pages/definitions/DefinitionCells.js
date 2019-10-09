@@ -4,11 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import cn from './Definitions.module.scss';
+import { toTime } from 'utils/helpers';
 
 export const JobCell = ({ row, path }) => (
   <Link
     className={classNames(cn.jobCell, cn.overflow)}
-    to={`/projects/${path[2]}/definitions/${path[4]}/definition/${row.job_definition_id}`}
+    to={`/projects/${path[2]}/definitions/${path[4]}/definition/${
+      row.job_definition_id
+    }`}
   >
     {row.job_definition_name}
     {row.description && (
@@ -40,7 +43,7 @@ LocationCell.propTypes = {
 
 export const TimeoutCell = ({ row }) => (
   <p className={classNames(cn.cell, cn.textRight, cn.overflow)}>
-    {row.timeout_seconds}
+    {toTime(row.timeout_seconds)}
   </p>
 );
 TimeoutCell.propTypes = {
@@ -65,7 +68,11 @@ CreatedByCell.propTypes = {
 
 export const CreatedCell = ({ row }) => (
   <p className={classNames(cn.cell, cn.textCenter, cn.overflow)}>
-    {new Date(row.created_datetime_utc).toLocaleDateString('en-US')}
+    {`${new Date(row.created_datetime_utc).toLocaleDateString(
+      'en-US',
+    )} ${new Date(row.created_datetime_utc).toLocaleTimeString('en-US', {
+      hour12: false,
+    })}`}
   </p>
 );
 CreatedCell.propTypes = {

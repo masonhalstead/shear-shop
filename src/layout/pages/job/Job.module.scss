@@ -1,4 +1,4 @@
-@import "src/scss/styles";
+@import 'src/scss/styles';
 
 .cell {
   padding: 0px 5px;
@@ -40,7 +40,6 @@
   text-align: right;
   justify-content: flex-end;
 }
-
 
 .flex {
   flex-grow: 1;
@@ -193,7 +192,8 @@
   height: 30px;
 }
 .stdoutContainer {
-  min-height: 200px;
+  max-height: 600px;
+  overflow-y: auto;
 }
 .containerRow {
   display: flex;
@@ -325,7 +325,7 @@
 
 .textColor {
   font-size: 17px;
-  color: $color-12
+  color: $color-12;
 }
 
 .customHeight {
@@ -347,7 +347,7 @@
   margin-top: 10px;
 }
 
-input[type=time]::-webkit-datetime-edit-ampm-field {
+input[type='time']::-webkit-datetime-edit-ampm-field {
   display: none;
 }
 .containerLeft {
@@ -363,7 +363,8 @@ input[type=time]::-webkit-datetime-edit-ampm-field {
   width: 33.33%;
   padding-left: 15px;
 }
-.logout:hover svg, .iconContainer:hover svg {
+.logout:hover svg,
+.iconContainer:hover svg {
   color: #3e96ed;
 }
 

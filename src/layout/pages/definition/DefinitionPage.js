@@ -9,6 +9,7 @@ import {
 import {
   getJobDefinition as getJobDefinitionAction,
   editDefinition as editDefinitionProps,
+  deleteDefinitionParams as deleteDefinitionParamsProps,
 } from 'ducks/operators/job_definition';
 import {
   editParameters as editParametersProps,
@@ -55,6 +56,7 @@ class DefinitionPage extends PureComponent {
     result_method_id: '',
     project_id: null,
     parameters: [],
+    deletedParams: [],
     callbacks: {
       saveParameterName: (row, value) => this.saveParameterName(row, value),
       changeRequired: id => this.changeRequired(id),
@@ -143,7 +145,7 @@ class DefinitionPage extends PureComponent {
   handleDefinitionTabs = input => {
     const { definitionChanged } = this.props;
     definitionChanged(true);
-    this.setState({ ...input});
+    this.setState({ ...input });
   };
 
   saveParameterName = (row, value) => {
@@ -303,14 +305,16 @@ class DefinitionPage extends PureComponent {
   };
 
   deleteRow = row => {
-    const { parameters } = this.state;
+    const { parameters, deletedParams } = this.state;
     const index = parameters.findIndex(
       parameter => parameter.uuid === row.uuid,
     );
+    const deletedParam = parameters[index];
     parameters.splice(index, 1);
     this.setState(
       {
         parameters: [...parameters],
+        deletedParams: [...deletedParams, deletedParam],
       },
       () => this.handleRowManagement(),
     );
@@ -366,7 +370,6 @@ class DefinitionPage extends PureComponent {
   };
 
   saveDefinitionFunc = async () => {
-    console.log(333333);
     const {
       job_definition_name,
       description,
@@ -383,6 +386,7 @@ class DefinitionPage extends PureComponent {
       data,
       parameters,
       location_id,
+      deletedParams,
     } = this.state;
     const {
       editDefinition,
@@ -393,6 +397,7 @@ class DefinitionPage extends PureComponent {
       locations,
       saveParameters,
       editParameters,
+      deleteDefinitionParams,
     } = this.props;
 
     const { job_definition_id } = job_definition;
@@ -420,10 +425,14 @@ class DefinitionPage extends PureComponent {
 
     try {
       await setLoadingAction(true);
+      deletedParams.map(param => {
+        deleteDefinitionParams(job_definition_id, param.parameter_name);
+      });
       await editParameters(parameters, job_definition_id);
       await saveParameters(parameters, job_definition_id);
       await editDefinition(post_data, job_definition_id);
       await getJobDefinition(job_definition_id);
+      this.setState({ deletedParams: [] });
     } catch (err) {
       handleErrorProps(err, data);
     }
@@ -521,6 +530,7 @@ const mapDispatchToProps = {
   editDefinition: editDefinitionProps,
   editParameters: editParametersProps,
   saveParameters: saveParametersProps,
+  deleteDefinitionParams: deleteDefinitionParamsProps,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
   saveDefinition: saveDefinitionAction,

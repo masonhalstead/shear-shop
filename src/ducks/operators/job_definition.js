@@ -43,3 +43,7 @@ export const editDefinition = (data, definition_id) => async dispatch => {
     throw err;
   }
 };
+
+export const deleteDefinitionParams = (definition_id, parameter) => async () => {
+  await getData(`/job_definitions/${definition_id}/parameters/${parameter}/delete`);
+};

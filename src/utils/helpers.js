@@ -20,3 +20,10 @@ export function containsStrings(string1 = '', string2 = '') {
 export function compareJSON(array1 = [], array2 = []) {
   return JSON.stringify(array1) === JSON.stringify(array2);
 }
+
+export function toTime(seconds) {
+  let date = new Date(null);
+  date.setSeconds(seconds); // specify value for SECONDS here
+
+  return date.toISOString().substr(11, 8);
+}

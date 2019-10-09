@@ -1,5 +1,5 @@
 import cn from './PrivateLayout.module.scss';
-import { Divider, List, Drawer, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Divider, List, Drawer, ListItem, ListItemIcon } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import React from 'react';
@@ -21,7 +21,6 @@ export const DrawerWrapper = ({open, classes, handleDrawerOpen, history, id}) =>
     }}
     variant="permanent"
     anchor="left"
-    open={open}
   >
     <div className={classes.drawerHeader}>
       <img
@@ -48,12 +47,6 @@ export const DrawerWrapper = ({open, classes, handleDrawerOpen, history, id}) =>
             className={cn.fontIconAlign}
           />
         </ListItemIcon>
-        {open && (
-          <ListItemText
-            primary="Projects"
-            classes={{ primary: cn.rootColor, root: cn.textRoot }}
-          />
-        )}
       </ListItem>
     </List>
     <Divider
@@ -77,95 +70,10 @@ export const DrawerWrapper = ({open, classes, handleDrawerOpen, history, id}) =>
             className={cn.fontIconAlign}
           />
         </ListItemIcon>
-        {open && (
-          <ListItemText
-            primary="Jobs"
-            classes={{ primary: cn.rootColor, root: cn.textRoot }}
-          />
-        )}
       </ListItem>
-      {open && (
-        <div className={cn.deepMenuItems}>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/24`);
-            }}
-          >
-            Last 24 Hours
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/7`);
-            }}
-          >
-            Last 7 Days
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/queued`);
-            }}
-          >
-            Queued
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/starting`);
-            }}
-          >
-            Starting
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/running`);
-            }}
-          >
-            Running
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/complete`);
-            }}
-          >
-            Complete
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/stopped`);
-            }}
-          >
-            Stopped
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/jobs/failed`);
-            }}
-          >
-            Failed
-          </ListItem>
-        </div>
-      )}
     </List>
     <Divider
-      className={classNames(
-        { [cn.dividerOpen]: open },
-        { [cn.dividerClosed]: !open },
-      )}
+      className={classNames(cn.dividerClosed)}
     />
     <List classkey={{ root: { height: '34px !important' } }}>
       <ListItem
@@ -182,62 +90,109 @@ export const DrawerWrapper = ({open, classes, handleDrawerOpen, history, id}) =>
             className={cn.fontIconAlign}
           />
         </ListItemIcon>
-        {open && (
-          <ListItemText
-            primary="Job Definitions"
-            classes={{ primary: cn.rootColor, root: cn.textRoot }}
-          />
-        )}
       </ListItem>
-      {open && (
-        <div className={cn.deepMenuItems}>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/definitions/unarchived`);
-            }}
-          >
-            Unarchived
-          </ListItem>
-          <ListItem
-            classes={{ root: cn.rootColor }}
-            button
-            onClick={() => {
-              history.push(`/projects/${id}/definitions/archived`);
-            }}
-          >
-            Archived
-          </ListItem>
-        </div>
-      )}
+    </List>
+    <Divider
+      className={classNames(cn.dividerClosed)}
+    />
+    <List classkey={{ root: cn.root }}>
+      <ListItem
+        button
+        key="Batch Definition"
+        onClick={() => {
+          history.push(`/batch`);
+        }}
+      >
+        <ListItemIcon>
+          <FontAwesomeIcon
+            icon="cogs"
+            color="white"
+            className={cn.fontIconAlign}
+          />
+        </ListItemIcon>
+      </ListItem>
+    </List>
+    <Divider
+      className={classNames(cn.dividerClosed)}
+    />
+    <List classkey={{ root: cn.root }}>
+      <ListItem
+        button
+        key="Definition Filter"
+        onClick={() => {
+          history.push(`/definition-filter`);
+        }}
+      >
+        <ListItemIcon>
+          <FontAwesomeIcon
+            icon="filter"
+            color="white"
+            className={cn.fontIconAlign}
+          />
+        </ListItemIcon>
+      </ListItem>
+    </List>
+    <Divider
+      className={classNames(cn.dividerClosed)}
+    />
+    <List classkey={{ root: cn.root }}>
+      <ListItem
+        button
+        key="Jobs"
+        onClick={() => {
+          history.push(`/jobs`);
+        }}
+      >
+        <ListItemIcon>
+          <FontAwesomeIcon
+            icon="cube"
+            color="white"
+            className={cn.fontIconAlign}
+          />
+        </ListItemIcon>
+      </ListItem>
+    </List>
+    <Divider
+      className={classNames(cn.dividerClosed)}
+    />
+    <List classkey={{ root: cn.root }}>
+      <ListItem
+        button
+        key="Batches"
+        onClick={() => {
+          history.push(`/batches`);
+        }}
+      >
+        <ListItemIcon>
+          <FontAwesomeIcon
+            icon="cubes"
+            color="white"
+            className={cn.fontIconAlign}
+          />
+        </ListItemIcon>
+      </ListItem>
+    </List>
+    <Divider
+      className={classNames(cn.dividerClosed)}
+    />
+    <List classkey={{ root: cn.root }}>
+      <ListItem
+        button
+        key="Schedule Batches"
+        onClick={() => {
+          history.push(`/schedule-batches`);
+        }}
+      >
+        <ListItemIcon>
+          <FontAwesomeIcon
+            icon="calendar"
+            color="white"
+            className={cn.fontIconAlign}
+          />
+        </ListItemIcon>
+      </ListItem>
     </List>
     <Divider className={cn.dividerOpen} />
-    {!open && (
-      <List classkey={{ root: cn.root }}>
-        <ListItem button key="Chevron" onClick={handleDrawerOpen}>
-          <ListItemIcon>
-            <FontAwesomeIcon
-              icon="chevron-right"
-              color="white"
-              className={cn.fontIconAlignChevron}
-            />
-          </ListItemIcon>
-        </ListItem>
-      </List>
-    )}
     <div className={cn.versionSmall}>{REACT_APP_VERSION}</div>
-    {open && (
-      <div className={cn.version} onClick={handleDrawerOpen}>
-        {REACT_APP_VERSION}
-        <div className={cn.closeButton}>
-          <FontAwesomeIcon
-            icon="times"
-            color="white"
-            className={cn.fontIconAlignChevron}
-          />
-        </div>
-      </div>
-    )}
   </Drawer>
 );

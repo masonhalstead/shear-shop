@@ -5,7 +5,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { Loading } from 'components/loading/Loading';
 import { Toolbar, Breadcrumbs } from '@material-ui/core';
 import {
-  setHamburger as setHamburgerAction,
   toggleModal as toggleModalAction,
   setCurrentJobs as setCurrentJobsAction,
   setCurrentDefinitions as setCurrentDefinitionsAction,
@@ -107,14 +106,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
 
   state = {
     open: false,
-  };
-
-  handleDrawerOpen = () => {
-    const { open } = this.state;
-    const { setHamburger } = this.props;
-    this.setState({ open: !open }, () => {
-      setHamburger({ open: !open });
-    });
   };
 
   logout = () => {
@@ -416,7 +407,6 @@ export class PrivateLayoutWrapper extends React.PureComponent {
   );
 
   render() {
-    const { open } = this.state;
     const {
       classes,
       history,
@@ -433,19 +423,12 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     return (
       <div className={cn.cognBody}>
         <DrawerWrapper
-          open={open}
           classes={classes}
-          handleDrawerOpen={this.handleDrawerOpen}
           history={history}
           id={id}
         />
         <main
-          className={classNames(
-            open ? classes.content : classes.contentClosed,
-            {
-              [classes.contentShift]: open,
-            },
-          )}
+          className={classNames(classes.contentClosed)}
         >
           <div className={cn.cognViews}>
             <CustomAppBar hamburger={hamburger.open}>
@@ -472,7 +455,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  setHamburger: setHamburgerAction,
   getProjects: getProjectsAction,
   toggleModal: toggleModalAction,
   setCurrentJobs: setCurrentJobsAction,
