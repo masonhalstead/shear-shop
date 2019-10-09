@@ -12,8 +12,8 @@ export const Tooltip = ({ title, top, right, left, bottom }) => (
   </div>
 );
 Tooltip.defaultProps = {
-  top: '45px',
-  right: '0px',
+  top: '',
+  right: '',
   left: '',
   bottom: '',
 };

@@ -1,5 +1,30 @@
 .menuContainer {
     flex-grow: 1;
     width: 75px;
-    background: pink;
+    background: #2e3440;
 }
+.logoWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    border-bottom: 1px solid pink;
+}
+.logo {
+    height: 36px;
+  }
+.linkWrapper {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    align-items: center;
+    position: relative;
+    color: #fff;
+    height: 50px;
+}
+.linkWrapper:hover {
+    color: #3e96ed;
+}
+.linkWrapper:hover [data-role='tooltip'] {
+    display: block;
+  }
