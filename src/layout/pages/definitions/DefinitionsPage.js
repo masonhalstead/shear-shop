@@ -37,7 +37,10 @@ class DefinitionsPage extends PureComponent {
 
   static getDerivedStateFromProps(props, state) {
     const [, , project_id] = props.location.pathname.split('/');
-    if (state.projectId !== '' && Number(project_id) !== Number(state.projectId)) {
+    if (
+      state.projectId !== '' &&
+      Number(project_id) !== Number(state.projectId)
+    ) {
       props.getJobDefinitions(project_id);
 
       return { projectId: project_id };
@@ -103,7 +106,9 @@ class DefinitionsPage extends PureComponent {
   openDefinition = id => {
     const { history, location } = this.props;
     const [, , project_id, filter] = location.pathname.split('/');
-    history.push(`/projects/${project_id}/definitions/${filter}/definition/${id}`);
+    history.push(
+      `/projects/${project_id}/definitions/${filter}/definition/${id}`,
+    );
   };
 
   changeJobName = name => {
@@ -190,27 +195,25 @@ class DefinitionsPage extends PureComponent {
     const { run, title, open, jobName, id } = this.state;
 
     return (
-      <>
-        <div className={cn.contentWrapper}>
-          <Table
-            rows={definitions}
-            path={location.pathname.split('/')}
-            headers={reduxDefinitions.headers}
-            cell_components={[
-              JobCell,
-              RequirementsCell,
-              LocationCell,
-              TimeoutCell,
-              ResultMethodCell,
-              CreatedByCell,
-              CreatedCell,
-              RunCell,
-            ]}
-            search_input={reduxDefinitions.search_string}
-            settings={reduxDefinitions.settings}
-            callbacks={this.state.callbacks}
-          />
-        </div>
+      <div className={cn.pageWrapper}>
+        <Table
+          rows={definitions}
+          path={location.pathname.split('/')}
+          headers={reduxDefinitions.headers}
+          cell_components={[
+            JobCell,
+            RequirementsCell,
+            LocationCell,
+            TimeoutCell,
+            ResultMethodCell,
+            CreatedByCell,
+            CreatedCell,
+            RunCell,
+          ]}
+          search_input={reduxDefinitions.search_string}
+          settings={reduxDefinitions.settings}
+          callbacks={this.state.callbacks}
+        />
         {run && (
           <RunDefinition
             opened={run}
@@ -230,7 +233,7 @@ class DefinitionsPage extends PureComponent {
           changeJobName={this.changeJobName}
           createDefinition={this.createDefinition}
         />
-      </>
+      </div>
     );
   }
 }

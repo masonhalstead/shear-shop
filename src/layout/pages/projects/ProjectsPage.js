@@ -71,7 +71,7 @@ class ProjectsPage extends PureComponent {
     const { projects, settings } = this.props;
     return (
       <>
-        <div className={cn.contentAlign}>
+        <div className={cn.pageWrapper}>
           <div
             className={cn.projectItemAdd}
             onClick={() => {

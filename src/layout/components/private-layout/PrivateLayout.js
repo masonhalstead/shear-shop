@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { Loading } from 'components/loading/Loading';
-import { Toolbar, Breadcrumbs } from '@material-ui/core';
+import { Breadcrumbs } from '@material-ui/core';
 import {
   toggleModal as toggleModalAction,
   setCurrentJobs as setCurrentJobsAction,
@@ -17,18 +16,15 @@ import { Alert } from 'components/Alert';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as Sentry from '@sentry/browser';
-import { CustomAppBar } from 'components/app-bar/AppBar';
 import { CustomizedInputBase } from 'components/search/SearchInput';
 import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
 import { Menu } from 'components/menu/Menu';
 import { styles } from './styles';
 import cn from './PrivateLayout.module.scss';
 import { Navigation } from 'components/navigation/Navigation';
-import { DrawerWrapper } from './Drawer';
 import {
   ProjectBread,
   JobFilterBread,
-  JobBread,
   DefinitionFilter,
   DefinitionsList,
 } from './BreadCramps';
@@ -335,6 +331,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               }
             />
           </Breadcrumbs>
+          <div className={cn.flex} />
           <div className={cn.actionWrapper}>
             <div className={cn.searchContainer}>
               <CustomizedInputBase onSearch={this.handleTableSearch} />
@@ -396,6 +393,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               }
             />
           </Breadcrumbs>
+          <div className={cn.flex} />
           <div className={cn.actionWrapperDefinition}>
             <div
               className={cn.iconContainer}

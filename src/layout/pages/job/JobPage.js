@@ -155,7 +155,7 @@ class JobPage extends PureComponent {
     }
 
     return (
-      <>
+      <div className={cn.pageWrapper}>
         <Paper className={cn.contentAlignHeader}>
           <div className={cn.firstRow}>
             <div className={cn.textMarginBig}>
@@ -187,7 +187,7 @@ class JobPage extends PureComponent {
           )}
           {tab !== 0 && <div className={cn.tabValueAlt}>{content}</div>}
         </Paper>
-      </>
+      </div>
     );
   }
 }

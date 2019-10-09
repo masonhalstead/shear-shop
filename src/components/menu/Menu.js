@@ -15,30 +15,33 @@ export const Menu = () => {
           alt="Andromeda"
         />
       </div>
+      <div>
       <Link to="/projects" className={cn.linkWrapper}>
         <FontAwesomeIcon icon="folder-open" />
         <Tooltip title="Projects" />
       </Link>
-      <Link to="/projects" className={cn.linkWrapper}>
+      <Link to="/projects/1/jobs/24" className={cn.linkWrapper}>
         <FontAwesomeIcon icon={['fas', 'cube']} />
         <Tooltip title="Jobs" />
       </Link>
-      <Link to="/projects" className={cn.linkWrapper}>
+      <Link to="/projects/1/batches/unarchived" className={cn.linkWrapper}>
         <FontAwesomeIcon icon={['fas', 'cubes']} />
         <Tooltip title="Batches" />
       </Link>
-      <Link to="/projects/1/definitions/24" className={cn.linkWrapper}>
+      <Link to="/projects/1/definitions/unarchived" className={cn.linkWrapper}>
         <FontAwesomeIcon icon={['fas', 'cog']} />
         <Tooltip title="Job Definitions" />
       </Link>
-      <Link to="/projects" className={cn.linkWrapper}>
+      <Link to="/projects/1/batches/unarchived" className={cn.linkWrapper}>
         <FontAwesomeIcon icon={['fas', 'cogs']} />
         <Tooltip title="Batch Definitions" />
       </Link>
-      <Link to="/projects" className={cn.linkWrapper}>
+      <Link to="/projects/1/schedule" className={cn.linkWrapper}>
         <FontAwesomeIcon icon={['fas', 'calendar-week']} />
         <Tooltip title="Schedule Batches" />
       </Link>
+      </div>
+      <div className={cn.versionWrapper}>v1.1.0</div>
     </div>
   );
 };

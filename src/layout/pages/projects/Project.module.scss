@@ -16,10 +16,11 @@
   border-bottom: 1px solid #cfd7e6;
 }
 
-.contentAlign {
+.pageWrapper {
   display: flex;
   flex-wrap: wrap;
   border-radius: 0;
+  padding: 20px;
 }
 
 .projectItem {

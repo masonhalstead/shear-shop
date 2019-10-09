@@ -17,6 +17,7 @@ export const ProjectBread = ({
       rows={projects}
       row_key="project_name"
       value={projectName}
+      bulk
       placeholder="Optional Placeholder"
       right_icon="chevron-down"
       handleOnSelect={handleOnSelectFilterProject}
@@ -42,6 +43,7 @@ export const JobFilterBread = ({
       rows={filtersJob}
       row_key="name"
       value={label}
+      bulk
       placeholder="Optional Placeholder"
       right_icon="chevron-down"
       handleOnSelect={handleOnSelectFilterJob}
@@ -61,6 +63,7 @@ export const JobBread = ({ handleOnSelectFilterOneJob, jobs, route }) => {
       rows={jobs}
       row_key="name"
       value={jobName}
+      bulk
       placeholder="Optional Placeholder"
       right_icon="chevron-down"
       handleOnSelect={handleOnSelectFilterOneJob}
@@ -80,6 +83,7 @@ export const DefinitionFilter = ({
       rows={filtersDefinition}
       row_key="name"
       value={label}
+      bulk
       placeholder="Optional Placeholder"
       right_icon="chevron-down"
       handleOnSelect={handleOnSelectFilterDefinition}
@@ -99,6 +103,7 @@ export const DefinitionsList = ({definitions, handleOnSelectFilterDefinitionsLis
       rows={definitions}
       row_key="job_definition_name"
       value={definitionName}
+      bulk
       placeholder="Optional Placeholder"
       right_icon="chevron-down"
       handleOnSelect={handleOnSelectFilterDefinitionsList}
