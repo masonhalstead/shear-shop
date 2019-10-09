@@ -23,6 +23,7 @@ import { DefinitionTabs } from './DefinitionTabs';
 import { ConfigTab } from './ConfigTab';
 import { InputsTab } from './InputsTab';
 import { OutputsTab } from './OutputsTab';
+import cn from './Definition.module.scss';
 
 class DefinitionPage extends PureComponent {
   static propTypes = {
@@ -462,7 +463,7 @@ class DefinitionPage extends PureComponent {
     } = this.state;
 
     return (
-      <>
+      <div className={cn.pageWrapper}>
         <DefinitionBlock
           job_definition_name={job_definition_name}
           docker_image={docker_image}
@@ -512,7 +513,7 @@ class DefinitionPage extends PureComponent {
             />
           )}
         </DefinitionTabs>
-      </>
+      </div>
     );
   }
 }

@@ -1,0 +1,21 @@
+.notFoundWrapper {
+  display: flex;
+  flex: 1 100%;
+  width: 100%;
+  padding: 50px 15px 15px 15px;
+  justify-content: center;
+  color: #62738d;
+}
+.notFoundContainer {
+  padding: 0px 25px;
+  max-width: 400px;
+
+}
+.notFoundContainer h1 {
+  font-weight: 400;
+  font-size: 75px;
+}
+.notFoundContainer p {
+  margin: 10px 0px;
+  font-size: 15px;
+}

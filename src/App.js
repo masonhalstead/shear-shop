@@ -1,5 +1,6 @@
 import React, { PureComponent, Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
+import { NotFound } from 'components/404/NotFound';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -71,6 +72,7 @@ export class App extends PureComponent {
               path={routes.JOB}
               component={pages.JobPage}
             />
+            <PrivateRoute component={NotFound} />
           </Switch>
         </Suspense>
       </Router>

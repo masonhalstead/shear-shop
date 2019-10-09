@@ -1,7 +1,9 @@
 @import "src/scss/styles";
 
-.contentWrapper {
-  margin-top: 46px; // matches toolbar height
+.pageWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 0;
   padding: 20px;
 }
 .cell {

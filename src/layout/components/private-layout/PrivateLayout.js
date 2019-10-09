@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { Loading } from 'components/loading/Loading';
-import { Toolbar, Breadcrumbs } from '@material-ui/core';
+import { Breadcrumbs } from '@material-ui/core';
 import {
   toggleModal as toggleModalAction,
   setCurrentJobs as setCurrentJobsAction,
@@ -16,17 +15,16 @@ import { withRouter } from 'react-router-dom';
 import { Alert } from 'components/Alert';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { styles } from './styles';
-import cn from './PrivateLayout.module.scss';
 import * as Sentry from '@sentry/browser';
-import { CustomAppBar } from 'components/app-bar/AppBar';
 import { CustomizedInputBase } from 'components/search/SearchInput';
 import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
-import { DrawerWrapper } from './Drawer';
+import { Menu } from 'components/menu/Menu';
+import { Navigation } from 'components/navigation/Navigation';
+import { styles } from './styles';
+import cn from './PrivateLayout.module.scss';
 import {
   ProjectBread,
   JobFilterBread,
-  JobBread,
   DefinitionFilter,
   DefinitionsList,
 } from './BreadCramps';
@@ -143,7 +141,9 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     const route = location.pathname.split('/');
 
     history.push(
-      `/projects/${route[2]}/definitions/${route[4]}/definition/${item.job_definition_id}`,
+      `/projects/${route[2]}/definitions/${route[4]}/definition/${
+        item.job_definition_id
+      }`,
     );
   };
 
@@ -171,8 +171,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
       setCurrentDefinitions,
     } = this.props;
 
-    let columns = jobs.columns;
-    let headers = jobs.headers;
+    let { columns } = jobs;
+    let { headers } = jobs;
 
     if (type === 'definitions') {
       columns = definitions.columns;
@@ -254,8 +254,8 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               handleOnSelectFilterJob={this.handleOnSelectFilterJob}
             />
             <div>Jobs</div>
-            {/*fill work when api will be ready*/}
-            {/*<JobBread route={route} handleOnSelectFilterOneJob={this.handleOnSelectFilterOneJob} jobs={jobsData}/>*/}
+            {/* fill work when api will be ready */}
+            {/* <JobBread route={route} handleOnSelectFilterOneJob={this.handleOnSelectFilterOneJob} jobs={jobsData}/> */}
             <div>{job.jobName}</div>
           </Breadcrumbs>
           <div className={cn.flex} />
@@ -331,6 +331,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               }
             />
           </Breadcrumbs>
+          <div className={cn.flex} />
           <div className={cn.actionWrapper}>
             <div className={cn.searchContainer}>
               <CustomizedInputBase onSearch={this.handleTableSearch} />
@@ -384,14 +385,24 @@ export class PrivateLayoutWrapper extends React.PureComponent {
               }
             />
             <div>Definition</div>
-            <DefinitionsList route={route} definitions={definitionsData} handleOnSelectFilterDefinitionsList={this.handleOnSelectFilterDefinitionsList} />
-          </Breadcrumbs>
-          <div className={cn.actionWrapperDefinition}>
-            <div className={cn.iconContainer} onClick={() => saveDefinition(true)}>
-            <FontAwesomeIcon
-            icon={['far', 'save']}
-            color={definitionChanged ? 'orange' : '#818fa3'}
+            <DefinitionsList
+              route={route}
+              definitions={definitionsData}
+              handleOnSelectFilterDefinitionsList={
+                this.handleOnSelectFilterDefinitionsList
+              }
             />
+          </Breadcrumbs>
+          <div className={cn.flex} />
+          <div className={cn.actionWrapperDefinition}>
+            <div
+              className={cn.iconContainer}
+              onClick={() => saveDefinition(true)}
+            >
+              <FontAwesomeIcon
+                icon={['far', 'save']}
+                color={definitionChanged ? 'orange' : '#818fa3'}
+              />
             </div>
             <div className={cn.logout} onClick={this.logout}>
               <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
@@ -402,41 +413,19 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     }
   };
 
-  buildCustomToolbar = () => (
-    <Toolbar className={cn.toolbar}>{this.generateToolbar()}</Toolbar>
-  );
-
   render() {
     const {
-      classes,
-      history,
       loading,
       settings: { project },
-      hamburger,
     } = this.props;
-    const id = Object(project).hasOwnProperty('project_id')
-      ? project.project_id
-      : 1;
-
     this.generateToolbar();
-
     return (
-      <div className={cn.cognBody}>
-        <DrawerWrapper
-          classes={classes}
-          history={history}
-          id={id}
-        />
-        <main
-          className={classNames(classes.contentClosed)}
-        >
-          <div className={cn.cognViews}>
-            <CustomAppBar hamburger={hamburger.open}>
-              {this.buildCustomToolbar()}
-            </CustomAppBar>
-            {this.props.children}
-          </div>
-        </main>
+      <div className={cn.privateLayout}>
+        <Menu />
+        <div className={cn.content}>
+          <Navigation>{this.generateToolbar()}</Navigation>
+          <div className={cn.views}>{this.props.children}</div>
+        </div>
         <Alert />
         {loading && <Loading variant="dark" />}
       </div>
@@ -451,7 +440,7 @@ const mapStateToProps = state => ({
   project: state.project,
   projects: state.projects,
   jobs: state.jobs,
-      definitions: state.definitions,
+  definitions: state.definitions,
 });
 
 const mapDispatchToProps = {

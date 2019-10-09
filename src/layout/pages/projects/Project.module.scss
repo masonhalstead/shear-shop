@@ -16,13 +16,11 @@
   border-bottom: 1px solid #cfd7e6;
 }
 
-.contentAlign {
+.pageWrapper {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 71px;
-  margin-left: 25px;
-  margin-right: 25px;
   border-radius: 0;
+  padding: 20px;
 }
 
 .projectItem {
@@ -31,6 +29,7 @@
   justify-content: space-between;
   border: 1px solid #cfd7e6;
   cursor: pointer;
+  background: #fff;
   border-radius: 15px;
   width: 200px;
   height: 150px;
@@ -44,6 +43,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  background: #fff;
   border: 1px solid #cfd7e6;
   cursor: pointer;
   border-radius: 15px;

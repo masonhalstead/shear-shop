@@ -493,7 +493,7 @@ class JobsPage extends PureComponent {
     } = this.props;
     return (
       <>
-        <div className={cn.contentWrapper}>
+        <div className={cn.pageWrapper}>
           <Table
             rows={result.data}
             path={location.pathname.split('/')}
