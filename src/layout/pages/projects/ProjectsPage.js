@@ -61,7 +61,6 @@ class ProjectsPage extends PureComponent {
 
   goToJobsPage = project => {
     const { setProject, history } = this.props;
-    console.log(project);
     setProject(project);
     history.push(`/projects/${project.project_id}/jobs/24`);
   };

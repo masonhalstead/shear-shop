@@ -1,17 +1,15 @@
 import React from 'react';
 
-import { NativeSelect, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import cn from './RunDefinition.module.scss';
 
 import classNames from 'classnames';
-import {
-  BootstrapInput,
-  BootstrapInputDisabled,
-} from 'components/bootsrap-input/BootstrapInput';
-import { InputWrapper } from '../../../../components/inputs/InputWrapper';
-import { Input } from '../../../../components/inputs/Input';
-import { InputTimeout } from '../../../../components/inputs/InputTimeout';
-import { TextAreaWrapper } from '../../../../components/textarea/TextAreaWrapper';
+import { InputWrapper } from 'components/inputs/InputWrapper';
+import { Input } from 'components/inputs/Input';
+import { InputTimeout } from 'components/inputs/InputTimeout';
+import { TextAreaWrapper } from 'components/textarea/TextAreaWrapper';
+import { Dropdown } from 'components/dropdowns/Dropdown';
+import uuid from 'uuid';
 
 export const DefinitionBlock = ({
   docker_image,
@@ -26,6 +24,10 @@ export const DefinitionBlock = ({
   location_id,
   batch_description,
   batch_id,
+  handleOnSelectLocation,
+  location_name,
+  region_endpoint_hint,
+                                  handleOnSelectRegion,
 }) => (
   <Typography component={'span'} gutterBottom>
     <div className={cn.container}>
@@ -98,58 +100,40 @@ export const DefinitionBlock = ({
     </div>
     <div className={cn.containerRow}>
       <div className={classNames(cn.containerInputLast, cn.inputMedium)}>
-        <div className={cn.label}>Location</div>
-        <NativeSelect
-          disabled={region !== 'empty'}
-          value={location_id}
-          style={{ width: '100%' }}
-          onChange={e =>
-            handleDefinitionBlock({
-              location_id: e.target.value,
-            })
-          }
-          input={
-            region !== 'empty' ? (
-              <BootstrapInputDisabled name="location" id="location" />
-            ) : (
-              <BootstrapInput name="location" id="location" />
-            )
-          }
-        >
-          <option key="empty" value="empty" />
-          {locations.map(item => (
-            <option key={item.uuid} value={item.location_id}>
-              {item.location_name}
-            </option>
-          ))}
-        </NativeSelect>
+        <Dropdown
+          rows={locations}
+          extended={[
+            {
+              location_name: 'Remove Location',
+              location_id: null,
+              uuid: uuid.v1(),
+            },
+          ]}
+          row_key="location_name"
+          value={location_name}
+          label="Location"
+          disabled={!!region_endpoint_hint}
+          right_icon="chevron-down"
+          handleOnSelect={handleOnSelectLocation}
+        />
       </div>
       <div className={classNames(cn.containerInputLast)}>
-        <div className={cn.label}>Region Hint</div>
-        <NativeSelect
-          disabled={location_id !== 'empty'}
-          value={region}
-          style={{ width: '100%' }}
-          onChange={e =>
-            handleDefinitionBlock({
-              region: e.target.value,
-            })
-          }
-          input={
-            location_id !== 'empty' ? (
-              <BootstrapInputDisabled name="region" id="region" />
-            ) : (
-              <BootstrapInput name="region" id="region" />
-            )
-          }
-        >
-          <option key="empty" value="empty" />
-          {locations.map(item => (
-            <option key={item.uuid} value={item.location_id}>
-              {item.location_name}
-            </option>
-          ))}
-        </NativeSelect>
+        <Dropdown
+          rows={locations}
+          extended={[
+            {
+              location_name: 'Remove Region Hint',
+              location_id: null,
+              uuid: uuid.v1(),
+            },
+          ]}
+          row_key="location_name"
+          value={region_endpoint_hint}
+          disabled={!!location_name}
+          label="Region Hint"
+          right_icon="chevron-down"
+          handleOnSelect={handleOnSelectRegion}
+        />
       </div>
     </div>
     <div className={cn.containerRow}>

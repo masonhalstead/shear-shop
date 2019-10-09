@@ -72,6 +72,21 @@ export class App extends PureComponent {
               path={routes.JOB}
               component={pages.JobPage}
             />
+            <PrivateRoute
+              exact
+              path={routes.BATCHES}
+              component={pages.Batches}
+            />
+            <PrivateRoute
+              exact
+              path={routes.SCHEDULE_BATCHES}
+              component={pages.ScheduleBatches}
+            />
+            <PrivateRoute
+              exact
+              path={routes.BATCH_DEFINITIONS}
+              component={pages.BatchDefinition}
+            />
             <PrivateRoute component={NotFound} />
           </Switch>
         </Suspense>

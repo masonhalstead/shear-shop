@@ -1,3 +1,5 @@
+@import "src/scss/styles";
+
 .navigationContainer {
     display: flex;
     align-items: center;
@@ -7,4 +9,187 @@
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
     border-bottom: 1px solid #cfd7e6;
     background: #fff;
+}
+
+.privateLayout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    background: lighten(#2e3440,77%);
+    width: calc(100% - 75px);
+}
+
+.views {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 46px);
+    min-width: 1000px;
+    width: 100%;
+    overflow: scroll;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding-right: 30px;
+}
+
+.imageMd {
+    width: 46px;
+    height: 46px;
+    position: fixed;
+}
+
+.imageMdBig {
+    width: 190px;
+    position: fixed;
+}
+.fontIconAlign {
+    margin-left: 12px;
+}
+.fontIconAlignChevron {
+    margin-left: 15px;
+}
+.closeButton {
+    position: absolute;
+    margin-left: 125px;
+    bottom: 6px;
+}
+.version {
+    position: fixed;
+    bottom: 0;
+    align-self: flex-start;
+    font-size: 12px;
+    color: white;
+    width: 195px;
+    text-align: left;
+    background-color: #2e3440;
+    border-top: 1px solid #3b4253;
+    padding: 8px 0px 7px 25px;
+    cursor: pointer;
+}
+.versionSmall {
+    position: fixed;
+    bottom: 0;
+    align-self: center;
+    font-size: 12px;
+    color: white;
+    width: 70px;
+    text-align: center;
+    background-color: #2e3440;
+    border-top: 1px solid #3b4253;
+    padding: 8px 0px;
+}
+.rootColor {
+    color: white !important;
+    font-size: 14px !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+.deepMenuItems {
+    color: white !important;
+    .rootColor {
+        padding-left: 73px;
+    }
+}
+.textRoot {
+    margin-left: 1px;
+}
+.dividerOpen {
+    background-color: #3b4253 !important;
+}
+.dividerClosed {
+    background-color: transparent !important;
+}
+.root {
+    height: 34px !important;
+}
+
+.toolbar {
+    background-color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    padding-left: 25px;
+    padding-right: 0px;
+    min-height: 45px !important;
+    height: 45px;
+    border-bottom: 1px solid #cfd7e6;
+}
+
+.header {
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #62738d;
+}
+.header:hover {
+    color: #3e96ed;
+}
+
+.flexGrow {
+    flex-grow: 1;
+}
+
+.iconContainer {
+    display: flex;
+    align-self: stretch;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 50px;
+}
+
+.logout {
+    display: flex;
+    align-self: stretch;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 50px;
+    border-left: 1px solid #cfd7e6;
+}
+.logout:hover svg, .iconContainer:hover svg {
+    color: #3e96ed;
+}
+
+.separator {
+    margin-left: 40px !important;
+    margin-right: 40px !important;
+}
+
+
+.text {
+    font-size: 14px !important;
+    cursor: pointer !important;
+    color: $color-6 !important;
+}
+
+.flex {
+    flex-grow: 1;
+}
+
+.actionWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 50%;
+    align-self: stretch;
+}
+.actionWrapperDefinition {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+}
+
+.searchContainer {
+    margin-right: 15px;
+    flex: 1;
 }

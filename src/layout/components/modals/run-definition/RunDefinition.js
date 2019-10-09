@@ -79,9 +79,9 @@ class RunDefinition extends PureComponent {
     setLoadingAction(false);
   };
 
-  saveDefault = (value, id) => {
+  saveDefault = (row, value) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === id);
+    const index = parameters.findIndex(parameter => parameter.uuid === row.uuid);
     parameters[index] = {
       ...parameters[index],
       parameter_value: value,
@@ -92,10 +92,10 @@ class RunDefinition extends PureComponent {
     });
   };
 
-  saveValue = (value, id) => {
+  saveValue = (row, value) => {
     const { additionalParameters } = this.state;
     const index = additionalParameters.findIndex(
-      parameter => parameter.uuid === id,
+      parameter => parameter.uuid === row.uuid,
     );
     additionalParameters[index] = {
       ...additionalParameters[index],
@@ -110,14 +110,14 @@ class RunDefinition extends PureComponent {
     );
   };
 
-  saveKey = (name, id) => {
+  saveKey = (row, value) => {
     const { additionalParameters } = this.state;
     const index = additionalParameters.findIndex(
-      parameter => parameter.uuid === id,
+      parameter => parameter.uuid === row.uuid,
     );
     additionalParameters[index] = {
       ...additionalParameters[index],
-      parameter_name: name,
+      parameter_name: value,
       modified: true,
     };
     this.setState(
@@ -154,10 +154,10 @@ class RunDefinition extends PureComponent {
     });
   };
 
-  deleteRow = id => {
+  deleteRow = row => {
     const { additionalParameters } = this.state;
     const index = additionalParameters.findIndex(
-      parameter => parameter.uuid === id,
+      parameter => parameter.uuid === row.uuid,
     );
     additionalParameters.splice(index, 1);
     this.setState(
@@ -216,9 +216,8 @@ class RunDefinition extends PureComponent {
       stdout_success_text,
       region_endpoint_hint:
         region !== 'empty'
-          ? locations.filter(
-          filter => filter.location_id === Number(region),
-          )[0].location_name
+          ? locations.filter(filter => filter.location_id === Number(region))[0]
+            .location_name
           : 'empty',
       location_id: location_id === 'empty' ? null : location_id,
       cpu,
@@ -245,6 +244,33 @@ class RunDefinition extends PureComponent {
     this.setState({ ...input, changes: true });
   };
 
+  handleOnSelectLocation = item => {
+    if (item.location_id === null) {
+      this.setState({
+        location_id: null,
+        location_name: '',
+      });
+      return;
+    }
+    this.setState({
+      location_id: item.location_id,
+      location_name: item.location_name,
+      region_endpoint_hint: null,
+    });
+  };
+
+  handleOnSelectRegion = item => {
+    if (item.location_id === null) {
+      this.setState({ region_endpoint_hint: null });
+      return;
+    }
+    this.setState({
+      location_id: null,
+      location_name: null,
+      region_endpoint_hint: item.location_name,
+    });
+  };
+
   render() {
     const { opened, handleClose, title, locations } = this.props;
     const {
@@ -261,6 +287,8 @@ class RunDefinition extends PureComponent {
       parameters,
       callbacks,
       additionalParameters,
+      location_name,
+      region_endpoint_hint,
     } = this.state;
     return (
       <CustomizedDialogs
@@ -280,18 +308,22 @@ class RunDefinition extends PureComponent {
           location_id={location_id}
           region={region}
           batch_id={batch_id}
+          region_endpoint_hint={region_endpoint_hint}
+          location_name={location_name}
           batch_description={batch_description}
           handleDefinitionBlock={this.handleDefinitionBlock}
+          handleOnSelectLocation={this.handleOnSelectLocation}
+          handleOnSelectRegion={this.handleOnSelectRegion}
         />
         <DefinitionParameters
           callbacks={callbacks}
-          parameters={parameters.filter(
+          rows={parameters.filter(
             parameter => parameter.parameter_direction_id === 1,
           )}
         />
         <AdditionalParameters
           callbacks={callbacks}
-          parameters={additionalParameters}
+          rows={additionalParameters}
         />
       </CustomizedDialogs>
     );

@@ -1,69 +1,57 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { TableContainer } from 'components/table-view/TableContainer';
-import { TableContent } from 'components/table-view/TableContent';
-import { configureColumnsOutput } from './inputColumns';
-
+import { Table } from 'components/table/Table';
+import uuid from 'uuid';
+import {
+  ParameterNameCellDisabled,
+  DescriptionCell,
+  DescriptionNameCellDisabled,
+} from './DefinitionCells';
 import cn from './RunDefinition.module.scss';
 
 export class DefinitionParameters extends PureComponent {
   static propTypes = {
     callbacks: PropTypes.object,
-    parameters: PropTypes.array,
+    rows: PropTypes.array,
   };
 
-  options = {
-    filterType: 'textField',
-    selectableRows: 'none',
-    search: false,
-    pagination: false,
-    filter: false,
-    download: false,
-    viewColumns: false,
-    print: false,
+  state = {
+    headers: [
+      {
+        title: 'Parameter Name',
+        show: true,
+        min_width: '250px',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Default',
+        show: true,
+        min_width: '250px',
+        flex_grow: 1,
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Description',
+        show: true,
+        sort: false,
+        min_width: '250px',
+        uuid: uuid.v1(),
+      },
+    ],
   };
-
-  componentDidMount() {
-    this.createColumns();
-  }
-
-  createColumns = () => configureColumnsOutput(this.props.callbacks);
 
   render() {
-    const { parameters } = this.props;
-
+    const { rows, callbacks } = this.props;
+    const { headers } = this.state;
     return (
-      <div>
-        <TableContainer style={cn.tableContainerWrapper}>
-          <TableContent
-            tableData={parameters}
-            tableOptions={this.options}
-            columns={this.createColumns()}
-            styles={{
-              MuiTableCell: {
-                root: {
-                  border: '1px solid #dde3ee',
-                  borderBottom: '1px solid #dde3ee',
-                },
-                body: {
-                  fontSize: '13px',
-                  fontWeight: 300,
-                  lineHeight: '1',
-                  // padding: '5px !important',
-                  // '&:nth-child(2)': {
-                  //   width: 100,
-                  // },
-                  // '&:nth-child(4)': {
-                  //   width: 150,
-                  // },
-                },
-                head: {
-                  fontSize: '1rem',
-                },
-              },
-            }}
-          />
-        </TableContainer>
+      <div className={cn.tabValueAlt}>
+        <Table
+          rows={rows}
+          headers={headers}
+          cell_components={[ParameterNameCellDisabled, DescriptionCell, DescriptionNameCellDisabled]}
+          callbacks={callbacks}
+        />
       </div>
     );
   }

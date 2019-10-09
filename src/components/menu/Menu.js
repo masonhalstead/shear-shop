@@ -1,11 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import cn from './Menu.module.scss';
 const { PUBLIC_URL } = process.env;
-export const Menu = () => {
+export const Menu = ({ project }) => {
   return (
     <div className={cn.menuContainer}>
       <div className={cn.logoWrapper}>
@@ -20,26 +19,38 @@ export const Menu = () => {
           <FontAwesomeIcon icon="folder-open" />
           <Tooltip title="Projects" />
         </Link>
-        <Link to="/projects/1/jobs/24" className={cn.linkWrapper}>
+        <Link
+          to={`/projects/${project.project_id}/jobs/24`}
+          className={cn.linkWrapper}
+        >
           <FontAwesomeIcon icon={['fas', 'cube']} />
           <Tooltip title="Jobs" />
         </Link>
-        <Link to="/projects/1/batches/unarchived" className={cn.linkWrapper}>
+        <Link
+          to={`/projects/${project.project_id}/batches/unarchived`}
+          className={cn.linkWrapper}
+        >
           <FontAwesomeIcon icon={['fas', 'cubes']} />
           <Tooltip title="Batches" />
         </Link>
         <Link
-          to="/projects/1/definitions/unarchived"
+          to={`/projects/${project.project_id}/definitions/unarchived`}
           className={cn.linkWrapper}
         >
           <FontAwesomeIcon icon={['fas', 'cog']} />
           <Tooltip title="Job Definitions" />
         </Link>
-        <Link to="/projects/1/batches/unarchived" className={cn.linkWrapper}>
+        <Link
+          to={`/projects/${project.project_id}/batches/definitions/unarchived`}
+          className={cn.linkWrapper}
+        >
           <FontAwesomeIcon icon={['fas', 'cogs']} />
           <Tooltip title="Batch Definitions" />
         </Link>
-        <Link to="/projects/1/schedule/unarchived" className={cn.linkWrapper}>
+        <Link
+          to={`/projects/${project.project_id}/schedule/unarchived`}
+          className={cn.linkWrapper}
+        >
           <FontAwesomeIcon icon={['fas', 'calendar-week']} />
           <Tooltip title="Schedule Batches" />
         </Link>
