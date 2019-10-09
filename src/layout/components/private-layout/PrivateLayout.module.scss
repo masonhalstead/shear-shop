@@ -9,6 +9,7 @@
 .content {
   display: flex;
   flex-wrap: wrap;
+  background: lighten(#2e3440,77%);
   width: calc(100% - 75px);
 }
 

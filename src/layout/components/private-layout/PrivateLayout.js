@@ -19,9 +19,9 @@ import * as Sentry from '@sentry/browser';
 import { CustomizedInputBase } from 'components/search/SearchInput';
 import { DropdownMulti } from 'components/dropdowns/DropdownMulti';
 import { Menu } from 'components/menu/Menu';
+import { Navigation } from 'components/navigation/Navigation';
 import { styles } from './styles';
 import cn from './PrivateLayout.module.scss';
-import { Navigation } from 'components/navigation/Navigation';
 import {
   ProjectBread,
   JobFilterBread,
