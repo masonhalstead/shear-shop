@@ -11,9 +11,8 @@ export const styles = theme => ({
     boxShadow: 'none',
   },
   appBarClosed: {
-    marginLeft: 70,
     [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - 70px)`,
+      width: `calc(100% - 75px)`,
     },
     boxShadow: 'none',
   },

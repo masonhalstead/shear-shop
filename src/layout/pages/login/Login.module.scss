@@ -2,16 +2,16 @@
 
 .flexLogin {
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   align-items: center;
   padding-top: 60px;
-  min-width: 1000px;
   height: 100%;
   flex: 1;
 }
 
 .loginInner {
-  width: 688px;
+  width: 700px;
   padding: 30px;
   background-color: #ffffff;
   border: 1px solid $color-4;
