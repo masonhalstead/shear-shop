@@ -67,10 +67,11 @@ export class InputWrapper extends Component {
       right_icon,
       bulk,
       margin,
+      width,
       ...rest
     } = this.props;
     return (
-      <div className={cn.inputWrapper} style={{ margin }}>
+      <div className={cn.inputWrapper} style={{ margin, width }}>
         {label && (
           <InputLabel label={label} handleClose={this.props.handleClose} />
         )}
