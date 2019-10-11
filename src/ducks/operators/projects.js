@@ -1,4 +1,4 @@
-import { setProjects, setProject } from 'ducks/actions';
+import { setProjects } from 'ducks/actions';
 import { handleError } from 'ducks/operators/settings';
 import { normalizeWithUUID } from 'utils/normalizers';
 import { getData, postData } from 'utils/axios';
@@ -8,7 +8,6 @@ export const getProjects = () => async dispatch => {
     const res = await getData('/projects/list');
     const projects = await normalizeWithUUID(res.data);
     await dispatch(setProjects(projects));
-    await dispatch(setProject(projects[0]));
     return projects;
   } catch (err) {
     dispatch(handleError(err));

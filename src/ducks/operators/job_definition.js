@@ -4,15 +4,31 @@ import {
   clearJobDefinition,
 } from 'ducks/actions';
 import { getParameters } from 'ducks/operators/parameters';
+import { getProject } from 'ducks/operators/project';
 import { normalizeDefinition } from 'utils/normalizers';
 import { handleError } from 'ducks/operators/settings';
 import { getData, postData } from 'utils/axios';
 
-export const getJobDefinition = definition_id => async dispatch => {
+export const getDefinitionConfig = (
+  project_id,
+  definition_id,
+) => async dispatch => {
+
   const definition_route = `/job_definitions/${definition_id}`;
-  await dispatch(getParameters(definition_route));
-  const res = await dispatch(getDefinition(definition_id));
-  return res.data;
+
+  const [definition, parameters] = await Promise.all([
+    dispatch(getDefinition(definition_id)),
+    dispatch(getParameters(definition_route)),
+    dispatch(getProject(project_id)),
+  ]);
+  return {
+    definition,
+    parameters,
+  };
+  // const definition_route = `/job_definitions/${definition_id}`;
+  // await dispatch(getParameters(definition_route));
+  // const res = await dispatch(getDefinition(definition_id));
+  // return res.data;
 };
 
 export const getDefinition = definition_id => async dispatch => {
@@ -44,6 +60,11 @@ export const editDefinition = (data, definition_id) => async dispatch => {
   }
 };
 
-export const deleteDefinitionParams = (definition_id, parameter) => async () => {
-  await getData(`/job_definitions/${definition_id}/parameters/${parameter}/delete`);
+export const deleteDefinitionParams = (
+  definition_id,
+  parameter,
+) => async () => {
+  await getData(
+    `/job_definitions/${definition_id}/parameters/${parameter}/delete`,
+  );
 };

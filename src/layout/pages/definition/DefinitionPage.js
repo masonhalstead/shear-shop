@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
@@ -7,7 +7,7 @@ import {
   definitionChanged as definitionChangedAction,
 } from 'ducks/actions';
 import {
-  getJobDefinition as getJobDefinitionAction,
+  getDefinitionConfig as getDefinitionConfigAction,
   editDefinition as editDefinitionProps,
   deleteDefinitionParams as deleteDefinitionParamsProps,
 } from 'ducks/operators/job_definition';
@@ -16,7 +16,6 @@ import {
   saveParameters as saveParametersProps,
 } from 'ducks/operators/parameters';
 import { handleError } from 'ducks/operators/settings';
-import * as Sentry from '@sentry/browser';
 import uuid from 'uuid';
 import { DefinitionBlock } from './DefinitionBlock';
 import { DefinitionTabs } from './DefinitionTabs';
@@ -25,25 +24,20 @@ import { InputsTab } from './InputsTab';
 import { OutputsTab } from './OutputsTab';
 import cn from './Definition.module.scss';
 
-class DefinitionPage extends PureComponent {
+class DefinitionPage extends Component {
   static propTypes = {
-    getJobDefinition: PropTypes.func,
+    getDefinitionConfig: PropTypes.func,
     setLoadingAction: PropTypes.func,
     editDefinition: PropTypes.func,
     handleErrorProps: PropTypes.func,
     editParameters: PropTypes.func,
     saveParameters: PropTypes.func,
-    logoutUserProps: PropTypes.func,
-    hamburger: PropTypes.object,
     job_definition: PropTypes.object,
-    parameters: PropTypes.array,
     locations: PropTypes.array,
-    history: PropTypes.object,
     location: PropTypes.object,
   };
 
   state = {
-    routeId: 0,
     description: '',
     cpu: '',
     timeout: '',
@@ -55,7 +49,6 @@ class DefinitionPage extends PureComponent {
     stdout_success_text: '',
     tab: 0,
     result_method_id: '',
-    project_id: null,
     parameters: [],
     deletedParams: [],
     callbacks: {
@@ -68,51 +61,6 @@ class DefinitionPage extends PureComponent {
       handleMethod: (item, id) => this.handleMethod(item, id),
     },
   };
-
-  static getDerivedStateFromProps(props, state) {
-    const { job_definition, parameters, location } = props;
-    const [, , , , , , id] = location.pathname.split('/');
-    const { job_definition_id } = state;
-    if (job_definition.job_definition_id !== job_definition_id) {
-      return {
-        ...job_definition,
-        parameters: [
-          ...parameters,
-          {
-            parameter_name: '',
-            description: '',
-            parameter_direction_id: 1,
-            parameter_method_name: 'Command Line',
-            parameter_method_id: 1,
-            modified: false,
-            saved: false,
-            uuid: uuid.v1(),
-          },
-          {
-            parameter_name: '',
-            description: '',
-            parameter_direction_id: 2,
-            parameter_method_name: 'Command Line',
-            parameter_method_id: 1,
-            modified: false,
-            saved: false,
-            uuid: uuid.v1(),
-          },
-        ],
-      };
-    }
-    if (Number(id) !== state.routeId) {
-      props.saveDefinition(false);
-      props.definitionChanged(false);
-      props.setLoadingAction(true);
-      props.getJobDefinition(id);
-      props.setLoadingAction(false);
-
-      return { routeId: Number(id) };
-    }
-
-    return null;
-  }
 
   componentDidMount() {
     this.setInitialData();
@@ -357,15 +305,23 @@ class DefinitionPage extends PureComponent {
   };
 
   setInitialData = async () => {
-    const { getJobDefinition, setLoadingAction, location } = this.props;
-    const [, , , , , , definition_id] = location.pathname.split('/');
+    const {
+      getDefinitionConfig,
+      setLoadingAction,
+      handleErrorProps,
+      location,
+    } = this.props;
+    const [, , project_id, , , , definition_id] = location.pathname.split('/');
 
+    setLoadingAction(true);
     try {
-      await setLoadingAction(true);
-      await getJobDefinition(definition_id);
+      const config = await getDefinitionConfig(project_id, definition_id);
+      this.setState({
+        ...config.definition,
+        parameters: config.parameters,
+      });
     } catch (err) {
-      // Only fires if the server is off line or the body isnt set correctly
-      Sentry.captureException(err);
+      handleErrorProps(err);
     }
     setLoadingAction(false);
   };
@@ -391,7 +347,7 @@ class DefinitionPage extends PureComponent {
     } = this.state;
     const {
       editDefinition,
-      getJobDefinition,
+      getDefinitionConfig,
       setLoadingAction,
       handleErrorProps,
       job_definition,
@@ -432,7 +388,7 @@ class DefinitionPage extends PureComponent {
       await editParameters(parameters, job_definition_id);
       await saveParameters(parameters, job_definition_id);
       await editDefinition(post_data, job_definition_id);
-      await getJobDefinition(job_definition_id);
+      await getDefinitionConfig(job_definition_id);
       this.setState({ deletedParams: [] });
     } catch (err) {
       handleErrorProps(err, data);
@@ -519,7 +475,6 @@ class DefinitionPage extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  hamburger: state.hamburger,
   locations: state.lookups.locations,
   parameters: state.parameters,
   job_definition: state.job_definition,
@@ -527,7 +482,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getJobDefinition: getJobDefinitionAction,
+  getDefinitionConfig: getDefinitionConfigAction,
   editDefinition: editDefinitionProps,
   editParameters: editParametersProps,
   saveParameters: saveParametersProps,

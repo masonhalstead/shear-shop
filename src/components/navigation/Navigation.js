@@ -11,7 +11,6 @@ import {
   setCurrentDefinitions as setCurrentDefinitionsAction,
   setCurrentJobs as setCurrentJobsAction,
   toggleModal as toggleModalAction,
-  setProject as setProjectAction,
 } from 'ducks/actions';
 import { connect } from 'react-redux';
 import { DropdownNav } from 'components/dropdowns/DropdownNav';
@@ -21,7 +20,6 @@ import cn from './Navigation.module.scss';
 class NavigationWrapper extends PureComponent {
   static propTypes = {
     logoutUser: PropTypes.func,
-    setProject: PropTypes.func,
     setCurrentJobs: PropTypes.func,
     setCurrentDefinitions: PropTypes.func,
     toggleModal: PropTypes.func,
@@ -55,21 +53,20 @@ class NavigationWrapper extends PureComponent {
   };
 
   handleProjectRoute = (item, route) => {
-    const { history, setProject } = this.props;
-    setProject(item);
+    const { history } = this.props;
     history.push(`/projects/${item.project_id}/${route[3]}/${route[4]}`);
   };
 
   handleOnSearchJobs = input => {
     const { setCurrentJobs } = this.props;
     this.setState({ search_input: input.value });
-    setCurrentJobs({ search_string: input.value });
+    setCurrentJobs(input.value);
   };
 
   handleOnSearchDefinitions = input => {
     const { setCurrentDefinitions } = this.props;
     this.setState({ search_input: input.value });
-    setCurrentDefinitions({ search_string: input.value });
+    setCurrentDefinitions(input.value);
   };
 
   render() {
@@ -121,7 +118,6 @@ class NavigationWrapper extends PureComponent {
               search_input={search_input}
               handleOnSearch={this.handleOnSearchJobs}
               handleJobsRoute={this.handleJobsRoute}
-              settings={settings}
               route={route}
             />
           )}
@@ -169,7 +165,6 @@ const mapDispatchToProps = {
   saveDefinition: saveDefinitionAction,
   setCurrentDefinitions: setCurrentDefinitionsAction,
   logoutUser: logoutUserProps,
-  setProject: setProjectAction,
 };
 
 export const Navigation = withRouter(
@@ -210,8 +205,6 @@ const ProjectsRoute = ({ route, handleProjectRoute }) => {
 const JobsRoute = ({
   handleJobsRoute,
   handleOnSearch,
-  handleOnColumnCheck,
-  settings,
   search_input,
   route,
 }) => (
@@ -230,7 +223,7 @@ const JobsRoute = ({
       placeholder="Filter Jobs"
       left_icon="search"
       width="400px"
-      margin="0px 0px 0px 0px"
+      margin="0px 10px 0px 0px"
       handleOnChange={handleOnSearch}
     />
   </>

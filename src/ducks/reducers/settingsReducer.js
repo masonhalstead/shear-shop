@@ -1,7 +1,6 @@
 import {
   SET_ERROR_MESSAGE,
   SET_LOADING,
-  SET_PROJECT,
   SHOW_ALERT,
   TOGGLE_MODAL,
   SET_CURRENT_JOB,
@@ -16,78 +15,13 @@ const settingsState = {
   error_message: '',
   loading: false,
   alert: false,
+  jobs_search_input: '',
+  definitions_search_input: '',
   definitionChanged: false,
   saveDefinition: false,
   modals: {
     project: false,
     definitions: false,
-  },
-  jobs: {
-    columns: [],
-    search_string: '',
-    headers: [
-      {
-        title: 'Job',
-        show: true,
-        flex_grow: 1,
-        min_width: '100px',
-        sort: 'default',
-        sort_key: 'job_definition_name',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'State',
-        show: true,
-        min_width: '125px',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Duration',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Requirements',
-        show: true,
-        min_width: '150px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created By',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: '',
-        show: true,
-        min_width: '40px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: '',
-        show: true,
-        min_width: '40px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-    ],
-    settings: {
-      search_key: 'job_definition_name',
-      row_height: 32,
-    },
   },
   definitions: {
     columns: [],
@@ -177,13 +111,13 @@ export const settingsReducer = (state = settingsState, action) => {
         alert: action.payload,
       };
     case SET_CURRENT_JOB:
-      return { ...state, job: action.payload };
+      return { ...state, jobs_search_input: action.payload };
     case SET_CURRENT_JOBS:
-      return { ...state, jobs: { ...state.jobs, ...action.payload } };
+      return { ...state, jobs_search_input: action.payload };
     case SET_CURRENT_DEFINITIONS:
       return {
         ...state,
-        definitions: { ...state.definitions, ...action.payload },
+        definitions_search_input: action.payload,
       };
     default:
       return state;
