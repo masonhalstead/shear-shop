@@ -16,7 +16,6 @@ import {
 import { connect } from 'react-redux';
 import { DropdownNav } from 'components/dropdowns/DropdownNav';
 import { routes } from 'layout/routes';
-import { DropdownMulti } from '../dropdowns/DropdownMulti';
 import cn from './Navigation.module.scss';
 
 class NavigationWrapper extends PureComponent {
@@ -73,43 +72,6 @@ class NavigationWrapper extends PureComponent {
     setCurrentDefinitions({ search_string: input.value });
   };
 
-  handleOnColumnCheck = (item, type) => {
-    const {
-      settings: { jobs, definitions },
-      setCurrentJobs,
-      setCurrentDefinitions,
-    } = this.props;
-
-    let { columns } = jobs;
-    let { headers } = jobs;
-
-    if (type === 'definitions') {
-      columns = definitions.columns;
-      headers = definitions.headers;
-    }
-
-    const index = columns.indexOf(item.title);
-    let new_columns = [...columns];
-
-    if (index === -1) {
-      new_columns = [...new_columns, item.title];
-    } else {
-      new_columns.splice(index, 1);
-    }
-
-    const new_headers = headers.map(header => ({
-      ...header,
-      show: !new_columns.includes(header.title),
-    }));
-
-    // Setting both the columns and headers
-    if (type !== 'definitions') {
-      setCurrentJobs({ columns: new_columns, headers: new_headers });
-    } else {
-      setCurrentDefinitions({ columns: new_columns, headers: new_headers });
-    }
-  };
-
   render() {
     const {
       toggleModal,
@@ -146,7 +108,6 @@ class NavigationWrapper extends PureComponent {
               toggleModal={toggleModal}
               handleOnSearch={this.handleOnSearchDefinitions}
               handleDefinitionsRoute={this.handleDefinitionsRoute}
-              handleOnColumnCheck={this.handleOnColumnCheck}
               settings={settings}
               route={route}
             />
@@ -160,7 +121,6 @@ class NavigationWrapper extends PureComponent {
               search_input={search_input}
               handleOnSearch={this.handleOnSearchJobs}
               handleJobsRoute={this.handleJobsRoute}
-              handleOnColumnCheck={this.handleOnColumnCheck}
               settings={settings}
               route={route}
             />
@@ -273,19 +233,6 @@ const JobsRoute = ({
       margin="0px 0px 0px 0px"
       handleOnChange={handleOnSearch}
     />
-    <div className={cn.iconContainer}>
-      <DropdownMulti
-        rows={settings.jobs.headers.filter(
-          header => !!header.title && !header.flex_grow,
-        )}
-        checked={settings.jobs.columns}
-        checked_key="title"
-        row_key="title"
-        icon={['fas', 'cog']}
-        inner_title="Hide Columns"
-        handleOnSelect={item => handleOnColumnCheck(item, 'jobs')}
-      />
-    </div>
   </>
 );
 
@@ -338,7 +285,6 @@ const DefinitionsRoute = ({
       handleOnSelect={item => handleDefinitionsRoute(item, route)}
     />
     <div className={cn.flex} />
-
     <InputWrapper
       value={search_input}
       component={Input}
@@ -348,19 +294,6 @@ const DefinitionsRoute = ({
       margin="0px 0px 0px 0px"
       handleOnChange={handleOnSearch}
     />
-    <div className={cn.iconContainer}>
-      <DropdownMulti
-        rows={settings.definitions.headers.filter(
-          header => !!header.title && !header.flex_grow,
-        )}
-        checked={settings.definitions.columns}
-        checked_key="title"
-        row_key="title"
-        icon={['fas', 'cog']}
-        inner_title="Hide Columns"
-        handleOnSelect={item => handleOnColumnCheck(item, 'definitions')}
-      />
-    </div>
     <div
       className={cn.iconContainer}
       onClick={() => toggleModal({ definitions: true })}

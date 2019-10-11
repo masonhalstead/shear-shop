@@ -9,9 +9,8 @@ import { parametersReducer } from './parametersReducer';
 import { userReducer } from './userReducer';
 import { lookupsReducer } from './lookupsReducer';
 import { settingsReducer } from './settingsReducer';
-import { containerReducer } from './containerReducer';
-import { hamburgerReducer } from './hamburgerReducer';
 import { projectsReducer } from './projectsReducer';
+import { projectReducer } from './projectReducer';
 
 const rootReducer = combineReducers({
   batch: batchReducer,
@@ -22,12 +21,11 @@ const rootReducer = combineReducers({
   job_definition: definitionReducer,
   definitions: definitionsReducer,
   parameters: parametersReducer,
-  container: containerReducer,
   lookups: lookupsReducer,
   user: userReducer,
   settings: settingsReducer,
-  hamburger: hamburgerReducer,
   projects: projectsReducer,
+  project: projectReducer,
 });
 
 export default rootReducer;

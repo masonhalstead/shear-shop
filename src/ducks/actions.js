@@ -104,11 +104,6 @@ export const clearParameters = () => ({
   type: constants.CLEAR_PARAMETERS,
 });
 
-export const setHamburger = settings => ({
-  type: constants.SET_HAMBURGER,
-  payload: settings,
-});
-
 export const setProjects = projects => ({
   type: constants.SET_PROJECTS,
   payload: projects,
@@ -117,11 +112,6 @@ export const setProjects = projects => ({
 export const setProject = project => ({
   type: constants.SET_PROJECT,
   payload: project,
-});
-
-export const setCurrentJob = job => ({
-  type: constants.SET_CURRENT_JOB,
-  payload: job,
 });
 
 export const toggleAlertAction = open => ({

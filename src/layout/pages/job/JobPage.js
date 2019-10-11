@@ -7,7 +7,7 @@ import { Paper } from '@material-ui/core';
 import {
   logoutUser,
   setLoading,
-  setCurrentJob as setCurrentJobAction,
+  setJob as setCurrentJobAction,
 } from 'ducks/actions';
 import cn from './Job.module.scss';
 import { JobTabs } from './JobTabs';
@@ -108,7 +108,7 @@ class JobPage extends PureComponent {
       getJobConfig,
       setLoadingAction,
       location,
-      setCurrentJob,
+      setJob,
     } = this.props;
     const { stdOutData } = this.state;
     const [, , , , job_id] = location.pathname.split('/');
@@ -118,7 +118,7 @@ class JobPage extends PureComponent {
       this.setState({ stdOutData: [...stdOutData] });
     });
 
-    setCurrentJob({ job_id, jobName: data.job_definition_name });
+    setJob({ job_id, jobName: data.job_definition_name });
 
     try {
       await setLoadingAction(true);
@@ -201,7 +201,7 @@ const mapDispatchToProps = {
   getJobConfig: getJobConfigAction,
   logoutUserProps: logoutUser,
   setLoadingAction: setLoading,
-  setCurrentJob: setCurrentJobAction,
+  setJob: setCurrentJobAction,
 };
 
 export default connect(

@@ -52,7 +52,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
 
 const mapStateToProps = state => ({
   loading: state.settings.loading,
-  project: state.settings.project,
+  project: state.project,
 });
 
 const mapDispatchToProps = {

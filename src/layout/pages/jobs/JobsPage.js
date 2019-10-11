@@ -20,6 +20,7 @@ import {
   RunJobCell,
 } from './JobsCells';
 import cn from './Jobs.module.scss';
+import { JobTabs } from './JobTabs';
 
 const result = {
   data: [
@@ -434,6 +435,7 @@ class JobsPage extends PureComponent {
   state = {
     open: false,
     jobId: '',
+    tab: 0,
     batchName: '',
     callbacks: {
       openModal: row => this.openModal(row),
@@ -477,6 +479,10 @@ class JobsPage extends PureComponent {
     this.setState({ open: false, batchName: '', jobId: '' });
   };
 
+  handleChangeTab = (e, value) => {
+    this.setState({ tab: value });
+  };
+
   openModal = row => {
     this.setState({
       open: true,
@@ -486,7 +492,7 @@ class JobsPage extends PureComponent {
   };
 
   render() {
-    const { open, batchName } = this.state;
+    const { open, batchName, tab } = this.state;
     const {
       settings: { jobs },
       location,
@@ -494,24 +500,28 @@ class JobsPage extends PureComponent {
     return (
       <>
         <div className={cn.pageWrapper}>
-          <Table
-            rows={result.data}
-            path={location.pathname.split('/')}
-            headers={jobs.headers}
-            cell_components={[
-              JobCell,
-              StateCell,
-              DurationCell,
-              RequirementsCell,
-              CreatedByCell,
-              CreatedCell,
-              EditBatchCell,
-              RunJobCell,
-            ]}
-            search_input={jobs.search_string}
-            settings={jobs.settings}
-            callbacks={this.state.callbacks}
-          />
+          <JobTabs handleChangeTab={this.handleChangeTab} tab={tab}>
+            <div style={{ marginTop: 25 }}>
+              <Table
+                rows={result.data}
+                path={location.pathname.split('/')}
+                headers={jobs.headers}
+                cell_components={[
+                  JobCell,
+                  StateCell,
+                  DurationCell,
+                  RequirementsCell,
+                  CreatedByCell,
+                  CreatedCell,
+                  EditBatchCell,
+                  RunJobCell,
+                ]}
+                search_input={jobs.search_string}
+                settings={jobs.settings}
+                callbacks={this.state.callbacks}
+              />
+            </div>
+          </JobTabs>
         </div>
         <BatchModal
           handleCloseBatch={this.handleCloseBatch}

@@ -23,6 +23,8 @@ import {
   CreatedCell,
   RunCell,
 } from './DefinitionCells';
+import { DefinitionsTabs } from './DefinitionsTabs';
+import { JobTabs } from '../jobs/JobTabs';
 
 class DefinitionsPage extends PureComponent {
   static propTypes = {
@@ -56,6 +58,7 @@ class DefinitionsPage extends PureComponent {
     open: false,
     projectId: '',
     id: '',
+    tab: 0,
     callbacks: {
       openModal: row => this.openModal(row),
     },
@@ -101,6 +104,10 @@ class DefinitionsPage extends PureComponent {
       id: row.job_definition_id,
       title: row.job_definition_name,
     });
+  };
+
+  handleChangeTab = (e, value) => {
+    this.setState({ tab: value });
   };
 
   openDefinition = id => {
@@ -192,28 +199,32 @@ class DefinitionsPage extends PureComponent {
       settings: { definitions: reduxDefinitions, project, modals },
       location,
     } = this.props;
-    const { run, title, open, jobName, id } = this.state;
+    const { run, title, open, jobName, id, tab } = this.state;
 
     return (
       <div className={cn.pageWrapper}>
-        <Table
-          rows={definitions}
-          path={location.pathname.split('/')}
-          headers={reduxDefinitions.headers}
-          cell_components={[
-            JobCell,
-            RequirementsCell,
-            LocationCell,
-            TimeoutCell,
-            ResultMethodCell,
-            CreatedByCell,
-            CreatedCell,
-            RunCell,
-          ]}
-          search_input={reduxDefinitions.search_string}
-          settings={reduxDefinitions.settings}
-          callbacks={this.state.callbacks}
-        />
+        <DefinitionsTabs handleChangeTab={this.handleChangeTab} tab={tab}>
+          <div style={{ marginTop: 25 }}>
+            <Table
+              rows={definitions}
+              path={location.pathname.split('/')}
+              headers={reduxDefinitions.headers}
+              cell_components={[
+                JobCell,
+                RequirementsCell,
+                LocationCell,
+                TimeoutCell,
+                ResultMethodCell,
+                CreatedByCell,
+                CreatedCell,
+                RunCell,
+              ]}
+              search_input={reduxDefinitions.search_string}
+              settings={reduxDefinitions.settings}
+              callbacks={this.state.callbacks}
+            />
+          </div>
+        </DefinitionsTabs>
         {run && (
           <RunDefinition
             opened={run}

@@ -18,8 +18,6 @@ const settingsState = {
   alert: false,
   definitionChanged: false,
   saveDefinition: false,
-  project: {},
-  job: {},
   modals: {
     project: false,
     definitions: false,
@@ -178,8 +176,6 @@ export const settingsReducer = (state = settingsState, action) => {
         ...state,
         alert: action.payload,
       };
-    case SET_PROJECT:
-      return { ...state, project: action.payload };
     case SET_CURRENT_JOB:
       return { ...state, job: action.payload };
     case SET_CURRENT_JOBS:

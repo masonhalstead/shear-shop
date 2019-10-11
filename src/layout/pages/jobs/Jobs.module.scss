@@ -245,3 +245,19 @@
   margin-bottom: 3px;
   font-weight: 400;
 }
+
+.contentAlignSecond {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  margin-top: 25px;
+  width: 100%;
+  border-radius: 0;
+  box-shadow: none;
+}
+.tabsWrapper {
+  border: 1px solid #cfd7e6;
+  background: #fff;
+  min-height: 44px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+}
