@@ -3,7 +3,7 @@ import { batchReducer } from './batchReducer';
 import { batchesReducer } from './batchesReducer';
 import { jobReducer } from './jobReducer';
 import { jobsReducer } from './jobsReducer';
-import { jobDefinitionReducer } from './jobDefinitionReducer';
+import { definitionReducer } from './definitionReducer';
 import { definitionsReducer } from './definitionsReducer';
 import { parametersReducer } from './parametersReducer';
 import { userReducer } from './userReducer';
@@ -18,7 +18,8 @@ const rootReducer = combineReducers({
   batches: batchesReducer,
   job: jobReducer,
   jobs: jobsReducer,
-  job_definition: jobDefinitionReducer,
+  definition: definitionReducer,
+  job_definition: definitionReducer,
   definitions: definitionsReducer,
   parameters: parametersReducer,
   container: containerReducer,

@@ -2,6 +2,70 @@ import { SET_LOOKUPS, CLEAR_LOOKUPS } from 'ducks/types';
 import uuid from 'uuid';
 
 const initial_state = {
+  filter_definitions: [
+    {
+      name: 'unarchived',
+      verbose_name: 'Unarchived',
+      id: 1,
+      uuid: 1,
+    },
+    {
+      name: 'archived',
+      verbose_name: 'Archived',
+      id: 2,
+      uuid: 2,
+    },
+  ],
+  filter_jobs: [
+    {
+      name: '24',
+      verbose_name: 'Last 24 Hours',
+      id: 1,
+      uuid: 1,
+    },
+    {
+      name: '7',
+      verbose_name: 'Last 7 Days',
+      id: 2,
+      uuid: 2,
+    },
+    {
+      name: 'queued',
+      verbose_name: 'Queued',
+      id: 3,
+      uuid: 3,
+    },
+    {
+      name: 'starting',
+      verbose_name: 'Starting',
+      id: 4,
+      uuid: 4,
+    },
+    {
+      name: 'running',
+      verbose_name: 'Running',
+      id: 5,
+      uuid: 5,
+    },
+    {
+      name: 'complete',
+      verbose_name: 'Complete',
+      id: 6,
+      uuid: 6,
+    },
+    {
+      name: 'stopped',
+      verbose_name: 'Stopped',
+      id: 7,
+      uuid: 7,
+    },
+    {
+      name: 'failed',
+      verbose_name: 'Failed',
+      id: 8,
+      uuid: 8,
+    },
+  ],
   file_states: [
     {
       file_state_name: 'Uploading',

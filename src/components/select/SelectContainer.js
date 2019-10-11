@@ -7,6 +7,7 @@ export const SelectContainer = ({
   input,
   select,
   margin,
+  width,
   disabled,
   bulk,
   handleOnKeyDown,
@@ -48,7 +49,7 @@ export const SelectContainer = ({
   }, [open]);
   const { component: Select } = select;
   return (
-    <div ref={node} className={cn.selectContainer} style={{ margin }}>
+    <div ref={node} className={cn.selectContainer} style={{ margin, width }}>
       <InputWrapper
         {...input}
         bulk={bulk}
@@ -79,6 +80,7 @@ SelectContainer.defaultProps = {
   select: {},
   disabled: false,
   margin: '',
+  width: '100%',
   bulk: false,
   handleOnKeyDown: () => {},
   handleOnChange: () => {},
@@ -91,6 +93,7 @@ SelectContainer.propTypes = {
   select: PropTypes.object,
   disabled: PropTypes.bool,
   margin: PropTypes.string,
+  width: PropTypes.string,
   bulk: PropTypes.bool,
   handleOnKeyDown: PropTypes.func,
   handleOnChange: PropTypes.func,

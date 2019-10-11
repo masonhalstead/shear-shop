@@ -12,7 +12,7 @@
   font-weight: 400;
   color: #62738d;
   font-size: 13px;
-  background: #f7f8fb;
+  background: darken(#f7f8fb,2%);
   border: 1px solid #cfd7e6;
 }
 .tableHeaderCell {
@@ -42,6 +42,7 @@
   font-size: 13px;
   font-weight: 300;
   height: 32px;
+  background: #fff;
   border-left: 1px solid #cfd7e6;
   border-right: 1px solid #cfd7e6;
   border-bottom: 1px solid #cfd7e6;

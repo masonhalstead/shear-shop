@@ -13,13 +13,21 @@
   width: calc(100% - 75px);
 }
 
+.scroll {
+  min-height: calc(100vh - 47px);
+}
+.scroll > div {
+  display: flex;
+  flex-direction: column;
+}
+.scroll > div:nth-child(2) {
+  height: 0px !important;
+}
+
 .views {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 46px);
-  min-width: 1000px;
-  width: 100%;
-  overflow: scroll;
+  flex-grow: 1;
 }
 
 .logo {
