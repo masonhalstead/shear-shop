@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getDefinitionsConfig as getDefinitionsConfigAction } from 'ducks/operators/job_definitions';
-import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
+import { createDefinition as createDefinitionAction } from 'ducks/operators/job_definition';
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import {
   logoutUser,
@@ -31,6 +31,8 @@ class DefinitionsPage extends PureComponent {
     getDefinitionsConfig: PropTypes.func,
     handleError: PropTypes.func,
     setLoadingAction: PropTypes.func,
+    createDefinition: PropTypes.func,
+    toggleModal: PropTypes.func,
     definitions: PropTypes.array,
     history: PropTypes.object,
     project: PropTypes.object,
@@ -162,11 +164,11 @@ class DefinitionsPage extends PureComponent {
     this.setState({ tab: value });
   };
 
-  openDefinition = id => {
+  openDefinition = definition_id => {
     const { history, location } = this.props;
     const [, , project_id, filter] = location.pathname.split('/');
     history.push(
-      `/projects/${project_id}/definitions/${filter}/definition/${id}`,
+      `/projects/${project_id}/definitions/${filter}/definition/${definition_id}`,
     );
   };
 
@@ -177,7 +179,7 @@ class DefinitionsPage extends PureComponent {
   createDefinition = async () => {
     const { jobName } = this.state;
     const {
-      addJobDefinition,
+      createDefinition,
       getDefinitionsConfig,
       location,
       setLoadingAction,
@@ -187,7 +189,7 @@ class DefinitionsPage extends PureComponent {
 
     await setLoadingAction(true);
 
-    const id = await addJobDefinition({
+    const definition_id = await createDefinition({
       job_definition_name: jobName,
       project_id,
       description: 'Testing Project Description',
@@ -238,10 +240,7 @@ class DefinitionsPage extends PureComponent {
 
     await getDefinitionsConfig(project_id);
     await setLoadingAction(false);
-
-    this.setState({ open: false });
-
-    this.openDefinition(id);
+    this.openDefinition(definition_id);
   };
 
   render() {
@@ -308,7 +307,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getDefinitionsConfig: getDefinitionsConfigAction,
-  addJobDefinition: addJobDefinitionAction,
+  createDefinition: createDefinitionAction,
   handleError: handleErrorAction,
   setLoadingAction: setLoading,
   logoutUserProps: logoutUser,

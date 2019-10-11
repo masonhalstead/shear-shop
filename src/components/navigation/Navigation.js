@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import {
   logoutUser as logoutUserProps,
-  saveDefinition as saveDefinitionAction,
+  triggerSaveDefiniton as triggerSaveDefinitonAction,
   setCurrentDefinitions as setCurrentDefinitionsAction,
   setCurrentJobs as setCurrentJobsAction,
   toggleModal as toggleModalAction,
@@ -23,7 +23,7 @@ class NavigationWrapper extends PureComponent {
     setCurrentJobs: PropTypes.func,
     setCurrentDefinitions: PropTypes.func,
     toggleModal: PropTypes.func,
-    saveDefinition: PropTypes.func,
+    triggerSaveDefiniton: PropTypes.func,
     job: PropTypes.object,
     definition: PropTypes.object,
     settings: PropTypes.object,
@@ -72,7 +72,7 @@ class NavigationWrapper extends PureComponent {
   render() {
     const {
       toggleModal,
-      saveDefinition,
+      triggerSaveDefiniton,
       settings,
       job,
       definition,
@@ -134,7 +134,7 @@ class NavigationWrapper extends PureComponent {
             <DefinitionRoute
               route={route}
               settings={settings}
-              saveDefinition={saveDefinition}
+              triggerSaveDefiniton={triggerSaveDefiniton}
               definition={definition}
             />
           )}
@@ -162,7 +162,7 @@ const mapDispatchToProps = {
   getProjects: getProjectsAction,
   toggleModal: toggleModalAction,
   setCurrentJobs: setCurrentJobsAction,
-  saveDefinition: saveDefinitionAction,
+  triggerSaveDefiniton: triggerSaveDefinitonAction,
   setCurrentDefinitions: setCurrentDefinitionsAction,
   logoutUser: logoutUserProps,
 };
@@ -187,8 +187,7 @@ const ProjectRoute = ({ toggleModal }) => (
   </>
 );
 
-const ProjectsRoute = ({ route, handleProjectRoute }) => {
-  return (
+const ProjectsRoute = ({ route, handleProjectRoute }) => (
     <>
       <DropdownNav
         list_key="projects"
@@ -200,7 +199,6 @@ const ProjectsRoute = ({ route, handleProjectRoute }) => {
       <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
     </>
   );
-};
 
 const JobsRoute = ({
   handleJobsRoute,
@@ -240,7 +238,12 @@ const JobRoute = ({ route, job }) => (
   </>
 );
 
-const DefinitionRoute = ({ definition, route, settings, saveDefinition }) => (
+const DefinitionRoute = ({
+  definition,
+  route,
+  settings,
+  triggerSaveDefiniton,
+}) => (
   <>
     <Link
       to={`/projects/${route[2]}/definitions/${route[4]}`}
@@ -251,7 +254,10 @@ const DefinitionRoute = ({ definition, route, settings, saveDefinition }) => (
     <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
     <div className={cn.header}>{definition.job_definition_name || 8239484}</div>
     <div className={cn.flex} />
-    <div className={cn.iconContainer} onClick={() => saveDefinition(true)}>
+    <div
+      className={cn.iconContainer}
+      onClick={() => triggerSaveDefiniton(true)}
+    >
       <FontAwesomeIcon
         icon={['far', 'save']}
         color={settings.definitionChanged ? 'orange' : '#818fa3'}
@@ -264,8 +270,6 @@ const DefinitionsRoute = ({
   handleDefinitionsRoute,
   handleOnSearch,
   toggleModal,
-  handleOnColumnCheck,
-  settings,
   search_input,
   route,
 }) => (

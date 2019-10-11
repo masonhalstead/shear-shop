@@ -18,7 +18,7 @@ const settingsState = {
   jobs_search_input: '',
   definitions_search_input: '',
   definitionChanged: false,
-  saveDefinition: false,
+  save_definition: false,
   modals: {
     project: false,
     definitions: false,
@@ -100,7 +100,7 @@ export const settingsReducer = (state = settingsState, action) => {
     case SET_LOADING:
       return { ...state, loading: action.payload };
     case SAVE_DEFINITION:
-      return { ...state, saveDefinition: action.payload };
+      return { ...state, save_definition: action.payload };
     case DEFINITION_CHANGED:
       return { ...state, definitionChanged: action.payload };
     case TOGGLE_MODAL:

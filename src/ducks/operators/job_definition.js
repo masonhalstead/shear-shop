@@ -1,8 +1,4 @@
-import {
-  setLoading,
-  setJobDefinition,
-  clearJobDefinition,
-} from 'ducks/actions';
+import { setLoading, setJobDefinition } from 'ducks/actions';
 import { getParameters } from 'ducks/operators/parameters';
 import { getProject } from 'ducks/operators/project';
 import { normalizeDefinition } from 'utils/normalizers';
@@ -13,7 +9,6 @@ export const getDefinitionConfig = (
   project_id,
   definition_id,
 ) => async dispatch => {
-
   const definition_route = `/job_definitions/${definition_id}`;
 
   const [definition, parameters] = await Promise.all([
@@ -25,10 +20,6 @@ export const getDefinitionConfig = (
     definition,
     parameters,
   };
-  // const definition_route = `/job_definitions/${definition_id}`;
-  // await dispatch(getParameters(definition_route));
-  // const res = await dispatch(getDefinition(definition_id));
-  // return res.data;
 };
 
 export const getDefinition = definition_id => async dispatch => {
@@ -38,33 +29,55 @@ export const getDefinition = definition_id => async dispatch => {
   return definition;
 };
 
-export const addJobDefinition = data => async dispatch => {
+export const createDefinition = data => async dispatch => {
   try {
-    await dispatch(setLoading(true));
     const res = await postData('/job_definitions/create', data);
     return res.data;
   } catch (err) {
     dispatch(handleError(err, data));
-
     throw err;
   }
 };
 
-export const editDefinition = (data, definition_id) => async dispatch => {
+export const saveDefinition = (definition, parameters) => async dispatch => {
+  const { job_definition_id } = definition;
+
   try {
-    await postData(`/job_definitions/${definition_id}/update`, data);
-    await dispatch(clearJobDefinition());
+    await updateDefinition(job_definition_id, definition);
+    await updateDefinitionParameters(job_definition_id, parameters.update);
+    await deleteDefinitionParameters(job_definition_id, parameters.remove);
+    await createDefinitionParameters(job_definition_id, parameters.create);
   } catch (err) {
-    dispatch(handleError(err, data));
-    throw err;
+    dispatch(handleError(err, { definition, parameters }));
   }
 };
 
-export const deleteDefinitionParams = (
-  definition_id,
-  parameter,
-) => async () => {
-  await getData(
-    `/job_definitions/${definition_id}/parameters/${parameter}/delete`,
-  );
+export const updateDefinition = (definition_id, data) => {
+  postData(`/job_definitions/${definition_id}/update`, data);
+};
+
+export const updateDefinitionParameters = (definition_id, data) => {
+  data.forEach(param => {
+    postData(
+      `/job_definitions/${definition_id}/parameters/${param.parameter_name}/update`,
+      param,
+    );
+  });
+};
+
+export const deleteDefinitionParameters = (definition_id, data) => {
+  data.forEach(param => {
+    getData(
+      `/job_definitions/${definition_id}/parameters/${param.parameter_name}/delete`,
+    );
+  });
+};
+
+export const createDefinitionParameters = (definition_id, data) => {
+  data.forEach(param => {
+    postData(
+      `/job_definitions/${definition_id}/parameters/${param.parameter_name}/create`,
+      param,
+    );
+  });
 };

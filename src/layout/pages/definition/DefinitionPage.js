@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   setLoading,
-  saveDefinition as saveDefinitionAction,
+  triggerSaveDefiniton as triggerSaveDefinitonAction,
   definitionChanged as definitionChangedAction,
 } from 'ducks/actions';
 import {
   getDefinitionConfig as getDefinitionConfigAction,
-  editDefinition as editDefinitionProps,
-  deleteDefinitionParams as deleteDefinitionParamsProps,
+  saveDefinition as saveDefinitionAction,
 } from 'ducks/operators/job_definition';
 import {
   editParameters as editParametersProps,
@@ -28,16 +27,15 @@ class DefinitionPage extends Component {
   static propTypes = {
     getDefinitionConfig: PropTypes.func,
     setLoadingAction: PropTypes.func,
-    editDefinition: PropTypes.func,
     handleErrorProps: PropTypes.func,
-    editParameters: PropTypes.func,
-    saveParameters: PropTypes.func,
-    job_definition: PropTypes.object,
+    triggerSaveDefiniton: PropTypes.func,
+    saveDefinition: PropTypes.func,
     locations: PropTypes.array,
     location: PropTypes.object,
   };
 
   state = {
+    job_definition_id: null,
     description: '',
     cpu: '',
     timeout: '',
@@ -50,7 +48,11 @@ class DefinitionPage extends Component {
     tab: 0,
     result_method_id: '',
     parameters: [],
-    deletedParams: [],
+    data: {
+      create: [],
+      remove: [],
+      update: [],
+    },
     callbacks: {
       saveParameterName: (row, value) => this.saveParameterName(row, value),
       changeRequired: id => this.changeRequired(id),
@@ -66,19 +68,19 @@ class DefinitionPage extends Component {
     this.setInitialData();
   }
 
-  componentWillUnmount() {
-    const { saveDefinition, definitionChanged } = this.props;
-    saveDefinition(false);
-    definitionChanged(false);
+  shouldComponentUpdate(nextProps) {
+    const { triggerSaveDefiniton } = this.props;
+    if (nextProps.settings.save_definition === true) {
+      this.handleSubmit();
+      triggerSaveDefiniton(false);
+    }
+    return true;
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    if (nextProps.settings.saveDefinition === true) {
-      this.saveDefinitionFunc();
-      this.props.saveDefinition(false);
-    }
-
-    return true;
+  componentWillUnmount() {
+    const { triggerSaveDefiniton, definitionChanged } = this.props;
+    triggerSaveDefiniton(false);
+    definitionChanged(false);
   }
 
   handleChangeTab = (e, value) => {
@@ -254,32 +256,55 @@ class DefinitionPage extends Component {
   };
 
   deleteRow = row => {
-    const { parameters, deletedParams } = this.state;
+    const { parameters, data } = this.state;
     const index = parameters.findIndex(
       parameter => parameter.uuid === row.uuid,
     );
-    const deletedParam = parameters[index];
+    const parameter = parameters[index];
     parameters.splice(index, 1);
     this.setState(
       {
         parameters: [...parameters],
-        deletedParams: [...deletedParams, deletedParam],
+        data: {
+          ...data,
+          remove: [...data.remove, parameter],
+        },
       },
       () => this.handleRowManagement(),
     );
+  };
+
+  handleParametersPayload = parameters => {
+    const { data } = this.state;
+
+    const filtered_parameters = parameters.filter(
+      parameter => parameter.modified,
+    );
+
+    const update = filtered_parameters.filter(parameter => parameter.owner_id);
+    const create = filtered_parameters.filter(parameter => !parameter.owner_id);
+
+    this.setState({
+      data: {
+        ...data,
+        update,
+        create,
+      },
+    });
   };
 
   handleRowManagement = () => {
     const { definitionChanged } = this.props;
     definitionChanged(true);
     const { parameters } = this.state;
-
     const inputs = parameters.filter(
       p => p.parameter_direction_id === 1 && p.modified === false,
     );
     const outputs = parameters.filter(
       p => p.parameter_direction_id === 2 && p.modified === false,
     );
+
+    this.handleParametersPayload(parameters);
 
     if (inputs.length === 0) {
       this.configNewRow(1);
@@ -326,14 +351,15 @@ class DefinitionPage extends Component {
     setLoadingAction(false);
   };
 
-  saveDefinitionFunc = async () => {
+  handleSubmit = async () => {
     const {
       job_definition_name,
+      job_definition_id,
       description,
       docker_image,
       result_method_id,
       startup_command,
-      timeout,
+      timeout_seconds,
       stdout_success_text,
       region,
       cpu,
@@ -341,32 +367,24 @@ class DefinitionPage extends Component {
       max_retries,
       memory_gb,
       data,
-      parameters,
       location_id,
-      deletedParams,
     } = this.state;
+
     const {
-      editDefinition,
-      getDefinitionConfig,
+      saveDefinition,
       setLoadingAction,
       handleErrorProps,
-      job_definition,
       locations,
-      saveParameters,
-      editParameters,
-      deleteDefinitionParams,
     } = this.props;
 
-    const { job_definition_id } = job_definition;
-    const timeOut = timeout.split(':');
-
-    const post_data = {
+    const definition = {
       job_definition_name,
+      job_definition_id,
       description,
       docker_image,
       result_method_id,
       startup_command,
-      timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
+      timeout_seconds,
       stdout_success_text,
       region_endpoint_hint:
         region !== 'empty'
@@ -380,16 +398,16 @@ class DefinitionPage extends Component {
       memory_gb,
     };
 
+    setLoadingAction(true);
     try {
-      await setLoadingAction(true);
-      deletedParams.map(param => {
-        deleteDefinitionParams(job_definition_id, param.parameter_name);
+      await saveDefinition(definition, data);
+      this.setState({
+        data: {
+          create: [],
+          remove: [],
+          update: [],
+        },
       });
-      await editParameters(parameters, job_definition_id);
-      await saveParameters(parameters, job_definition_id);
-      await editDefinition(post_data, job_definition_id);
-      await getDefinitionConfig(job_definition_id);
-      this.setState({ deletedParams: [] });
     } catch (err) {
       handleErrorProps(err, data);
     }
@@ -483,10 +501,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getDefinitionConfig: getDefinitionConfigAction,
-  editDefinition: editDefinitionProps,
   editParameters: editParametersProps,
   saveParameters: saveParametersProps,
-  deleteDefinitionParams: deleteDefinitionParamsProps,
+  triggerSaveDefiniton: triggerSaveDefinitonAction,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
   saveDefinition: saveDefinitionAction,
