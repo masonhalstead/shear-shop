@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { BatchModal } from 'layout/components/modals/batch-modal/BatchModal';
 import {
-  getJobs as getJobsAction,
+  getJobsConfig as getJobsConfigAction,
   addJobBatch as addJobBatchAction,
 } from 'ducks/operators/jobs';
+import { handleError } from 'ducks/operators/settings';
 import { logoutUser, setLoading } from 'ducks/actions';
-import * as Sentry from '@sentry/browser';
 import { Table } from 'components/table/Table';
+import uuid from 'uuid';
+import result from 'data/jobs.json';
 import {
   JobCell,
   StateCell,
@@ -22,413 +24,13 @@ import {
 import cn from './Jobs.module.scss';
 import { JobTabs } from './JobTabs';
 
-const result = {
-  data: [
-    {
-      job_id: 389946,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 2,
-      job_state_name: '02 - Starting',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:22:29.139083+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 4.079993,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233192,
-      batch_name: 'Batch 233192',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389945,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:22:28.914619+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 4.30446,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233191,
-      batch_name: 'Batch 233191',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389944,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:22:03.645602+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 29.573439,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233190,
-      batch_name: 'Batch 233190',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389943,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:21:29.415905+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 63.803165,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233189,
-      batch_name: 'Batch 233189',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389942,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:21:09.282517+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 83.936506,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233188,
-      batch_name: 'Batch 233188',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389941,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 8,
-      job_state_name: '04 - Complete',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:20:20.095794+00:00',
-      finish_datetime_utc: '2019-09-26T01:22:28.295505+00:00',
-      duration_seconds: 128.199711,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233187,
-      batch_name: 'Batch 233187',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389940,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:20:10.286537+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 142.932454,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233186,
-      batch_name: 'Batch 233186',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389939,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:20:10.277229+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 142.941801,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233185,
-      batch_name: 'Batch 233185',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389938,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:19:30.69401+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 182.525017,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233184,
-      batch_name: 'Batch 233184',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389936,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 7,
-      job_state_name: '03 - Running',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:17:50.011964+00:00',
-      finish_datetime_utc: null,
-      duration_seconds: 283.207053,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233182,
-      batch_name: 'Batch 233182',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-    {
-      job_id: 389935,
-      project_id: 37,
-      project_name: 'Lynx (Prod)',
-      organization_id: 1,
-      organization_name: 'Cognitiv',
-      job_state_id: 8,
-      job_state_name: '04 - Complete',
-      created_by: 'Lynx User',
-      start_datetime_utc: '2019-09-26T01:17:35.183498+00:00',
-      finish_datetime_utc: '2019-09-26T01:22:28.298676+00:00',
-      duration_seconds: 293.115178,
-      docker_image:
-        '387926682510.dkr.ecr.us-east-1.amazonaws.com/cognitiv/lynx/jobs/netcore:0.1.6',
-      startup_command:
-        'dotnet /usr/local/lib/jobs/Cognitiv.Lynx.Jobs.UniqueUserMap/UniqueUserMap.dll',
-      required_cpu: 1,
-      required_gpu: 0,
-      required_memory_gb: 4,
-      required_storage_gb: 1,
-      timeout_seconds: 3600,
-      region_endpoint_hint: null,
-      description: null,
-      result_method_id: 3,
-      result_method_name: 'STDOUT JSON',
-      stdout_success_text: null,
-      retries: 0,
-      max_retries: 0,
-      job_definition_id: 1372,
-      job_definition_name: 'Unique User Map',
-      batch_id: 233181,
-      batch_name: 'Batch 233181',
-      batch_descriptor: null,
-      location_id: 11,
-      location_name: 'Umbra (Prod) VPC - 1c',
-    },
-  ],
-};
-
 class JobsPage extends PureComponent {
   static propTypes = {
-    getProjects: PropTypes.func,
-    hamburger: PropTypes.object,
-    projects: PropTypes.array,
-    history: PropTypes.object,
+    getJobsConfig: PropTypes.func,
+    setLoadingAction: PropTypes.func,
+    handleErrorAction: PropTypes.func,
+    addJobBatch: PropTypes.func,
+    settings: PropTypes.object,
     location: PropTypes.object,
   };
 
@@ -437,6 +39,69 @@ class JobsPage extends PureComponent {
     jobId: '',
     tab: 0,
     batchName: '',
+    headers: [
+      {
+        title: 'Job',
+        show: true,
+        flex_grow: 1,
+        min_width: '100px',
+        sort: 'default',
+        sort_key: 'job_definition_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'State',
+        show: true,
+        min_width: '125px',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Duration',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Requirements',
+        show: true,
+        min_width: '150px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created By',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: '',
+        show: true,
+        min_width: '40px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: '',
+        show: true,
+        min_width: '40px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+    ],
+    settings: {
+      search_key: 'job_definition_name',
+      row_height: 32,
+    },
     callbacks: {
       openModal: row => this.openModal(row),
     },
@@ -447,15 +112,19 @@ class JobsPage extends PureComponent {
   }
 
   setInitialData = async () => {
-    const { getJobs, setLoadingAction, location } = this.props;
+    const {
+      getJobsConfig,
+      setLoadingAction,
+      handleErrorAction,
+      location,
+    } = this.props;
     const [, , project_id, , filter] = location.pathname.split('/');
 
+    setLoadingAction(true);
     try {
-      await setLoadingAction(true);
-      await getJobs({ project_id }); // TODO: integrate days & state
+      await getJobsConfig(project_id, filter);
     } catch (err) {
-      // Only fires if the server is off line or the body isnt set correctly
-      Sentry.captureException(err);
+      handleErrorAction(err);
     }
     setLoadingAction(false);
   };
@@ -470,11 +139,11 @@ class JobsPage extends PureComponent {
 
   createBatch = async () => {
     const { batchName, jobId } = this.state;
-    const { addJobBatch, getJobs, location } = this.props;
+    const { addJobBatch, getJobsConfig, location } = this.props;
     const [, , project_id, , filter] = location.pathname.split('/');
     await addJobBatch({ batch_name: batchName, job_id: jobId, project_id });
 
-    await getJobs({ project_id });
+    await getJobsConfig(project_id, filter);
 
     this.setState({ open: false, batchName: '', jobId: '' });
   };
@@ -492,11 +161,10 @@ class JobsPage extends PureComponent {
   };
 
   render() {
-    const { open, batchName, tab } = this.state;
-    const {
-      settings: { jobs },
-      location,
-    } = this.props;
+    const { open, batchName, tab, headers, settings, callbacks } = this.state;
+    const { location } = this.props;
+    const { jobs_search_input } = this.props.settings;
+
     return (
       <>
         <div className={cn.pageWrapper}>
@@ -505,7 +173,7 @@ class JobsPage extends PureComponent {
               <Table
                 rows={result.data}
                 path={location.pathname.split('/')}
-                headers={jobs.headers}
+                headers={headers}
                 cell_components={[
                   JobCell,
                   StateCell,
@@ -516,9 +184,9 @@ class JobsPage extends PureComponent {
                   EditBatchCell,
                   RunJobCell,
                 ]}
-                search_input={jobs.search_string}
-                settings={jobs.settings}
-                callbacks={this.state.callbacks}
+                search_input={jobs_search_input}
+                settings={settings}
+                callbacks={callbacks}
               />
             </div>
           </JobTabs>
@@ -543,8 +211,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getJobs: getJobsAction,
+  getJobsConfig: getJobsConfigAction,
   logoutUserProps: logoutUser,
+  handleErrorAction: handleError,
   setLoadingAction: setLoading,
   addJobBatch: addJobBatchAction,
 };

@@ -34,7 +34,7 @@ RequirementsCell.propTypes = {
 
 export const LocationCell = ({ row }) => (
   <p className={classNames(cn.cell, cn.textCenter, cn.overflow)}>
-    {row.location_name}
+    {row.location}
   </p>
 );
 LocationCell.propTypes = {

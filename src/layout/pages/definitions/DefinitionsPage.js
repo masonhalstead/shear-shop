@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getJobDefinitions as getJobDefinitionsAction } from 'ducks/operators/job_definitions';
-import { addJobDefinition as addJobDefinitionAction } from 'ducks/operators/job_definition';
-import * as Sentry from '@sentry/browser';
+import { getDefinitionsConfig as getDefinitionsConfigAction } from 'ducks/operators/job_definitions';
+import { createDefinition as createDefinitionAction } from 'ducks/operators/job_definition';
+import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import {
   logoutUser,
   setLoading,
@@ -12,6 +12,7 @@ import {
 import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
 import { Table } from 'components/table/Table';
+import uuid from 'uuid';
 import cn from './Definitions.module.scss';
 import {
   JobCell,
@@ -24,41 +25,93 @@ import {
   RunCell,
 } from './DefinitionCells';
 import { DefinitionsTabs } from './DefinitionsTabs';
-import { JobTabs } from '../jobs/JobTabs';
 
 class DefinitionsPage extends PureComponent {
   static propTypes = {
-    getJobDefinitions: PropTypes.func,
+    getDefinitionsConfig: PropTypes.func,
+    handleError: PropTypes.func,
     setLoadingAction: PropTypes.func,
-    hamburger: PropTypes.object,
+    createDefinition: PropTypes.func,
+    toggleModal: PropTypes.func,
     definitions: PropTypes.array,
     history: PropTypes.object,
+    project: PropTypes.object,
     location: PropTypes.object,
     lookups: PropTypes.object,
+    settings: PropTypes.object,
   };
-
-  static getDerivedStateFromProps(props, state) {
-    const [, , project_id] = props.location.pathname.split('/');
-    if (
-      state.projectId !== '' &&
-      Number(project_id) !== Number(state.projectId)
-    ) {
-      props.getJobDefinitions(project_id);
-
-      return { projectId: project_id };
-    }
-
-    return state;
-  }
 
   state = {
     run: false,
     title: '',
     jobName: '',
-    open: false,
-    projectId: '',
     id: '',
     tab: 0,
+    headers: [
+      {
+        title: 'Job',
+        show: true,
+        flex_grow: 1,
+        min_width: '100px',
+        sort: 'default',
+        sort_key: 'job_definition_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Requirements',
+        show: true,
+        min_width: '175px',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Location',
+        show: true,
+        min_width: '175px',
+        sort: 'default',
+        sort_key: 'location_name',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Timeout',
+        show: true,
+        min_width: '125px',
+        sort: 'default',
+        sort_key: 'timeout_seconds',
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Method',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created By',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: 'Created',
+        show: true,
+        min_width: '125px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: '',
+        show: true,
+        min_width: '40px',
+        sort: false,
+        uuid: uuid.v1(),
+      },
+    ],
+    settings: {
+      search_key: 'job_definition_name',
+      row_height: 33,
+    },
     callbacks: {
       openModal: row => this.openModal(row),
     },
@@ -69,20 +122,21 @@ class DefinitionsPage extends PureComponent {
   }
 
   setInitialData = async () => {
-    const { getJobDefinitions, setLoadingAction, location } = this.props;
-    const [, , project_id] = location.pathname.split('/');
+    const {
+      getDefinitionsConfig,
+      setLoadingAction,
+      handleError,
+      location,
+    } = this.props;
+    const [, , project_id, , filter] = location.pathname.split('/');
 
-    this.setState({ projectId: project_id });
-
+    setLoadingAction(true);
     try {
-      await setLoadingAction(true);
-      await getJobDefinitions(project_id);
-      setLoadingAction(false);
+      await getDefinitionsConfig(project_id, filter);
     } catch (err) {
-      // Only fires if the server is off line or the body isnt set correctly
-      Sentry.captureException(err);
-      setLoadingAction(false);
+      handleError(err);
     }
+    setLoadingAction(false);
   };
 
   runJob = () => {
@@ -110,11 +164,11 @@ class DefinitionsPage extends PureComponent {
     this.setState({ tab: value });
   };
 
-  openDefinition = id => {
+  openDefinition = definition_id => {
     const { history, location } = this.props;
     const [, , project_id, filter] = location.pathname.split('/');
     history.push(
-      `/projects/${project_id}/definitions/${filter}/definition/${id}`,
+      `/projects/${project_id}/definitions/${filter}/definition/${definition_id}`,
     );
   };
 
@@ -125,8 +179,8 @@ class DefinitionsPage extends PureComponent {
   createDefinition = async () => {
     const { jobName } = this.state;
     const {
-      addJobDefinition,
-      getJobDefinitions,
+      createDefinition,
+      getDefinitionsConfig,
       location,
       setLoadingAction,
     } = this.props;
@@ -135,7 +189,7 @@ class DefinitionsPage extends PureComponent {
 
     await setLoadingAction(true);
 
-    const id = await addJobDefinition({
+    const definition_id = await createDefinition({
       job_definition_name: jobName,
       project_id,
       description: 'Testing Project Description',
@@ -184,22 +238,15 @@ class DefinitionsPage extends PureComponent {
       ],
     });
 
-    await getJobDefinitions(project_id);
+    await getDefinitionsConfig(project_id);
     await setLoadingAction(false);
-
-    this.setState({ open: false });
-
-    this.openDefinition(id);
+    this.openDefinition(definition_id);
   };
 
   render() {
-    const {
-      definitions,
-      lookups,
-      settings: { definitions: reduxDefinitions, project, modals },
-      location,
-    } = this.props;
-    const { run, title, open, jobName, id, tab } = this.state;
+    const { definitions, lookups, project, location } = this.props;
+    const { modals, definitions_search_input } = this.props.settings;
+    const { run, title, jobName, id, tab, headers, settings } = this.state;
 
     return (
       <div className={cn.pageWrapper}>
@@ -208,7 +255,7 @@ class DefinitionsPage extends PureComponent {
             <Table
               rows={definitions}
               path={location.pathname.split('/')}
-              headers={reduxDefinitions.headers}
+              headers={headers}
               cell_components={[
                 JobCell,
                 RequirementsCell,
@@ -219,8 +266,8 @@ class DefinitionsPage extends PureComponent {
                 CreatedCell,
                 RunCell,
               ]}
-              search_input={reduxDefinitions.search_string}
-              settings={reduxDefinitions.settings}
+              search_input={definitions_search_input}
+              settings={settings}
               callbacks={this.state.callbacks}
             />
           </div>
@@ -254,12 +301,14 @@ const mapStateToProps = state => ({
   definitions: state.definitions,
   lookups: state.lookups,
   settings: state.settings,
+  project: state.project,
   projects: state.projects,
 });
 
 const mapDispatchToProps = {
-  getJobDefinitions: getJobDefinitionsAction,
-  addJobDefinition: addJobDefinitionAction,
+  getDefinitionsConfig: getDefinitionsConfigAction,
+  createDefinition: createDefinitionAction,
+  handleError: handleErrorAction,
   setLoadingAction: setLoading,
   logoutUserProps: logoutUser,
   toggleModal: toggleModalAction,

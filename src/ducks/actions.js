@@ -134,7 +134,7 @@ export const setCurrentDefinitions = definitions => ({
   payload: definitions,
 });
 
-export const saveDefinition = definition => ({
+export const triggerSaveDefiniton = definition => ({
   type: constants.SAVE_DEFINITION,
   payload: definition,
 });

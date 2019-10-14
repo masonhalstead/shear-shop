@@ -25,6 +25,7 @@ class PrivateRouteWrapper extends React.PureComponent {
       return (
         <Route
           {...rest}
+          key={location.pathname}
           render={props => (
             <PrivateLayout>
               <Component {...props} />

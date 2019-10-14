@@ -13,4 +13,3 @@ export const routes = {
   DEFINITIONS: '/projects/:project_id/definitions/:filter',
   DEFINITION: '/projects/:project_id/definitions/:filter/definition/:def_id',
 };
- 

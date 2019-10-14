@@ -25,6 +25,11 @@ class ProjectsPage extends PureComponent {
     history: PropTypes.object,
   };
 
+  state = {
+    open: false,
+    projectName: '',
+  };
+
   componentDidMount() {
     const { getProjects } = this.props;
     try {
@@ -33,11 +38,6 @@ class ProjectsPage extends PureComponent {
       Sentry.captureException(err);
     }
   }
-
-  state = {
-    open: false,
-    projectName: '',
-  };
 
   handleCloseProject = () => {
     const { toggleModal } = this.props;

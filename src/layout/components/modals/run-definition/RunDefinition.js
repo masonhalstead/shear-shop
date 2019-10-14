@@ -4,7 +4,7 @@ import { CustomizedDialogs } from 'components/modal/CustomModal';
 import { DefinitionBlock } from './DefinitonBlock';
 import * as Sentry from '@sentry/browser';
 import uuid from 'uuid';
-import { getJobDefinition as getJobDefinitionAction } from 'ducks/operators/job_definition';
+import { getDefinitionConfig as getDefinitionConfigAction } from 'ducks/operators/job_definition';
 import { addJob as addJobAction } from 'ducks/operators/job';
 import { setLoading } from 'ducks/actions';
 import { handleError } from 'ducks/operators/settings';
@@ -67,11 +67,11 @@ class RunDefinition extends PureComponent {
   };
 
   setInitialData = async () => {
-    const { getJobDefinition, setLoadingAction, id } = this.props;
+    const { getDefinitionConfig, setLoadingAction, id } = this.props;
 
     try {
       await setLoadingAction(true);
-      await getJobDefinition(id);
+      await getDefinitionConfig(id);
     } catch (err) {
       // Only fires if the server is off line or the body isnt set correctly
       Sentry.captureException(err);
@@ -338,7 +338,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getJobDefinition: getJobDefinitionAction,
+  getDefinitionConfig: getDefinitionConfigAction,
   addJob: addJobAction,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
