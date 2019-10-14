@@ -129,6 +129,9 @@ class DefinitionsPage extends PureComponent {
       location,
     } = this.props;
     const [, , project_id, , filter] = location.pathname.split('/');
+    this.setState({
+      tab: filter === 'archived' ? 1 : 0,
+    });
 
     setLoadingAction(true);
     try {
@@ -161,7 +164,16 @@ class DefinitionsPage extends PureComponent {
   };
 
   handleChangeTab = (e, value) => {
-    this.setState({ tab: value });
+    const { history, location } = this.props;
+    const [, , project_id, , filter] = location.pathname.split('/');
+
+    this.setState({ tab: value }, () =>
+      history.push(
+        `/projects/${project_id}/definitions/${
+          value === 1 ? 'archived' : 'unarchived'
+        }`,
+      ),
+    );
   };
 
   openDefinition = definition_id => {

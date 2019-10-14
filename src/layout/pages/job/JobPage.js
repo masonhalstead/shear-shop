@@ -111,7 +111,7 @@ class JobPage extends PureComponent {
       setJob,
     } = this.props;
     const { stdOutData } = this.state;
-    const [, , , , job_id] = location.pathname.split('/');
+    const [, , , , , ,job_id] = location.pathname.split('/');
 
     this.socket.on('FromAPI', data => {
       stdOutData.push(data);

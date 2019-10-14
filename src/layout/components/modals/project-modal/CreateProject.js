@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
 
-export const CreateProjectModal = ({handleCloseProject, open, projectName, changeProjectName, createProject }) => (
+export const CreateProjectModal = React.memo(({handleCloseProject, open, projectName, changeProjectName, createProject }) => (
   <Dialog
     onClose={handleCloseProject}
     aria-labelledby="customized-dialog-title"
@@ -43,5 +43,4 @@ export const CreateProjectModal = ({handleCloseProject, open, projectName, chang
       </Button>
     </DialogActions>
   </Dialog>
-
-)
+));

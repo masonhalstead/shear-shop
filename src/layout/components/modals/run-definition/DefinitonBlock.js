@@ -27,7 +27,7 @@ export const DefinitionBlock = ({
   handleOnSelectLocation,
   location_name,
   region_endpoint_hint,
-                                  handleOnSelectRegion,
+  handleOnSelectRegion,
 }) => (
   <Typography component={'span'} gutterBottom>
     <div className={cn.container}>

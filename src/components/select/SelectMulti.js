@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { CheckboxAlt } from 'components/checkbox/CheckboxAlt';
 import cn from './Select.module.scss';
 
-export const SelectMulti = ({
+export const SelectMulti = React.memo(({
   rows,
   checked,
   checked_key,
@@ -27,7 +27,7 @@ export const SelectMulti = ({
       ))}
     {rows.length === 0 && <p className={cn.itemEmpty}>{empty_text}</p>}
   </div>
-);
+));
 
 SelectMulti.defaultProps = {
   rows: [],

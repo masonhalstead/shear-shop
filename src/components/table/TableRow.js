@@ -31,7 +31,14 @@ export class TableRow extends Component {
   }
 
   render() {
-    const { headers, row, settings, callbacks, cell_components, path } = this.props;
+    const {
+      headers,
+      row,
+      settings,
+      callbacks,
+      cell_components,
+      path,
+    } = this.props;
 
     const row_styles = {
       minHeight: `${settings.row_height}px`,

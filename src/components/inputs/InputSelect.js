@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import cn from './Input.module.scss';
 
-export const InputSelect = ({ placeholder, value, handleOpen }) => (
+export const InputSelect = React.memo(({ placeholder, value, handleOpen }) => (
   <div
     onClick={handleOpen}
     className={classNames(cn.selectInputWrapper, cn.overflow)}
@@ -11,7 +11,7 @@ export const InputSelect = ({ placeholder, value, handleOpen }) => (
     {placeholder && !value && <p className={cn.placeholder}>{placeholder}</p>}
     {value && <p className={cn.selectValue}>{value}</p>}
   </div>
-);
+));
 
 InputSelect.propTypes = {
   handleOpen: PropTypes.func,

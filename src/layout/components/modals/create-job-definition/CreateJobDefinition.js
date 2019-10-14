@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
 
-export const CreateJobDefinition = ({
+export const CreateJobDefinition = React.memo(({
   handleCloseDefinition,
   open,
   jobName,
@@ -50,4 +50,4 @@ export const CreateJobDefinition = ({
       </Button>
     </DialogActions>
   </Dialog>
-);
+));

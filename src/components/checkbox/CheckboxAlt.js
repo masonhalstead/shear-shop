@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from './Checkbox.module.scss';
 
-export const CheckboxAlt = ({ checked, onChange, label, margin, weight }) => (
+export const CheckboxAlt = React.memo(({ checked, onChange, label, margin, weight }) => (
   <div
     className={cn.checkboxContainer}
     onClick={() => onChange(!checked)}
@@ -20,7 +20,7 @@ export const CheckboxAlt = ({ checked, onChange, label, margin, weight }) => (
       </p>
     )}
   </div>
-);
+));
 CheckboxAlt.defaultProps = {
   checked: false,
   label: false,

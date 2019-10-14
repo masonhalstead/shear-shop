@@ -119,6 +119,35 @@ class JobsPage extends PureComponent {
       location,
     } = this.props;
     const [, , project_id, , filter] = location.pathname.split('/');
+    let tab = 0;
+    switch (filter) {
+      case '7':
+        tab = 1;
+        break;
+      case 'queued':
+        tab = 2;
+        break;
+      case 'starting':
+        tab = 3;
+        break;
+      case 'running':
+        tab = 4;
+        break;
+      case 'complete':
+        tab = 5;
+        break;
+      case 'stopped':
+        tab = 6;
+        break;
+      case 'failed':
+        tab = 7;
+        break;
+      default:
+        tab = 0;
+    }
+
+    this.setState({ tab });
+
 
     setLoadingAction(true);
     try {
@@ -149,7 +178,35 @@ class JobsPage extends PureComponent {
   };
 
   handleChangeTab = (e, value) => {
-    this.setState({ tab: value });
+    const { history, location } = this.props;
+    const [, , project_id] = location.pathname.split('/');
+    let route = 24;
+    switch (value) {
+      case 1:
+        route = 7;
+        break;
+      case 2:
+        route = 'queued';
+        break;
+      case 3:
+        route = 'starting';
+        break;
+      case 4:
+        route = 'running';
+        break;
+      case 5:
+        route = 'complete';
+        break;
+      case 6:
+        route = 'stopped';
+        break;
+      case 7:
+        route = 'failed';
+        break;
+      default:
+        route = 24;
+    }
+    history.push(`/projects/${project_id}/jobs/${route}/`);
   };
 
   openModal = row => {

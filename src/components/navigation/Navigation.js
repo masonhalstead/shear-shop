@@ -188,17 +188,17 @@ const ProjectRoute = ({ toggleModal }) => (
 );
 
 const ProjectsRoute = ({ route, handleProjectRoute }) => (
-    <>
-      <DropdownNav
-        list_key="projects"
-        list_name="project_name"
-        list_id="project_id"
-        route_id={parseInt(route[2], 10)}
-        handleOnSelect={item => handleProjectRoute(item, route)}
-      />
-      <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
-    </>
-  );
+  <>
+    <DropdownNav
+      list_key="projects"
+      list_name="project_name"
+      list_id="project_id"
+      route_id={parseInt(route[2], 10)}
+      handleOnSelect={item => handleProjectRoute(item, route)}
+    />
+    <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
+  </>
+);
 
 const JobsRoute = ({
   handleJobsRoute,
@@ -227,16 +227,28 @@ const JobsRoute = ({
   </>
 );
 
-const JobRoute = ({ route, job }) => (
-  <>
-    <Link to={`/projects/${route[2]}/jobs/${route[4]}`} className={cn.header}>
-      Jobs
-    </Link>
-    <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
-    <div className={cn.header}>{job.job_id || 8239484}</div>
-    <div className={cn.flex} />
-  </>
-);
+const JobRoute = ({ route, job }) => {
+  let label = 'Last 24 Hours';
+
+  if (route[4] === '7') {
+    label = 'Last 7 Days';
+  }
+  if (route[4] !== '24' && route[4] !== '7') {
+    label = route[4].charAt(0).toUpperCase() + route[4].slice(1);
+  }
+  return (
+    <>
+      <Link to={`/projects/${route[2]}/jobs/${route[4]}`} className={cn.header}>
+        Jobs
+      </Link>
+      <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
+      <div className={cn.header}>{label}</div>
+      <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
+      <div className={cn.header}>{job.job_id}</div>
+      <div className={cn.flex} />
+    </>
+  );
+};
 
 const DefinitionRoute = ({
   definition,

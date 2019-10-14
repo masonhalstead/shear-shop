@@ -8,7 +8,7 @@ import {
 import classNames from 'classnames';
 import cn from './Modal.module.scss';
 
-export const CustomizedDialogs = ({
+export const CustomizedDialogs = React.memo(({
   open,
   handleClose,
   runJob,
@@ -41,4 +41,4 @@ export const CustomizedDialogs = ({
       </Button>
     </DialogActions>
   </Dialog>
-);
+));

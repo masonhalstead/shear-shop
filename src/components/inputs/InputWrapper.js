@@ -101,8 +101,8 @@ export class InputWrapper extends Component {
   }
 }
 
-const InputLabel = ({ label, handleClose }) => (
+const InputLabel = React.memo(({ label, handleClose }) => (
   <p className={cn.inputLabel} role="presentation" onClick={handleClose}>
     {label}
   </p>
-);
+));

@@ -10,7 +10,7 @@ import React from 'react';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
 
-export const BatchModal = ({
+export const BatchModal = React.memo(({
   handleCloseBatch,
   open,
   batchName,
@@ -49,4 +49,4 @@ export const BatchModal = ({
       </Button>
     </DialogActions>
   </Dialog>
-);
+));

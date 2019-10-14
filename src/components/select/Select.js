@@ -4,7 +4,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import classNames from 'classnames';
 import cn from './Select.module.scss';
 
-export const Select = ({
+export const Select = React.memo(({
   rows,
   inner_title,
   row_key,
@@ -51,7 +51,7 @@ export const Select = ({
       )}
     </div>
   </Scrollbars>
-);
+));
 
 Select.defaultProps = {
   rows: [],

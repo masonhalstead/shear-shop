@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from './Tooltip.module.scss';
 
-export const Tooltip = ({ title, top, right, left, bottom }) => (
+export const Tooltip = React.memo(({ title, top, right, left, bottom }) => (
   <div
     className={cn.tooltip}
     data-role="tooltip"
@@ -10,7 +10,7 @@ export const Tooltip = ({ title, top, right, left, bottom }) => (
   >
     <p>{title}</p>
   </div>
-);
+));
 Tooltip.defaultProps = {
   top: '',
   right: '',
