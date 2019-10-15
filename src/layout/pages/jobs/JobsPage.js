@@ -148,7 +148,6 @@ class JobsPage extends PureComponent {
 
     this.setState({ tab });
 
-
     setLoadingAction(true);
     try {
       await getJobsConfig(project_id, filter);
@@ -206,7 +205,7 @@ class JobsPage extends PureComponent {
       default:
         route = 24;
     }
-    history.push(`/projects/${project_id}/jobs/${route}/`);
+    history.push(`/projects/${project_id}/jobs/${route}`);
   };
 
   openModal = row => {
