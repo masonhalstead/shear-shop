@@ -85,6 +85,14 @@ export const setBatches = batches => ({
 export const clearBatches = () => ({
   type: constants.CLEAR_BATCHES,
 });
+// ------ BATCHES ACTIONS ------ //
+export const setBatchDefinitions = batches => ({
+  type: constants.SET_BATCH_DEFINITIONS,
+  payload: batches,
+});
+export const clearBatchDefinitions = () => ({
+  type: constants.CLEAR_BATCH_DEFINITIONS,
+});
 
 // ------ CONTAINER ACTIONS ------ //
 export const setContainer = container => ({
