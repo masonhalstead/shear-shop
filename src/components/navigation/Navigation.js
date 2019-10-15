@@ -139,6 +139,36 @@ class NavigationWrapper extends PureComponent {
             />
           )}
         />
+        <Route
+          path={routes.BATCHES}
+          exact
+          render={() => (
+            <>
+              <Link
+                to="/"
+                className={cn.header}
+              >
+                Batches
+              </Link>
+              <div className={cn.flex} />
+            </>
+          )}
+        />
+        <Route
+          path={routes.BATCH_DEFINITIONS}
+          exact
+          render={() => (
+            <>
+              <Link
+                to="/"
+                className={cn.header}
+              >
+                Batch Definitions
+              </Link>
+              <div className={cn.flex} />
+            </>
+          )}
+        />
         <div className={cn.logout} onClick={this.logout}>
           <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
         </div>

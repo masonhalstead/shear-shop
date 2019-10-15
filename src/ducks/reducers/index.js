@@ -11,6 +11,7 @@ import { lookupsReducer } from './lookupsReducer';
 import { settingsReducer } from './settingsReducer';
 import { projectsReducer } from './projectsReducer';
 import { projectReducer } from './projectReducer';
+import { batchDefinitionReducer } from './batchDefinitionReducer';
 
 const rootReducer = combineReducers({
   batch: batchReducer,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   settings: settingsReducer,
   projects: projectsReducer,
   project: projectReducer,
+  batchDefinitions: batchDefinitionReducer,
 });
 
 export default rootReducer;
