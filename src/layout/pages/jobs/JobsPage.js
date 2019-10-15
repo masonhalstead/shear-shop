@@ -10,7 +10,6 @@ import { handleError } from 'ducks/operators/settings';
 import { logoutUser, setLoading } from 'ducks/actions';
 import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
-import result from 'data/jobs.json';
 import {
   JobCell,
   StateCell,
@@ -218,7 +217,7 @@ class JobsPage extends PureComponent {
 
   render() {
     const { open, batchName, tab, headers, settings, callbacks } = this.state;
-    const { location } = this.props;
+    const { jobs } = this.props;
     const { jobs_search_input } = this.props.settings;
 
     return (
@@ -227,7 +226,7 @@ class JobsPage extends PureComponent {
           <JobTabs handleChangeTab={this.handleChangeTab} tab={tab}>
             <div style={{ marginTop: 25 }}>
               <TableWrapper
-                rows={result.data}
+                rows={jobs}
                 headers={headers}
                 cell_components={[
                   JobCell,

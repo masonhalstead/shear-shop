@@ -11,15 +11,14 @@ export const getDefinitionConfig = (
 ) => async dispatch => {
   const definition_route = `/job_definitions/${definition_id}`;
 
-  const [definition, parameters] = await Promise.all([
+  // Needs to fire before definition for run definition modal
+  const parameters = await dispatch(getParameters(definition_route));
+
+  const [definition] = await Promise.all([
     dispatch(getDefinition(definition_id)),
-    dispatch(getParameters(definition_route)),
     dispatch(getProject(project_id)),
   ]);
-  return {
-    definition,
-    parameters,
-  };
+  return { definition, parameters };
 };
 
 export const getDefinition = definition_id => async dispatch => {

@@ -16,7 +16,6 @@ export class ConnectedTableRows extends PureComponent {
     location: PropTypes.object,
     frequency_list: PropTypes.array,
     state_classes: PropTypes.object,
-    creative_groups: PropTypes.array,
     row_component: PropTypes.any,
     cell_components: PropTypes.array,
   };
@@ -26,7 +25,6 @@ export class ConnectedTableRows extends PureComponent {
     states: [],
     platforms: [],
     frequency_list: [],
-    creative_groups: [],
   };
 
   render() {

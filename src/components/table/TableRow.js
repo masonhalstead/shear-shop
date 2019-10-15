@@ -9,7 +9,6 @@ export class TableRow extends Component {
     row: PropTypes.object,
     headers: PropTypes.array,
     settings: PropTypes.object,
-    creative_groups: PropTypes.array,
     state_classes: PropTypes.object,
     callbacks: PropTypes.object,
     cell_components: PropTypes.array,

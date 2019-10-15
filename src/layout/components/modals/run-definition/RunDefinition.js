@@ -12,16 +12,17 @@ import {
 } from 'ducks/actions';
 import { handleError } from 'ducks/operators/settings';
 import { connect } from 'react-redux';
+import { postData } from 'utils/axios';
 import { DefinitionBlock } from './DefinitonBlock';
-import { DefinitionParameters } from './DefinitionParameters';
-import { AdditionalParameters } from './AdditionalParameters';
+import { ParametersTable } from './ParametersTable';
+import { AdditionalParametersTable } from './AdditionalParametersTable';
+import cn from './RunDefinition.module.scss';
 
 class ConnectedRunDefinition extends PureComponent {
   static propTypes = {
     toggleModalAction: PropTypes.func,
     clearDefinitionAction: PropTypes.func,
     clearParametersAction: PropTypes.func,
-    runJob: PropTypes.func,
     run_definition: PropTypes.bool,
     definition: PropTypes.object,
     parameters: PropTypes.array,
@@ -51,12 +52,23 @@ class ConnectedRunDefinition extends PureComponent {
     region: 'empty',
     batch_description: '',
     batch_id: '',
+    parameters: [],
     additionalParameters: [
       {
         parameter_name: '',
         parameter_direction_id: 1,
         parameter_method_id: 1,
         parameter_value: '',
+        is_required: false,
+        is_encrypted: false,
+        description: null,
+        command_line_prefix: null,
+        command_line_assignment_char: null,
+        command_line_escaped: null,
+        command_line_ignore_name: null,
+        reference_type_id: null,
+        reference_id: null,
+        reference_parameter_name: null,
         modified: false,
         uuid: uuid.v1(),
       },
@@ -152,79 +164,65 @@ class ConnectedRunDefinition extends PureComponent {
       parameter => parameter.uuid === row.uuid,
     );
     additionalParameters.splice(index, 1);
-    this.setState(
-      {
-        additionalParameters: [...additionalParameters],
-        row_id: null,
-      },
-      () => this.handleRowManagement(),
+    this.setState({ additionalParameters: [...additionalParameters] }, () =>
+      this.handleRowManagement(),
     );
   };
 
-  runJob = async () => {
+  handleSubmit = async () => {
     const {
-      job_definition_name,
+      project_id,
       description,
+      job_definition_id,
       docker_image,
-      result_method_id,
       startup_command,
-      timeout,
+      required_cpu,
+      required_gpu,
+      required_memory_gb,
+      required_storage_gb,
+      timeout_seconds,
+      region_endpoint_hint,
+      result_method_id,
       stdout_success_text,
-      region,
-      cpu,
-      gpu,
       max_retries,
-      memory_gb,
-      data,
-      parameters,
       location_id,
-      batch_id,
-      batch_description,
+      parameters,
       additionalParameters,
     } = this.state;
-    const {
-      projectId,
-      runJob,
-      setLoadingAction,
-      handleErrorProps,
-      job_definition,
-      locations,
-      addJob,
-    } = this.props;
+    const { handleErrorProps, setLoadingAction } = this.props;
 
-    const { job_definition_id } = job_definition;
-    const timeOut = timeout.split(':');
-
-    const params = [...parameters, ...additionalParameters];
-
-    const post_data = {
-      project_id: Number(projectId),
-      job_definition_name,
+    const data = {
+      main_module_file_id: 0,
+      sub_modules_file_id_list: [],
+      project_id,
+      batch_id: 0,
+      batch_descriptor: null,
       description,
+      job_definition_id,
       docker_image,
-      result_method_id,
       startup_command,
-      timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
+      required_cpu,
+      required_gpu,
+      required_memory_gb,
+      required_storage_gb,
+      timeout_seconds,
+      region_endpoint_hint,
+      result_method_id,
       stdout_success_text,
-      region_endpoint_hint:
-        region !== 'empty'
-          ? locations.filter(filter => filter.location_id === Number(region))[0]
-              .location_name
-          : 'empty',
-      location_id: location_id === 'empty' ? null : location_id,
-      cpu,
-      gpu,
       max_retries,
-      memory_gb,
-      batch_id,
-      batch_description,
-      parameters: params.filter(filter => filter.parameter_name.length > 0),
+      location_id,
+      depends_on: [],
+      input_file_id_list: [],
+      output_file_id_list: [],
+      parameters: [
+        ...parameters,
+        ...additionalParameters.filter(param => param.modified),
+      ],
     };
 
+    setLoadingAction(true);
     try {
-      await setLoadingAction(true);
-      await addJob(post_data, job_definition_id);
-      runJob();
+      await postData('/jobs/run_python', data);
     } catch (err) {
       handleErrorProps(err, data);
     }
@@ -232,7 +230,7 @@ class ConnectedRunDefinition extends PureComponent {
   };
 
   handleDefinitionBlock = input => {
-    this.setState({ ...input, changes: true });
+    this.setState({ ...input });
   };
 
   handleOnSelectLocation = item => {
@@ -297,8 +295,9 @@ class ConnectedRunDefinition extends PureComponent {
       <CustomizedDialogs
         open={run_definition}
         handleClose={this.handleModalClose}
-        runJob={this.runJob}
+        handleSubmit={this.handleSubmit}
         title={definition.job_definition_name}
+        description={definition.description}
       >
         <DefinitionBlock
           docker_image={docker_image}
@@ -318,13 +317,14 @@ class ConnectedRunDefinition extends PureComponent {
           handleOnSelectLocation={this.handleOnSelectLocation}
           handleOnSelectRegion={this.handleOnSelectRegion}
         />
-        <DefinitionParameters
+        <p className={cn.parameterTitle}>Parameters</p>
+        <ParametersTable
           callbacks={callbacks}
           rows={parameters.filter(
             parameter => parameter.parameter_direction_id === 1,
           )}
         />
-        <AdditionalParameters
+        <AdditionalParametersTable
           callbacks={callbacks}
           rows={additionalParameters}
         />
