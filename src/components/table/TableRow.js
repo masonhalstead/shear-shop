@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compareJSON } from 'utils/helpers';
 import cn from './Table.module.scss';
-import { Cell } from './Cell';
+import { TableCell } from './TableCell';
 
 export class TableRow extends Component {
   static propTypes = {
     row: PropTypes.object,
     headers: PropTypes.array,
     settings: PropTypes.object,
+    creative_groups: PropTypes.array,
+    state_classes: PropTypes.object,
     callbacks: PropTypes.object,
     cell_components: PropTypes.array,
   };
@@ -37,32 +39,30 @@ export class TableRow extends Component {
       settings,
       callbacks,
       cell_components,
-      path,
+      ...rest
     } = this.props;
 
     const row_styles = {
       minHeight: `${settings.row_height}px`,
       maxHeight: `${settings.row_height}px`,
     };
-
-    if (settings.row_grow) {
+    if (settings.row_flex) {
       row_styles.maxHeight = 'auto';
     }
-
     return (
       <div className={cn.tableRow} style={row_styles}>
         {cell_components.map((ChildComponent, index) => {
           const cell_key = `${row.uuid}${index}`;
           return (
-            <Cell row={row} key={cell_key} header={headers[index]}>
+            <TableCell row={row} key={cell_key} header={headers[index]}>
               <ChildComponent
-                path={path}
                 row={row}
                 column_index={index}
                 header={headers[index]}
                 callbacks={callbacks}
+                {...rest}
               />
-            </Cell>
+            </TableCell>
           );
         })}
       </div>

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import {
   ParameterNameCell,
@@ -75,7 +75,7 @@ export class InputsTab extends PureComponent {
     const { headers } = this.state;
     return (
       <div className={cn.tabValueAlt}>
-        <Table
+        <TableWrapper
           rows={rows}
           headers={headers}
           cell_components={[

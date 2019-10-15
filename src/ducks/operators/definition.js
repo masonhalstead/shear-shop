@@ -1,4 +1,4 @@
-import { setLoading, setJobDefinition } from 'ducks/actions';
+import { setJobDefinition } from 'ducks/actions';
 import { getParameters } from 'ducks/operators/parameters';
 import { getProject } from 'ducks/operators/project';
 import { normalizeDefinition } from 'utils/normalizers';

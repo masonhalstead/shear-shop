@@ -67,13 +67,9 @@ ParameterNameCellDisabled.propTypes = {
 };
 
 export const DescriptionNameCellDisabled = ({ row }) => (
-  <InputWrapper
-    value={row.description}
-    component={Input}
-    bulk
-  />
+  <InputWrapper value={row.description} component={Input} bulk />
 );
-ParameterNameCellDisabled.propTypes = {
+DescriptionNameCellDisabled.propTypes = {
   row: PropTypes.object,
 };
 

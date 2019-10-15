@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import {
   ParameterNameCell,
@@ -59,7 +59,7 @@ export class InputTab extends Component {
 
   render() {
     return (
-      <Table
+      <TableWrapper
         rows={data}
         headers={this.state.headers}
         cell_components={[

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Typography } from '@material-ui/core';
 import cn from './RunDefinition.module.scss';
-
+import { handleTimoutConversion } from 'utils/helpers';
 import classNames from 'classnames';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
@@ -92,9 +92,10 @@ export const DefinitionBlock = ({
           data_mask="timeout"
           placeholder="hh:mm"
           component={InputTimeout}
-          handleOnChange={input =>
-            handleDefinitionBlock({ timeout: input.value })
-          }
+          handleOnChange={input => {
+            const timeout_seconds = handleTimoutConversion(input.value);
+            handleDefinitionBlock({ timeout: input.value, timeout_seconds });
+          }}
         />
       </div>
     </div>

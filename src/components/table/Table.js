@@ -1,184 +1,91 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { formatNull, containsStrings, compareJSON } from 'utils/helpers';
+import { TableRows } from 'components/table/TableRows';
+import { TableHeader } from './TableHeader';
 import { TableHeaderCell } from './TableHeaderCell';
 import { TableRow } from './TableRow';
 import cn from './Table.module.scss';
-
-function handleSearchFilter(props) {
-  const { rows, settings, search_input } = props;
-  const { search_key } = settings;
-  if (search_key) {
-    return rows.filter(row => containsStrings(row[search_key], search_input));
-  }
-  return rows;
-}
-function handleSortingFilter(props) {
-  const { rows, sort_key, sort } = props;
-  if (!sort_key) {
-    return rows;
-  }
-  if (sort === 'desc') {
-    return rows.sort((a, b) =>
-      formatNull(a[sort_key])
-        .toString()
-        .toLowerCase() <
-      formatNull(b[sort_key])
-        .toString()
-        .toLowerCase()
-        ? 1
-        : -1,
-    );
-  }
-  if (sort === 'asc') {
-    return rows.sort((a, b) =>
-      formatNull(a[sort_key])
-        .toString()
-        .toLowerCase() >
-      formatNull(b[sort_key])
-        .toString()
-        .toLowerCase()
-        ? 1
-        : -1,
-    );
-  }
-  return rows;
-}
-function handleKeywordFilter(props) {
-  const { rows, settings, keywords } = props;
-  const { keyword_key } = settings;
-
-  if (keyword_key) {
-    return rows.filter(row =>
-      keywords.every(key => {
-        const key_check = formatNull(key);
-        const keyword_check = formatNull(row[keyword_key]);
-        return containsStrings(keyword_check, key_check);
-      }),
-    );
-  }
-  return rows;
-}
 
 export class Table extends Component {
   static propTypes = {
     callbacks: PropTypes.object,
     headers: PropTypes.array,
-    keywords: PropTypes.array,
-    search_input: PropTypes.string,
+    headers_component: PropTypes.any,
+    header_component: PropTypes.any,
+    rows_component: PropTypes.any,
+    row_component: PropTypes.any,
     cell_components: PropTypes.array,
+    creative_groups: PropTypes.array,
     settings: PropTypes.object,
-    location: PropTypes.object,
     rows: PropTypes.array,
+    handleSort: PropTypes.func,
   };
+
+  rowsRef = React.createRef();
 
   static defaultProps = {
     headers: [],
     rows: [],
-    keywords: [],
     callbacks: {},
     settings: {},
-    search_input: '',
+    creative_groups: [],
+    handleSort: () => {},
+    headers_component: TableHeaderCell,
+    header_component: TableHeader,
+    rows_component: TableRows,
+    row_component: TableRow,
   };
 
   state = {
-    headers: [],
-    headers_data: [],
-    rows: [],
-    sort_key: false,
-    sort: 'desc',
-    settings: {
-      header: true,
-      header_height: 32,
-      row_height: 30,
-      search_key: false,
-      keyword_key: false,
-    },
+    table_height: 62, // default value header + row
+    header: true,
+    header_height: 32,
+    row_height: 30,
+    search_key: false,
+    keyword_key: false,
+    row_length: 1,
+    height: 62, // default value header + row
   };
-
-  componentDidMount() {
-    const { rows } = this.props;
-    this.setState({ rows });
-  }
 
   static getDerivedStateFromProps(props, state) {
-    const { keywords, search_input, rows, settings, headers } = props;
-    const { sort_key, sort, headers_data } = state;
-
-    if (!compareJSON(headers_data, headers)) {
-      return {
-        headers_data: props.headers,
-        headers: props.headers,
-      };
-    }
-    const search_filter = handleSearchFilter({ rows, settings, search_input });
-    const keyword_filter = handleKeywordFilter({
-      rows: search_filter,
-      settings,
-      keywords,
-    });
-    const sort_filter = handleSortingFilter({
-      rows: keyword_filter,
-      sort_key,
-      sort,
-    });
     return {
-      rows: [...sort_filter],
-      settings: {
-        ...state.settings,
-        ...props.settings,
-      },
+      ...state,
+      ...props.settings,
     };
   }
 
-  handleSort = (header, headers) => {
-    const { sort_key, sort } = header;
-    this.setState({ headers, sort_key, sort });
-  };
-
   render() {
-    const { headers, rows, settings } = this.state;
-    const { callbacks, cell_components, path } = this.props;
-    const { header, header_height } = settings;
-
-    const headers_style = {
-      minHeight: `${header_height}px`,
-      maxHeight: `${header_height}px`,
-    };
+    const {
+      handleSort,
+      callbacks,
+      creative_groups,
+      headers,
+      headers_component,
+      header_component: Header,
+      rows,
+      rows_component: Rows,
+      row_component: Row,
+      cell_components,
+    } = this.props;
+    const settings = { ...this.state };
 
     return (
       <div className={cn.table}>
-        {header && (
-          <div className={cn.tableHeader} style={headers_style}>
-            {headers.map((item, index) => (
-              <TableHeaderCell
-                key={item.uuid}
-                header={item}
-                headers={headers}
-                header_index={index}
-                handleSort={this.handleSort}
-              />
-            ))}
-          </div>
-        )}
-        {rows.length > 0 && (
-          <div className={cn.tableRowWrapper}>
-            {rows.map(row => (
-              <TableRow
-                key={row.uuid}
-                headers={headers}
-                path={path}
-                row={row}
-                settings={settings}
-                callbacks={callbacks}
-                cell_components={cell_components}
-              />
-            ))}
-          </div>
-        )}
-        {rows.length === 0 && (
-          <div className={cn.tableRowEmpty}>No Data Available</div>
-        )}
+        <Header
+          headers_component={headers_component}
+          headers={headers}
+          settings={settings}
+          handleSort={handleSort}
+        />
+        <Rows
+          headers={headers}
+          rows={rows}
+          settings={settings}
+          callbacks={callbacks}
+          creative_groups={creative_groups}
+          row_component={Row}
+          cell_components={cell_components}
+        />
       </div>
     );
   }

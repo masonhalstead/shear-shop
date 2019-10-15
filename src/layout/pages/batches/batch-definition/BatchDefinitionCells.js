@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import cn from '../Batches.module.scss';
 
-export const BatchNameCell = ({ row, path }) => (
+export const BatchNameCell = ({ row, paths }) => (
   <Link
     className={classNames(cn.jobCell, cn.overflow)}
-    to={`/projects/${path[2]}/definitions/${path[4]}/definition/${
+    to={`/projects/${paths[2]}/definitions/${paths[4]}/definition/${
       row.batch_id
     }`}
   >
@@ -20,9 +20,7 @@ BatchNameCell.propTypes = {
 };
 
 export const BatchDescriptionCell = ({ row }) => (
-  <p
-    className={classNames(cn.cell, cn.overflow)}
-  >Here will be description</p>
+  <p className={classNames(cn.cell, cn.overflow)}>Here will be description</p>
 );
 BatchDescriptionCell.propTypes = {
   row: PropTypes.object,

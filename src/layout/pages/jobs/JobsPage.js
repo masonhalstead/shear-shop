@@ -8,7 +8,7 @@ import {
 } from 'ducks/operators/jobs';
 import { handleError } from 'ducks/operators/settings';
 import { logoutUser, setLoading } from 'ducks/actions';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import result from 'data/jobs.json';
 import {
@@ -226,9 +226,8 @@ class JobsPage extends PureComponent {
         <div className={cn.pageWrapper}>
           <JobTabs handleChangeTab={this.handleChangeTab} tab={tab}>
             <div style={{ marginTop: 25 }}>
-              <Table
+              <TableWrapper
                 rows={result.data}
-                path={location.pathname.split('/')}
                 headers={headers}
                 cell_components={[
                   JobCell,

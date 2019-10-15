@@ -1,17 +1,19 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getDefinitionsConfig as getDefinitionsConfigAction } from 'ducks/operators/job_definitions';
-import { createDefinition as createDefinitionAction } from 'ducks/operators/job_definition';
+import { getDefinitionsConfig as getDefinitionsConfigAction } from 'ducks/operators/definitions';
+import {
+  createDefinition as createDefinitionAction,
+  getDefinitionConfig as getDefinitionConfigAction,
+} from 'ducks/operators/definition';
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import {
   logoutUser,
   setLoading,
   toggleModal as toggleModalAction,
 } from 'ducks/actions';
-import RunDefinition from 'layout/components/modals/run-definition/RunDefinition';
 import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import cn from './Definitions.module.scss';
 import {
@@ -29,23 +31,19 @@ import { DefinitionsTabs } from './DefinitionsTabs';
 class DefinitionsPage extends PureComponent {
   static propTypes = {
     getDefinitionsConfig: PropTypes.func,
+    getDefinitionConfig: PropTypes.func,
     handleError: PropTypes.func,
     setLoadingAction: PropTypes.func,
     createDefinition: PropTypes.func,
     toggleModal: PropTypes.func,
     definitions: PropTypes.array,
     history: PropTypes.object,
-    project: PropTypes.object,
     location: PropTypes.object,
-    lookups: PropTypes.object,
     settings: PropTypes.object,
   };
 
   state = {
-    run: false,
-    title: '',
     jobName: '',
-    id: '',
     tab: 0,
     headers: [
       {
@@ -142,30 +140,31 @@ class DefinitionsPage extends PureComponent {
     setLoadingAction(false);
   };
 
-  runJob = () => {
-    this.setState({ run: false });
-  };
-
-  handleClose = () => {
-    this.setState({ run: false });
-  };
-
   handleCloseDefinition = () => {
     const { toggleModal } = this.props;
     toggleModal({ definitions: false });
   };
 
-  openModal = row => {
-    this.setState({
-      run: true,
-      id: row.job_definition_id,
-      title: row.job_definition_name,
-    });
+  openModal = async row => {
+    const {
+      getDefinitionConfig,
+      toggleModal,
+      setLoadingAction,
+      handleError,
+    } = this.props;
+    setLoadingAction(true);
+    try {
+      await getDefinitionConfig(row.project_id, row.job_definition_id);
+      await toggleModal({ run_definition: true });
+    } catch (err) {
+      handleError(err);
+    }
+    setLoadingAction(false);
   };
 
   handleChangeTab = (e, value) => {
     const { history, location } = this.props;
-    const [, , project_id, , filter] = location.pathname.split('/');
+    const [, , project_id] = location.pathname.split('/');
 
     this.setState({ tab: value }, () =>
       history.push(
@@ -256,17 +255,16 @@ class DefinitionsPage extends PureComponent {
   };
 
   render() {
-    const { definitions, lookups, project, location } = this.props;
+    const { definitions, location } = this.props;
     const { modals, definitions_search_input } = this.props.settings;
-    const { run, title, jobName, id, tab, headers, settings } = this.state;
+    const { jobName, tab, headers, settings } = this.state;
 
     return (
       <div className={cn.pageWrapper}>
         <DefinitionsTabs handleChangeTab={this.handleChangeTab} tab={tab}>
           <div style={{ marginTop: 25 }}>
-            <Table
+            <TableWrapper
               rows={definitions}
-              path={location.pathname.split('/')}
               headers={headers}
               cell_components={[
                 JobCell,
@@ -284,18 +282,6 @@ class DefinitionsPage extends PureComponent {
             />
           </div>
         </DefinitionsTabs>
-        {run && (
-          <RunDefinition
-            opened={run}
-            toggleModal={() => this.setState({ run: false })}
-            runJob={this.runJob}
-            handleClose={this.handleClose}
-            title={title}
-            id={id}
-            locations={lookups.locations}
-            projectId={project.project_id}
-          />
-        )}
         <CreateJobDefinition
           handleCloseDefinition={this.handleCloseDefinition}
           open={modals.definitions}
@@ -311,7 +297,6 @@ class DefinitionsPage extends PureComponent {
 const mapStateToProps = state => ({
   hamburger: state.hamburger,
   definitions: state.definitions,
-  lookups: state.lookups,
   settings: state.settings,
   project: state.project,
   projects: state.projects,
@@ -319,6 +304,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getDefinitionsConfig: getDefinitionsConfigAction,
+  getDefinitionConfig: getDefinitionConfigAction,
   createDefinition: createDefinitionAction,
   handleError: handleErrorAction,
   setLoadingAction: setLoading,

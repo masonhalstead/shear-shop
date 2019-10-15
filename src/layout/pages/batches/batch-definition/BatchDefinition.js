@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import cn from '../Batches.module.scss';
 import { BatchDefinitionTabs } from './BatchDefinitionTabs';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import {
   BatchNameCell,
   BatchDescriptionCell,
@@ -15,6 +14,7 @@ import { getBatchDefinitions as getBatchDefinitionsAction } from 'ducks/operator
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import { setLoading } from 'ducks/actions';
 import { connect } from 'react-redux';
+import cn from '../Batches.module.scss';
 
 class BatchDefinition extends PureComponent {
   state = {
@@ -95,14 +95,17 @@ class BatchDefinition extends PureComponent {
   };
 
   setInitialData = async () => {
-    const { getBatchDefinitions, setLoadingAction, handleError, location } = this.props;
+    const {
+      getBatchDefinitions,
+      setLoadingAction,
+      handleError,
+      location,
+    } = this.props;
     const [, , project_id, , , filter] = location.pathname.split('/');
-
 
     this.setState({
       tab: filter === 'archived' ? 1 : 0,
     });
-
 
     setLoadingAction(true);
     try {
@@ -115,13 +118,13 @@ class BatchDefinition extends PureComponent {
 
   handleChangeTab = (e, value) => {
     const { history, location } = this.props;
-    const [, , project_id, , ,filter] = location.pathname.split('/');
+    const [, , project_id, , , filter] = location.pathname.split('/');
 
     this.setState({ tab: value }, () =>
       history.push(
         `/projects/${project_id}/batches/definitions/${
           value === 1 ? 'archived' : 'unarchived'
-          }`,
+        }`,
       ),
     );
   };
@@ -134,9 +137,8 @@ class BatchDefinition extends PureComponent {
       <div className={cn.pageWrapper}>
         <BatchDefinitionTabs handleChangeTab={this.handleChangeTab} tab={tab}>
           <div style={{ marginTop: 25 }}>
-            <Table
+            <TableWrapper
               rows={batchDefinitions}
-              path={location.pathname.split('/')}
               headers={headers}
               cell_components={[
                 BatchNameCell,

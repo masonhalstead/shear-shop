@@ -1,40 +1,43 @@
 import React, { PureComponent } from 'react';
 import * as PropTypes from 'prop-types';
 import { CustomizedDialogs } from 'components/modal/CustomModal';
-import { DefinitionBlock } from './DefinitonBlock';
-import * as Sentry from '@sentry/browser';
 import uuid from 'uuid';
-import { getDefinitionConfig as getDefinitionConfigAction } from 'ducks/operators/job_definition';
+import { getDefinitionConfig as getDefinitionConfigAction } from 'ducks/operators/definition';
 import { addJob as addJobAction } from 'ducks/operators/job';
-import { setLoading } from 'ducks/actions';
+import {
+  setLoading,
+  toggleModal,
+  clearDefinition,
+  clearParameters,
+} from 'ducks/actions';
 import { handleError } from 'ducks/operators/settings';
 import { connect } from 'react-redux';
+import { DefinitionBlock } from './DefinitonBlock';
 import { DefinitionParameters } from './DefinitionParameters';
 import { AdditionalParameters } from './AdditionalParameters';
 
-class RunDefinition extends PureComponent {
+class ConnectedRunDefinition extends PureComponent {
   static propTypes = {
-    opened: PropTypes.bool,
-    handleClose: PropTypes.func,
+    toggleModalAction: PropTypes.func,
+    clearDefinitionAction: PropTypes.func,
+    clearParametersAction: PropTypes.func,
     runJob: PropTypes.func,
-    title: PropTypes.string,
+    run_definition: PropTypes.bool,
+    definition: PropTypes.object,
+    parameters: PropTypes.array,
     locations: PropTypes.array,
   };
 
   static getDerivedStateFromProps(props, state) {
-    const { job_definition, parameters } = props;
+    const { definition, parameters } = props;
     const { job_definition_id } = state;
-    if (job_definition.job_definition_id !== job_definition_id) {
+    if (definition.job_definition_id !== job_definition_id) {
       return {
-        ...job_definition,
+        ...definition,
         parameters: [...parameters],
       };
     }
     return null;
-  }
-
-  componentDidMount() {
-    this.setInitialData();
   }
 
   state = {
@@ -66,22 +69,11 @@ class RunDefinition extends PureComponent {
     },
   };
 
-  setInitialData = async () => {
-    const { getDefinitionConfig, setLoadingAction, id } = this.props;
-
-    try {
-      await setLoadingAction(true);
-      await getDefinitionConfig(id);
-    } catch (err) {
-      // Only fires if the server is off line or the body isnt set correctly
-      Sentry.captureException(err);
-    }
-    setLoadingAction(false);
-  };
-
   saveDefault = (row, value) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === row.uuid);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters[index] = {
       ...parameters[index],
       parameter_value: value,
@@ -188,7 +180,7 @@ class RunDefinition extends PureComponent {
       location_id,
       batch_id,
       batch_description,
-      additionalParameters
+      additionalParameters,
     } = this.state;
     const {
       projectId,
@@ -217,7 +209,7 @@ class RunDefinition extends PureComponent {
       region_endpoint_hint:
         region !== 'empty'
           ? locations.filter(filter => filter.location_id === Number(region))[0]
-            .location_name
+              .location_name
           : 'empty',
       location_id: location_id === 'empty' ? null : location_id,
       cpu,
@@ -238,7 +230,6 @@ class RunDefinition extends PureComponent {
     }
     setLoadingAction(false);
   };
-
 
   handleDefinitionBlock = input => {
     this.setState({ ...input, changes: true });
@@ -271,8 +262,20 @@ class RunDefinition extends PureComponent {
     });
   };
 
+  handleModalClose = () => {
+    const {
+      toggleModalAction,
+      clearDefinitionAction,
+      clearParametersAction,
+    } = this.props;
+
+    clearDefinitionAction();
+    clearParametersAction();
+    toggleModalAction({ run_definition: false });
+  };
+
   render() {
-    const { opened, handleClose, title, locations } = this.props;
+    const { run_definition, definition, locations } = this.props;
     const {
       docker_image,
       startup_command,
@@ -292,10 +295,10 @@ class RunDefinition extends PureComponent {
     } = this.state;
     return (
       <CustomizedDialogs
-        open={opened}
-        handleClose={handleClose}
+        open={run_definition}
+        handleClose={this.handleModalClose}
         runJob={this.runJob}
-        title={title}
+        title={definition.job_definition_name}
       >
         <DefinitionBlock
           docker_image={docker_image}
@@ -334,17 +337,21 @@ const mapStateToProps = state => ({
   locations: state.lookups.locations,
   projects: state.projects,
   parameters: state.parameters,
-  job_definition: state.job_definition,
+  run_definition: state.settings.modals.run_definition,
+  definition: state.definition,
 });
 
 const mapDispatchToProps = {
   getDefinitionConfig: getDefinitionConfigAction,
   addJob: addJobAction,
+  toggleModalAction: toggleModal,
+  clearDefinitionAction: clearDefinition,
+  clearParametersAction: clearParameters,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
 };
 
-export default connect(
+export const RunDefinition = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(RunDefinition);
+)(ConnectedRunDefinition);

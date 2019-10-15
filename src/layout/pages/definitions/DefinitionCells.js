@@ -6,10 +6,10 @@ import classNames from 'classnames';
 import cn from './Definitions.module.scss';
 import { toTime } from 'utils/helpers';
 
-export const JobCell = ({ row, path }) => (
+export const JobCell = ({ row, paths }) => (
   <Link
     className={classNames(cn.jobCell, cn.overflow)}
-    to={`/projects/${path[2]}/definitions/${path[4]}/definition/${
+    to={`/projects/${paths[2]}/definitions/${paths[4]}/definition/${
       row.job_definition_id
     }`}
   >

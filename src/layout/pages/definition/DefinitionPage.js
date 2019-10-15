@@ -9,7 +9,7 @@ import {
 import {
   getDefinitionConfig as getDefinitionConfigAction,
   saveDefinition as saveDefinitionAction,
-} from 'ducks/operators/job_definition';
+} from 'ducks/operators/definition';
 import {
   editParameters as editParametersProps,
   saveParameters as saveParametersProps,
@@ -495,7 +495,7 @@ class DefinitionPage extends Component {
 const mapStateToProps = state => ({
   locations: state.lookups.locations,
   parameters: state.parameters,
-  job_definition: state.job_definition,
+  definition: state.definition,
   settings: state.settings,
 });
 

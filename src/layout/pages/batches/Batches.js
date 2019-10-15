@@ -1,5 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
+import uuid from 'uuid';
+import { connect } from 'react-redux';
+import { getBatches as getBatchesAction } from 'ducks/operators/batches';
+import { handleError as handleErrorAction } from 'ducks/operators/settings';
+import { setLoading } from 'ducks/actions';
 import {
   CreatedByCell,
   CreatedCell,
@@ -13,11 +18,6 @@ import {
   CompletedCell,
   FailedCell,
 } from './BatchesCells';
-import uuid from 'uuid';
-import { connect } from 'react-redux';
-import { getBatches as getBatchesAction } from 'ducks/operators/batches';
-import { handleError as handleErrorAction } from 'ducks/operators/settings';
-import { setLoading } from 'ducks/actions';
 import cn from './Batches.module.scss';
 
 class Batches extends PureComponent {
@@ -141,16 +141,14 @@ class Batches extends PureComponent {
     }
     setLoadingAction(false);
   };
+
   render() {
     const { headers, settings } = this.state;
     const { batches, location } = this.props;
-    console.log(batches);
-
     return (
       <div className={cn.pageWrapper}>
-        <Table
+        <TableWrapper
           rows={batches}
-          path={location.pathname.split('/')}
           headers={headers}
           cell_components={[
             BatchNameCell,
