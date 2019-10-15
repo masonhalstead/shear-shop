@@ -192,8 +192,6 @@ class ConnectedRunDefinition extends PureComponent {
     const { handleErrorProps, setLoadingAction } = this.props;
 
     const data = {
-      main_module_file_id: 0,
-      sub_modules_file_id_list: [],
       project_id,
       batch_id: 0,
       batch_descriptor: null,
@@ -222,7 +220,7 @@ class ConnectedRunDefinition extends PureComponent {
 
     setLoadingAction(true);
     try {
-      await postData('/jobs/run_python', data);
+      await postData('/jobs/create', data);
     } catch (err) {
       handleErrorProps(err, data);
     }
