@@ -22,6 +22,7 @@ const settingsState = {
   modals: {
     project: false,
     definitions: false,
+    run_definition: false,
   },
   definitions: {
     columns: [],

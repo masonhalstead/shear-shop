@@ -1,5 +1,20 @@
 @import "src/scss/styles";
 
+.cell {
+  padding: 0px 5px;
+  color: #62738d;
+  font-weight: 400;
+  font-size: 13px;
+  align-self: center;
+  margin: 0px;
+  width: 100%;
+}
+.overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
 .containerRow {
   display: flex;
   flex-direction: row;
@@ -17,6 +32,12 @@
   flex-direction: row;
   width: 50%;
   margin-right: 20px;
+}
+.parameterTitle {
+  margin: 0px;
+  color: #62738d;
+  font-size: 14px;
+  margin: 10px 0px;
 }
 .inputStyles {
   height: 10px;
@@ -41,8 +62,8 @@
   width: 35%;
 }
 .divider {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
   flex: 1;
   border-bottom: 1px solid $color-4;

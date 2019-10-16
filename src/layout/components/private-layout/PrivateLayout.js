@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Alert } from 'components/Alert';
+import { Modals } from 'layout/components/modals/Modals';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import * as Sentry from '@sentry/browser';
 import { Menu } from 'components/menu/Menu';
@@ -45,6 +46,7 @@ export class PrivateLayoutWrapper extends React.PureComponent {
         </div>
         <Alert />
         {loading && <Loading variant="dark" />}
+        <Modals internal />
       </div>
     );
   }

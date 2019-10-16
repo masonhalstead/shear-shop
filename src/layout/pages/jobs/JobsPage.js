@@ -8,9 +8,8 @@ import {
 } from 'ducks/operators/jobs';
 import { handleError } from 'ducks/operators/settings';
 import { logoutUser, setLoading } from 'ducks/actions';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
-import result from 'data/jobs.json';
 import {
   JobCell,
   StateCell,
@@ -148,7 +147,6 @@ class JobsPage extends PureComponent {
 
     this.setState({ tab });
 
-
     setLoadingAction(true);
     try {
       await getJobsConfig(project_id, filter);
@@ -206,7 +204,7 @@ class JobsPage extends PureComponent {
       default:
         route = 24;
     }
-    history.push(`/projects/${project_id}/jobs/${route}/`);
+    history.push(`/projects/${project_id}/jobs/${route}`);
   };
 
   openModal = row => {
@@ -219,7 +217,7 @@ class JobsPage extends PureComponent {
 
   render() {
     const { open, batchName, tab, headers, settings, callbacks } = this.state;
-    const { location } = this.props;
+    const { jobs } = this.props;
     const { jobs_search_input } = this.props.settings;
 
     return (
@@ -227,9 +225,8 @@ class JobsPage extends PureComponent {
         <div className={cn.pageWrapper}>
           <JobTabs handleChangeTab={this.handleChangeTab} tab={tab}>
             <div style={{ marginTop: 25 }}>
-              <Table
-                rows={result.data}
-                path={location.pathname.split('/')}
+              <TableWrapper
+                rows={jobs}
                 headers={headers}
                 cell_components={[
                   JobCell,

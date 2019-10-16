@@ -6,10 +6,10 @@ import classNames from 'classnames';
 import cn from './Jobs.module.scss';
 import { toTime } from 'utils/helpers';
 
-export const JobCell = ({ row, path }) => (
+export const JobCell = ({ row, paths }) => (
   <Link
     className={classNames(cn.jobCell, cn.overflow)}
-    to={`/projects/${1}/jobs/${path[4]}/job/${row.job_id}`}
+    to={`/projects/${1}/jobs/${paths[4]}/job/${row.job_id}`}
   >
     {row.job_id} {row.batch_descriptor && <span>: {row.batch_descriptor}</span>}
   </Link>

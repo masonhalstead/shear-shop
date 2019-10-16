@@ -70,3 +70,17 @@
   background: #e1edf7 !important;
 }
 
+
+
+.tableDefinition {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.tableDefinition .tableRow,
+.tableDefinition .tableCell {
+  border: none;
+}
+.tableDefinition .tableRow:hover .tableCell {
+  background: transparent !important;
+}

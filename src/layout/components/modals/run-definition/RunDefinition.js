@@ -1,40 +1,44 @@
 import React, { PureComponent } from 'react';
 import * as PropTypes from 'prop-types';
 import { CustomizedDialogs } from 'components/modal/CustomModal';
-import { DefinitionBlock } from './DefinitonBlock';
-import * as Sentry from '@sentry/browser';
 import uuid from 'uuid';
-import { getDefinitionConfig as getDefinitionConfigAction } from 'ducks/operators/job_definition';
+import { getDefinitionConfig as getDefinitionConfigAction } from 'ducks/operators/definition';
 import { addJob as addJobAction } from 'ducks/operators/job';
-import { setLoading } from 'ducks/actions';
+import {
+  setLoading,
+  toggleModal,
+  clearDefinition,
+  clearParameters,
+} from 'ducks/actions';
 import { handleError } from 'ducks/operators/settings';
 import { connect } from 'react-redux';
-import { DefinitionParameters } from './DefinitionParameters';
-import { AdditionalParameters } from './AdditionalParameters';
+import { postData } from 'utils/axios';
+import { DefinitionBlock } from './DefinitonBlock';
+import { ParametersTable } from './ParametersTable';
+import { AdditionalParametersTable } from './AdditionalParametersTable';
+import cn from './RunDefinition.module.scss';
 
-class RunDefinition extends PureComponent {
+class ConnectedRunDefinition extends PureComponent {
   static propTypes = {
-    opened: PropTypes.bool,
-    handleClose: PropTypes.func,
-    runJob: PropTypes.func,
-    title: PropTypes.string,
+    toggleModalAction: PropTypes.func,
+    clearDefinitionAction: PropTypes.func,
+    clearParametersAction: PropTypes.func,
+    run_definition: PropTypes.bool,
+    definition: PropTypes.object,
+    parameters: PropTypes.array,
     locations: PropTypes.array,
   };
 
   static getDerivedStateFromProps(props, state) {
-    const { job_definition, parameters } = props;
+    const { definition, parameters } = props;
     const { job_definition_id } = state;
-    if (job_definition.job_definition_id !== job_definition_id) {
+    if (definition.job_definition_id !== job_definition_id) {
       return {
-        ...job_definition,
+        ...definition,
         parameters: [...parameters],
       };
     }
     return null;
-  }
-
-  componentDidMount() {
-    this.setInitialData();
   }
 
   state = {
@@ -48,12 +52,23 @@ class RunDefinition extends PureComponent {
     region: 'empty',
     batch_description: '',
     batch_id: '',
+    parameters: [],
     additionalParameters: [
       {
         parameter_name: '',
         parameter_direction_id: 1,
         parameter_method_id: 1,
         parameter_value: '',
+        is_required: false,
+        is_encrypted: false,
+        description: null,
+        command_line_prefix: null,
+        command_line_assignment_char: null,
+        command_line_escaped: null,
+        command_line_ignore_name: null,
+        reference_type_id: null,
+        reference_id: null,
+        reference_parameter_name: null,
         modified: false,
         uuid: uuid.v1(),
       },
@@ -66,22 +81,11 @@ class RunDefinition extends PureComponent {
     },
   };
 
-  setInitialData = async () => {
-    const { getDefinitionConfig, setLoadingAction, id } = this.props;
-
-    try {
-      await setLoadingAction(true);
-      await getDefinitionConfig(id);
-    } catch (err) {
-      // Only fires if the server is off line or the body isnt set correctly
-      Sentry.captureException(err);
-    }
-    setLoadingAction(false);
-  };
-
   saveDefault = (row, value) => {
     const { parameters } = this.state;
-    const index = parameters.findIndex(parameter => parameter.uuid === row.uuid);
+    const index = parameters.findIndex(
+      parameter => parameter.uuid === row.uuid,
+    );
     parameters[index] = {
       ...parameters[index],
       parameter_value: value,
@@ -160,88 +164,71 @@ class RunDefinition extends PureComponent {
       parameter => parameter.uuid === row.uuid,
     );
     additionalParameters.splice(index, 1);
-    this.setState(
-      {
-        additionalParameters: [...additionalParameters],
-        row_id: null,
-      },
-      () => this.handleRowManagement(),
+    this.setState({ additionalParameters: [...additionalParameters] }, () =>
+      this.handleRowManagement(),
     );
   };
 
-  runJob = async () => {
+  handleSubmit = async () => {
     const {
-      job_definition_name,
+      project_id,
       description,
+      job_definition_id,
       docker_image,
-      result_method_id,
       startup_command,
-      timeout,
+      required_cpu,
+      required_gpu,
+      required_memory_gb,
+      required_storage_gb,
+      timeout_seconds,
+      region_endpoint_hint,
+      result_method_id,
       stdout_success_text,
-      region,
-      cpu,
-      gpu,
       max_retries,
-      memory_gb,
-      data,
-      parameters,
       location_id,
-      batch_id,
-      batch_description,
-      additionalParameters
+      parameters,
+      additionalParameters,
     } = this.state;
-    const {
-      projectId,
-      runJob,
-      setLoadingAction,
-      handleErrorProps,
-      job_definition,
-      locations,
-      addJob,
-    } = this.props;
+    const { handleErrorProps, setLoadingAction } = this.props;
 
-    const { job_definition_id } = job_definition;
-    const timeOut = timeout.split(':');
-
-    const params = [...parameters, ...additionalParameters];
-
-    const post_data = {
-      project_id: Number(projectId),
-      job_definition_name,
+    const data = {
+      project_id,
+      batch_id: 0,
+      batch_descriptor: null,
       description,
+      job_definition_id,
       docker_image,
-      result_method_id,
       startup_command,
-      timeout_seconds: Number(timeOut[0]) * 3600 + Number(timeOut[1] * 60),
+      required_cpu,
+      required_gpu,
+      required_memory_gb,
+      required_storage_gb,
+      timeout_seconds,
+      region_endpoint_hint,
+      result_method_id,
       stdout_success_text,
-      region_endpoint_hint:
-        region !== 'empty'
-          ? locations.filter(filter => filter.location_id === Number(region))[0]
-            .location_name
-          : 'empty',
-      location_id: location_id === 'empty' ? null : location_id,
-      cpu,
-      gpu,
       max_retries,
-      memory_gb,
-      batch_id,
-      batch_description,
-      parameters: params.filter(filter => filter.parameter_name.length > 0),
+      location_id,
+      depends_on: [],
+      input_file_id_list: [],
+      output_file_id_list: [],
+      parameters: [
+        ...parameters,
+        ...additionalParameters.filter(param => param.modified),
+      ],
     };
 
+    setLoadingAction(true);
     try {
-      await setLoadingAction(true);
-      await addJob(post_data, job_definition_id);
-      runJob();
+      await postData('/jobs/create', data);
     } catch (err) {
       handleErrorProps(err, data);
     }
     setLoadingAction(false);
   };
 
-
   handleDefinitionBlock = input => {
-    this.setState({ ...input, changes: true });
+    this.setState({ ...input });
   };
 
   handleOnSelectLocation = item => {
@@ -271,8 +258,20 @@ class RunDefinition extends PureComponent {
     });
   };
 
+  handleModalClose = () => {
+    const {
+      toggleModalAction,
+      clearDefinitionAction,
+      clearParametersAction,
+    } = this.props;
+
+    clearDefinitionAction();
+    clearParametersAction();
+    toggleModalAction({ run_definition: false });
+  };
+
   render() {
-    const { opened, handleClose, title, locations } = this.props;
+    const { run_definition, definition, locations } = this.props;
     const {
       docker_image,
       startup_command,
@@ -292,10 +291,11 @@ class RunDefinition extends PureComponent {
     } = this.state;
     return (
       <CustomizedDialogs
-        open={opened}
-        handleClose={handleClose}
-        runJob={this.runJob}
-        title={title}
+        open={run_definition}
+        handleClose={this.handleModalClose}
+        handleSubmit={this.handleSubmit}
+        title={definition.job_definition_name}
+        description={definition.description}
       >
         <DefinitionBlock
           docker_image={docker_image}
@@ -315,13 +315,14 @@ class RunDefinition extends PureComponent {
           handleOnSelectLocation={this.handleOnSelectLocation}
           handleOnSelectRegion={this.handleOnSelectRegion}
         />
-        <DefinitionParameters
+        <p className={cn.parameterTitle}>Parameters</p>
+        <ParametersTable
           callbacks={callbacks}
           rows={parameters.filter(
             parameter => parameter.parameter_direction_id === 1,
           )}
         />
-        <AdditionalParameters
+        <AdditionalParametersTable
           callbacks={callbacks}
           rows={additionalParameters}
         />
@@ -334,17 +335,21 @@ const mapStateToProps = state => ({
   locations: state.lookups.locations,
   projects: state.projects,
   parameters: state.parameters,
-  job_definition: state.job_definition,
+  run_definition: state.settings.modals.run_definition,
+  definition: state.definition,
 });
 
 const mapDispatchToProps = {
   getDefinitionConfig: getDefinitionConfigAction,
   addJob: addJobAction,
+  toggleModalAction: toggleModal,
+  clearDefinitionAction: clearDefinition,
+  clearParametersAction: clearParameters,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
 };
 
-export default connect(
+export const RunDefinition = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(RunDefinition);
+)(ConnectedRunDefinition);

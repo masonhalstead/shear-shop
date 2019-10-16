@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { Typography } from '@material-ui/core';
-import cn from './RunDefinition.module.scss';
-
+import { handleTimoutConversion } from 'utils/helpers';
 import classNames from 'classnames';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
@@ -10,6 +9,7 @@ import { InputTimeout } from 'components/inputs/InputTimeout';
 import { TextAreaWrapper } from 'components/textarea/TextAreaWrapper';
 import { Dropdown } from 'components/dropdowns/Dropdown';
 import uuid from 'uuid';
+import cn from './RunDefinition.module.scss';
 
 export const DefinitionBlock = ({
   docker_image,
@@ -19,9 +19,7 @@ export const DefinitionBlock = ({
   gpu,
   memory_gb,
   timeout,
-  region,
   locations,
-  location_id,
   batch_description,
   batch_id,
   handleOnSelectLocation,
@@ -29,7 +27,7 @@ export const DefinitionBlock = ({
   region_endpoint_hint,
   handleOnSelectRegion,
 }) => (
-  <Typography component={'span'} gutterBottom>
+  <Typography component="span">
     <div className={cn.container}>
       <InputWrapper
         label="Docker Image"
@@ -92,9 +90,10 @@ export const DefinitionBlock = ({
           data_mask="timeout"
           placeholder="hh:mm"
           component={InputTimeout}
-          handleOnChange={input =>
-            handleDefinitionBlock({ timeout: input.value })
-          }
+          handleOnChange={input => {
+            const timeout_seconds = handleTimoutConversion(input.value);
+            handleDefinitionBlock({ timeout: input.value, timeout_seconds });
+          }}
         />
       </div>
     </div>
@@ -158,6 +157,5 @@ export const DefinitionBlock = ({
         />
       </div>
     </div>
-    <div className={cn.divider} />
   </Typography>
 );

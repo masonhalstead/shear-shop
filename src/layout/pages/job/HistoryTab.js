@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import { HistoryStateCell, HistoryTimestampCell } from './JobCells';
 
@@ -78,7 +78,7 @@ export class HistoryTab extends Component {
 
   render() {
     return (
-      <Table
+      <TableWrapper
         rows={data}
         headers={this.state.headers}
         cell_components={[HistoryStateCell, HistoryTimestampCell]}

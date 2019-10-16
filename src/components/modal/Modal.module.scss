@@ -4,13 +4,25 @@
   color: $color-5;
   line-height: 1;
 }
+.paper {
+  margin: 0px auto !important;
+  padding: 0px 15px;
+}
+.root {
+  padding: 15px 0px !important;
+}
 .subTitle {
   color: $color-5;
   font-size: 13px;
   font-weight: 300;
   margin-top: 10px;
 }
-
+.btnWrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 15px 0px;
+}
 .btn {
   display: inline-block;
   font-weight: 300;
@@ -24,23 +36,17 @@
   font-size: 1rem;
   line-height: 1.5;
   border-radius: 0.25rem;
-  text-transform: none !important;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .btnPrimary {
-  color: #fff !important;
+  color: #fff;
   background-color: $color-5;
   border-radius: 3px;
-  padding: 5px;
-  height: 35px !important;
-  width: 33% !important;
+  padding: 0;
+  height: 35px;
+  width: 300px;
   font-weight: 300;
   font-size: 13px;
   cursor: pointer;
-  margin-left: 8px;
-  margin-right: 8px;
-}
-.btnPrimary:hover {
-  background-color: $color-5;
 }

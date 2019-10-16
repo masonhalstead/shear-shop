@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl } from '@material-ui/core';
+import { handleTimoutConversion } from 'utils/helpers';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
 import { InputTimeout } from 'components/inputs/InputTimeout';
@@ -27,18 +28,6 @@ export class ConnectedConfigTab extends PureComponent {
     handleOnSelectMethod: PropTypes.func,
     handleOnSelectLocation: PropTypes.func,
     handleDefinitionTabs: PropTypes.func,
-  };
-
-  handleTimoutConversion = input => {
-    let timeout_seconds = 0;
-    if (input === 0 || input) {
-      const [hours, hour, minutes, minute] = input.split('');
-      timeout_seconds += (hours || 0) * 36000;
-      timeout_seconds += (hour || 0) * 3600;
-      timeout_seconds += (minutes || 0) * 600;
-      timeout_seconds += (minute || 0) * 60;
-    }
-    return timeout_seconds;
   };
 
   render() {
@@ -84,9 +73,7 @@ export class ConnectedConfigTab extends PureComponent {
               placeholder="hh:mm"
               component={InputTimeout}
               handleOnChange={input => {
-                const timeout_seconds = this.handleTimoutConversion(
-                  input.value,
-                );
+                const timeout_seconds = handleTimoutConversion(input.value);
                 handleDefinitionTabs({ timeout: input.value, timeout_seconds });
               }}
             />

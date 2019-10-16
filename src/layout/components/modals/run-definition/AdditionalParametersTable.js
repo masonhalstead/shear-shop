@@ -1,15 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
-import {
-  ParameterNameCell,
-  DefaultCell,
-  RemoveCell,
-} from './DefinitionCells';
-import cn from './RunDefinition.module.scss';
+import { TableDefinition } from 'components/table/TableDefinition';
+import { KeyCell, ValueCell, RemoveCell, FlexCell } from './DefinitionCells';
 
-export class AdditionalParameters extends PureComponent {
+export class AdditionalParametersTable extends PureComponent {
   static propTypes = {
     callbacks: PropTypes.object,
     rows: PropTypes.array,
@@ -26,30 +22,39 @@ export class AdditionalParameters extends PureComponent {
       {
         title: 'Description',
         show: true,
-        flex_grow: 1,
-        min_width: '100px',
-        sort: false,
+        min_width: '250px',
         uuid: uuid.v1(),
       },
       {
         title: '',
         show: true,
         min_width: '40px',
-        sort: false,
+        uuid: uuid.v1(),
+      },
+      {
+        title: '',
+        show: true,
+        min_width: '100px',
+        flex_grow: 1,
         uuid: uuid.v1(),
       },
     ],
+    settings: {
+      row_height: '40px',
+    },
   };
 
   render() {
     const { rows, callbacks } = this.props;
-    const { headers } = this.state;
+    const { headers, settings } = this.state;
     return (
-      <div className={cn.tabValueAlt}>
-        <Table
+      <div>
+        <TableWrapper
           rows={rows}
           headers={headers}
-          cell_components={[ParameterNameCell, DefaultCell, RemoveCell]}
+          table_component={TableDefinition}
+          cell_components={[KeyCell, ValueCell, RemoveCell, FlexCell]}
+          settings={settings}
           callbacks={callbacks}
         />
       </div>

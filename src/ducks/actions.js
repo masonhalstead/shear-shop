@@ -64,7 +64,7 @@ export const setJobDefinition = job_def => ({
   type: constants.SET_JOB_DEFINITION,
   payload: job_def,
 });
-export const clearJobDefinition = () => ({
+export const clearDefinition = () => ({
   type: constants.CLEAR_JOB_DEFINITION,
 });
 

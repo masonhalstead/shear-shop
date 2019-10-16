@@ -9,7 +9,7 @@ import {
 import {
   getDefinitionConfig as getDefinitionConfigAction,
   saveDefinition as saveDefinitionAction,
-} from 'ducks/operators/job_definition';
+} from 'ducks/operators/definition';
 import {
   editParameters as editParametersProps,
   saveParameters as saveParametersProps,
@@ -106,7 +106,7 @@ class DefinitionPage extends Component {
     );
     parameters[index] = {
       ...parameters[index],
-      parameter_name: value,
+      parameter_name: value.trim(),
       modified: true,
     };
     this.setState(
@@ -341,10 +341,11 @@ class DefinitionPage extends Component {
     setLoadingAction(true);
     try {
       const config = await getDefinitionConfig(project_id, definition_id);
-      this.setState({
+      await this.setState({
         ...config.definition,
         parameters: config.parameters,
       });
+      await this.handleRowManagement();
     } catch (err) {
       handleErrorProps(err);
     }
@@ -495,7 +496,7 @@ class DefinitionPage extends Component {
 const mapStateToProps = state => ({
   locations: state.lookups.locations,
   parameters: state.parameters,
-  job_definition: state.job_definition,
+  definition: state.definition,
   settings: state.settings,
 });
 

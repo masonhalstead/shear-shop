@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import cn from './Table.module.scss';
-export class Cell extends PureComponent {
+export class TableEmptyCell extends PureComponent {
   static propTypes = {
-    children: PropTypes.node,
     header: PropTypes.object,
   };
 
@@ -12,7 +11,7 @@ export class Cell extends PureComponent {
   };
 
   render() {
-    const { children, header } = this.props;
+    const { header } = this.props;
     const { flex_grow, min_width, show } = header;
 
     const cell_style = {
@@ -23,10 +22,6 @@ export class Cell extends PureComponent {
     if (!show) {
       return null;
     }
-    return (
-      <div className={cn.tableCell} style={cell_style}>
-        {children}
-      </div>
-    );
+    return <div className={cn.tableCell} style={cell_style}></div>;
   }
 }

@@ -1,15 +1,15 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'components/table/Table';
+import { TableWrapper } from 'components/table/TableWrapper';
+import { TableDefinition } from 'components/table/TableDefinition';
 import uuid from 'uuid';
 import {
-  ParameterNameCellDisabled,
+  ParameterNameCell,
+  DefaultCell,
   DescriptionCell,
-  DescriptionNameCellDisabled,
 } from './DefinitionCells';
-import cn from './RunDefinition.module.scss';
 
-export class DefinitionParameters extends PureComponent {
+export class ParametersTable extends PureComponent {
   static propTypes = {
     callbacks: PropTypes.object,
     rows: PropTypes.array,
@@ -27,29 +27,32 @@ export class DefinitionParameters extends PureComponent {
         title: 'Default',
         show: true,
         min_width: '250px',
-        flex_grow: 1,
-        sort: false,
         uuid: uuid.v1(),
       },
       {
         title: 'Description',
         show: true,
-        sort: false,
         min_width: '250px',
+        flex_grow: 1,
         uuid: uuid.v1(),
       },
     ],
+    settings: {
+      row_height: '40px',
+    },
   };
 
   render() {
     const { rows, callbacks } = this.props;
-    const { headers } = this.state;
+    const { headers, settings } = this.state;
     return (
-      <div className={cn.tabValueAlt}>
-        <Table
+      <div>
+        <TableWrapper
           rows={rows}
           headers={headers}
-          cell_components={[ParameterNameCellDisabled, DescriptionCell, DescriptionNameCellDisabled]}
+          table_component={TableDefinition}
+          cell_components={[ParameterNameCell, DefaultCell, DescriptionCell]}
+          settings={settings}
           callbacks={callbacks}
         />
       </div>
