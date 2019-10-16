@@ -26,6 +26,9 @@ export function normalizeDefinition(data) {
   return {
     ...data,
     location,
+    timeout_masked: moment
+      .duration(data.timeout_seconds, 'seconds')
+      .format('hh [hrs] mm [mins]'),
     timeout: moment.duration(data.timeout_seconds, 'seconds').format('hh:mm'),
     uuid: uuid.v1(),
   };

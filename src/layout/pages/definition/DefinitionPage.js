@@ -21,12 +21,14 @@ import cn from './Definition.module.scss';
 
 class DefinitionPage extends Component {
   static propTypes = {
+    location: PropTypes.object,
+    settings: PropTypes.object,
     getDefinitionConfig: PropTypes.func,
     setLoadingAction: PropTypes.func,
     handleErrorProps: PropTypes.func,
+    definitionChanged: PropTypes.func,
     triggerSaveDefiniton: PropTypes.func,
     saveDefinition: PropTypes.func,
-    location: PropTypes.object,
   };
 
   state = {
@@ -290,14 +292,17 @@ class DefinitionPage extends Component {
 
   handleRowManagement = () => {
     const { definitionChanged } = this.props;
-    definitionChanged(true);
     const { parameters } = this.state;
-    const inputs = parameters.filter(
-      p => p.parameter_direction_id === 1 && p.modified === false,
-    );
-    const outputs = parameters.filter(
-      p => p.parameter_direction_id === 2 && p.modified === false,
-    );
+
+    definitionChanged(true);
+
+    const inputs = parameters
+      .filter(p => p.parameter_direction_id === 1 && p.modified === false)
+      .filter(p => !p.saved);
+
+    const outputs = parameters
+      .filter(p => p.parameter_direction_id === 2 && p.modified === false)
+      .filter(p => !p.saved);
 
     this.handleParametersPayload(parameters);
 
@@ -316,6 +321,7 @@ class DefinitionPage extends Component {
       description: '',
       parameter_direction_id: direction_id,
       modified: false,
+      saved: false,
       uuid: uuid.v1(),
     };
     parameters.push(new_row);
@@ -340,6 +346,8 @@ class DefinitionPage extends Component {
         ...config.definition,
         parameters: config.parameters,
       });
+      await this.configNewRow(1);
+      await this.configNewRow(2);
       await this.handleRowManagement();
     } catch (err) {
       handleErrorProps(err);

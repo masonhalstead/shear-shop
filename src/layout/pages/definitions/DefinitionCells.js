@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import cn from './Definitions.module.scss';
-import { toTime } from 'utils/helpers';
 
 export const JobCell = ({ row, paths }) => (
   <Link
@@ -21,6 +20,7 @@ export const JobCell = ({ row, paths }) => (
 );
 JobCell.propTypes = {
   row: PropTypes.object,
+  paths: PropTypes.array,
 };
 
 export const RequirementsCell = ({ row }) => (
@@ -43,7 +43,7 @@ LocationCell.propTypes = {
 
 export const TimeoutCell = ({ row }) => (
   <p className={classNames(cn.cell, cn.textRight, cn.overflow)}>
-    {toTime(row.timeout_seconds)}
+    {row.timeout_masked}
   </p>
 );
 TimeoutCell.propTypes = {
