@@ -29,13 +29,13 @@ export function toTime(seconds) {
 }
 
 export function handleTimoutConversion(input) {
-  let timeout_seconds = 0;
+  let timeout = 0;
   if (input === 0 || input) {
     const [hours, hour, minutes, minute] = input.split('');
-    timeout_seconds += (hours || 0) * 36000;
-    timeout_seconds += (hour || 0) * 3600;
-    timeout_seconds += (minutes || 0) * 600;
-    timeout_seconds += (minute || 0) * 60;
+    timeout += (hours || 0) * 36000;
+    timeout += (hour || 0) * 3600;
+    timeout += (minutes || 0) * 600;
+    timeout += (minute || 0) * 60;
   }
-  return timeout_seconds;
+  return timeout;
 }

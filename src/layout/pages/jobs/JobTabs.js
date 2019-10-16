@@ -5,7 +5,7 @@ import cn from './Jobs.module.scss';
 
 export class JobTabs extends PureComponent {
   static propTypes = {
-    children: PropTypes.node,
+    children: PropTypes.any,
     tab: PropTypes.number,
     handleChangeTab: PropTypes.func,
   };

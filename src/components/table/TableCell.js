@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import cn from './Table.module.scss';
 export class TableCell extends PureComponent {
   static propTypes = {
-    children: PropTypes.node,
+    children: PropTypes.any,
     header: PropTypes.object,
   };
 

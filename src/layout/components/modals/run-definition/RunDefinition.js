@@ -23,6 +23,8 @@ class ConnectedRunDefinition extends PureComponent {
     toggleModalAction: PropTypes.func,
     clearDefinitionAction: PropTypes.func,
     clearParametersAction: PropTypes.func,
+    handleErrorProps: PropTypes.func,
+    setLoadingAction: PropTypes.func,
     run_definition: PropTypes.bool,
     definition: PropTypes.object,
     parameters: PropTypes.array,
@@ -34,7 +36,6 @@ class ConnectedRunDefinition extends PureComponent {
     const { job_definition_id } = state;
 
     if (definition.job_definition_id !== job_definition_id) {
-      console.log(definition);
       return {
         ...definition,
         parameters: [...parameters],
