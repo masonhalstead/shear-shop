@@ -4,33 +4,6 @@
   display: flex;
   flex-wrap: wrap;
 }
-.cell {
-  padding: 0px 5px;
-  color: #62738d;
-  font-weight: 300;
-  font-size: 13px;
-  align-self: center;
-  margin: 0px;
-  width: 100%;
-}
-.overflow {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-all;
-  white-space: nowrap;
-}
-.jobCell {
-  display: flex;
-  flex-direction: column;
-  padding: 0px 5px;
-  align-self: center;
-  margin: 0px;
-  width: 100%;
-}
-.description {
-  color: #62738d;
-  font-size: 11px;
-}
 .removeCell {
   cursor: pointer;
   display: flex;
@@ -44,33 +17,6 @@
 }
 .removeCell:hover {
   color: #3e96ed;
-}
-.textCenter {
-  text-align: center;
-  justify-content: center;
-}
-.textRight {
-  text-align: right;
-  justify-content: flex-end;
-}
-
-
-
-
-.flex {
-  flex-grow: 1;
-}
-.toolbar {
-  background-color: #fff;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
-  padding-left: 25px;
-  padding-right: 0px;
-  min-height: 45px !important;
-  height: 45px;
-  border-bottom: 1px solid #cfd7e6;
 }
 
 .contentAlign {
@@ -96,67 +42,6 @@
   min-height: 44px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
-.projectItem {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid #cfd7e6;
-  border-radius: 15px;
-  width: 200px;
-  height: 150px;
-  padding: 15px;
-}
-.rootColor {
-  color: $color-5;
-}
-.header {
-  color: $color-5;
-  font-weight: bold;
-}
-.secondText {
-  color: $color-4;
-  font-size: 14px;
-  margin-top: 5px;
-}
-.iconContainer {
-  display: flex;
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  width: 50px;
-}
-.logout {
-  display: flex;
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  width: 50px;
-  border-left: 1px solid #cfd7e6;
-}
-
-.addNewJob {
-  cursor: pointer;
-  margin-right: 15px;
-}
-
-.textColor {
-  color: #3b4253;
-}
-
-.mainColumnText {
-  color: $color-10;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.inputStyles {
-  height: 30px;
-}
 
 .containerRow {
   display: flex;
@@ -167,11 +52,6 @@
 }
 .containerRow:last-child {
   margin-bottom: 0px;
-}
-
-.smallItem {
-  width: 35%;
-  margin-right: 15px;
 }
 
 .tabValue {
@@ -186,51 +66,6 @@
   margin-top: 25px;
 }
 
-.rowPadding {
-  padding: 0;
-}
-
-.label {
-  font-size: 13px;
-  color: $color-6;
-  margin-bottom: 3px;
-  font-weight: 400;
-}
-
-.rowPaddingSelect {
-  width: 32.4%;
-  margin-right: 20px;
-}
-
-.rowPaddingSelectLast {
-  width: 32.6%;
-}
-
-.addMore {
-  background-color: $color-4;
-  color: $color-5;
-  padding: 5px;
-  border-radius: 5px;
-  width: 200px;
-  margin-top: 10px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.addMoreButton {
-  margin-left: 5px;
-}
-
-.align {
-  margin-left: 0;
-  margin-top: 0;
-}
-
-.tableContainerWrapper {
-  display: flex;
-  flex-direction: column;
-}
-
 .container {
   flex: 1;
   margin-right: 20px;
@@ -238,21 +73,6 @@
 
 .containerLast {
   flex: 1;
-}
-
-.separator {
-  margin-left: 40px;
-  margin-right: 40px;
-}
-
-.text {
-  font-size: 14px;
-  cursor: pointer;
-  color: $color-6;
-}
-
-.customHeight {
-  border: none !important;
 }
 
 .inputSmall {
@@ -263,16 +83,10 @@
   width: 66.66%;
   max-width: 66.66%;
 }
-.inputLarge {
-  max-width: 100%;
-}
 .topItem {
   margin-top: 10px;
 }
 
-input[type=time]::-webkit-datetime-edit-ampm-field {
-  display: none;
-}
 .containerLeft {
   width: 33.33%;
   padding-right: 15px;
@@ -285,13 +99,4 @@ input[type=time]::-webkit-datetime-edit-ampm-field {
 .containerRight {
   width: 33.33%;
   padding-left: 15px;
-}
-.logout:hover svg, .iconContainer:hover svg {
-  color: #3e96ed;
-}
-
-.formWrapper {
-  padding: 10px 15px 15px 10px;
-  width: 225px;
-  margin-top: 6px;
 }

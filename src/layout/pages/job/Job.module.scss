@@ -13,24 +13,7 @@
   margin: 0px;
   width: 100%;
 }
-.overflow {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-all;
-  white-space: nowrap;
-}
-.jobCell {
-  display: flex;
-  flex-direction: column;
-  padding: 0px 5px;
-  align-self: center;
-  margin: 0px;
-  width: 100%;
-}
-.description {
-  color: #62738d;
-  font-size: 11px;
-}
+
 .stateIcon {
   font-size: 11px;
   color: #5db85b;
@@ -40,43 +23,12 @@
   text-align: center;
   justify-content: center;
 }
-.textRight {
-  text-align: right;
-  justify-content: flex-end;
-}
-
-.flex {
-  flex-grow: 1;
-}
-.toolbar {
-  background-color: #fff;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
-  padding-left: 25px;
-  padding-right: 0px;
-  min-height: 45px !important;
-  height: 45px;
-  border-bottom: 1px solid #cfd7e6;
-}
 
 .contentAlignHeader {
   display: flex;
   flex-direction: column;
   padding: 15px;
   width: 100%;
-  border-radius: 0;
-  border: 1px solid #cfd7e6;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
-}
-.contentAlign {
-  display: flex;
-  flex-direction: column;
-  margin-top: 71px;
-  margin-left: 25px;
-  padding: 20px;
-  margin-right: 25px;
   border-radius: 0;
   border: 1px solid #cfd7e6;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
@@ -97,67 +49,11 @@
   min-height: 44px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
-.projectItem {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid #cfd7e6;
-  border-radius: 15px;
-  width: 200px;
-  height: 150px;
-  padding: 15px;
-}
-.rootColor {
-  color: $color-5;
-}
-.header {
-  color: $color-5;
-  font-weight: bold;
-}
-.secondText {
-  color: $color-4;
-  font-size: 14px;
-  margin-top: 5px;
-}
-.iconContainer {
-  display: flex;
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  width: 50px;
-}
-.logout {
-  display: flex;
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  width: 50px;
-  border-left: 1px solid #cfd7e6;
-}
-
-.addNewJob {
-  cursor: pointer;
-  margin-right: 15px;
-}
 
 .textColor {
   color: #3b4253;
 }
 
-.mainColumnText {
-  color: $color-10;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-top: 1px solid $color-2;
-  margin-left: -20px;
-  margin-right: -20px;
-}
 .containerConfigRow {
   display: flex;
   flex-direction: row;
@@ -172,54 +68,17 @@
   width: 33.33%;
   border-right: 1px solid $color-2;
 }
-.rowSecond {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 30%;
-  border-right: 1px solid $color-2;
-  margin-bottom: -20px;
-  padding-bottom: 20px;
-}
 
-.elseRows {
-  border-right: 1px solid $color-2;
-  margin-bottom: -20px;
-  width: 15%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-
-.inputStyles {
-  height: 30px;
-}
 .stdoutContainer {
   max-height: 600px;
   overflow-y: auto;
 }
-.containerRow {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex: 1;
-  margin-bottom: 10px;
-}
-.containerRow:last-child {
-  margin-bottom: 0px;
-}
-
 .containerTabRow {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   flex: 1;
   padding: 0px 20px;
-}
-
-.smallItem {
-  width: 35%;
-  margin-right: 15px;
 }
 
 .tabValueFirst {
@@ -243,63 +102,11 @@
   margin-top: 25px;
 }
 
-.rowPadding {
-  padding: 0;
-}
-
 .label {
   font-size: 13px;
   color: $color-6;
   margin-bottom: 3px;
   font-weight: bold;
-}
-
-.rowPaddingSelect {
-  width: 32.4%;
-  margin-right: 20px;
-}
-
-.rowPaddingSelectLast {
-  width: 32.6%;
-}
-
-.addMore {
-  background-color: $color-4;
-  color: $color-5;
-  padding: 5px;
-  border-radius: 5px;
-  width: 200px;
-  margin-top: 10px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.addMoreButton {
-  margin-left: 5px;
-}
-
-.align {
-  margin-left: 0;
-  margin-top: 0;
-}
-
-.tableContainerWrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.container {
-  flex: 1;
-  margin-right: 20px;
-}
-
-.containerLast {
-  flex: 1;
-}
-
-.separator {
-  margin-left: 40px;
-  margin-right: 40px;
 }
 
 .text {
@@ -318,64 +125,12 @@
   font-size: 17px;
   line-height: 1;
   color: $color-6;
-  display: flex;
   justify-content: space-between;
-}
-
-.columnMargin {
-  display: flex;
-  justify-content: flex-start;
 }
 
 .textColor {
   font-size: 17px;
   color: $color-12;
-}
-
-.customHeight {
-  border: none !important;
-}
-
-.inputSmall {
-  width: 33.33%;
-  max-width: 33.33%;
-}
-.inputMedium {
-  width: 66.66%;
-  max-width: 66.66%;
-}
-.inputLarge {
-  max-width: 100%;
-}
-.topItem {
-  margin-top: 10px;
-}
-
-input[type='time']::-webkit-datetime-edit-ampm-field {
-  display: none;
-}
-.containerLeft {
-  width: 33.33%;
-  padding-right: 15px;
-}
-.containerMiddle {
-  width: 33.33%;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-.containerRight {
-  width: 33.33%;
-  padding-left: 15px;
-}
-.logout:hover svg,
-.iconContainer:hover svg {
-  color: #3e96ed;
-}
-
-.formWrapper {
-  padding: 10px 15px 15px 10px;
-  width: 225px;
-  margin-top: 6px;
 }
 
 .padding {
@@ -408,13 +163,6 @@ input[type='time']::-webkit-datetime-edit-ampm-field {
   margin-right: 10px;
 }
 
-.circleTable {
-  background: $color-12;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
 .stdoutText {
   font-family: 'Inconsolata', monospace;
   color: #fff;

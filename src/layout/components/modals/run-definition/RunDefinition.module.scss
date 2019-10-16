@@ -21,12 +21,6 @@
   justify-content: space-between;
   margin-top: 10px;
 }
-.containerRowSmall {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex: 1;
-}
 .splitContainer {
   display: flex;
   flex-direction: row;
@@ -48,44 +42,12 @@
   width: 80px;
 }
 
-.formControl {
-  width: 49%;
-}
-
-.customHeight {
-  height: 5px;
-}
-.longInput {
-  width: 65%
-}
-.shortInput {
-  width: 35%;
-}
 .divider {
   margin-top: 20px;
   margin-bottom: 20px;
   display: flex;
   flex: 1;
   border-bottom: 1px solid $color-4;
-}
-.label {
-  font-size: 13px;
-  color: $color-5
-}
-
-.addMore {
-  background-color: $color-4;
-  color: $color-5;
-  padding: 5px;
-  border-radius: 5px;
-  width: 200px;
-  margin-top: 10px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.addMoreButton {
-  margin-left: 5px;
 }
 
 .container {
@@ -103,10 +65,7 @@
 .containerInputLast {
   flex: 1;
 }
-.containerBig {
-  width: 50%;
-  margin-top: 10px;
-}
+
 .inputSmall {
   max-width: 33.33%;
 }
@@ -121,17 +80,8 @@
   margin-right: 20px;
 }
 
-input[type=time]::-webkit-datetime-edit-ampm-field {
-  display: none;
-}
-
 .tabValueAlt {
   padding: 25px 0 0 0;
-}
-
-.tableContainerWrapper {
-  display: flex;
-  flex-direction: column;
 }
 
 .tabValueAlt {
