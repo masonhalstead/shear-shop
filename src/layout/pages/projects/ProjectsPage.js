@@ -2,27 +2,28 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
+  setLoading as setLoadingAction,
   setProject as setProjectAction,
   toggleModal as toggleModalAction,
 } from 'ducks/actions';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CreateProjectModal } from 'layout/components/modals/project-modal/CreateProject';
-
 import {
   getProjects as getProjectsAction,
   addProject as addProjectAction,
 } from 'ducks/operators/projects';
+import { handleError as handleErrorAction } from 'ducks/operators/settings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CreateProjectModal } from 'layout/components/modals/project-modal/CreateProject';
 
-import * as Sentry from '@sentry/browser';
 import cn from './Project.module.scss';
 
 class ProjectsPage extends PureComponent {
   static propTypes = {
-    getProjects: PropTypes.func,
-    logoutUserProps: PropTypes.func,
     projects: PropTypes.array,
     history: PropTypes.object,
+    getProjects: PropTypes.func,
+    toggleModal: PropTypes.func,
+    setLoading: PropTypes.func,
+    handleError: PropTypes.func,
   };
 
   state = {
@@ -31,13 +32,20 @@ class ProjectsPage extends PureComponent {
   };
 
   componentDidMount() {
-    const { getProjects } = this.props;
+    this.setInitialData();
+  }
+
+  setInitialData = async () => {
+    const { getProjects, setLoading, handleError } = this.props;
+
+    setLoading(true);
     try {
       getProjects();
     } catch (err) {
-      Sentry.captureException(err);
+      handleError(err);
     }
-  }
+    setLoading(false);
+  };
 
   handleCloseProject = () => {
     const { toggleModal } = this.props;
@@ -120,6 +128,8 @@ const mapDispatchToProps = {
   getProjects: getProjectsAction,
   addProject: addProjectAction,
   setProject: setProjectAction,
+  handleError: handleErrorAction,
+  setLoading: setLoadingAction,
   toggleModal: toggleModalAction,
 };
 

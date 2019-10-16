@@ -11,37 +11,71 @@
     align-items: center;
     justify-content: center;
     height: 46px;
-    width: 100%;
+    width: calc(100% - 20px);
+    padding: 0px 10px;
     border-bottom: 1px solid #3b4253;
 }
 .logo {
     height: 36px;
   }
+.logoFull {
+    width: 100%;
+    height: auto;
+}
+.iconWrapper {
+    display: flex;
+    justify-content: center;
+    width: 20px;
+}
 .linkWrapper {
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: calc(100% - 40px);
     cursor: pointer;
     align-items: center;
     position: relative;
     color: #fff;
     height: 50px;
+    padding: 0px 20px;
     font-size: 16px;
 }
 .linkWrapper:hover {
     color: #3e96ed;
 }
-.linkWrapper:hover [data-role='tooltip'] {
+.expandWrapper {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    width: calc(100% - 40px);
+    cursor: pointer;
+    align-items: flex-end;
+    position: relative;
+    color: #fff;
+    padding: 0px 20px;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+.expandWrapper:hover {
+    color: #3e96ed;
+}
+.linkWrapper:hover [data-role='tooltip'],
+.expandWrapper:hover [data-role='tooltip']  {
     display: block;
   }
   .versionWrapper {
       display: flex;
       padding: 5px;
-      align-items: flex-end;
-      align-self: stretch;
+      max-height: 20px;
       flex-grow: 1;
       justify-content: center;
       color: #fff;
         font-size: 12px;
         margin: 0px;
   }
+.menuTitle {
+    margin: 0px;
+    flex-grow: 1;
+    font-weight: 400;
+    font-size: 13px;
+    margin-left: 15px;
+}

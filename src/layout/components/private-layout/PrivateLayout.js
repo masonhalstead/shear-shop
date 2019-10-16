@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Alert } from 'components/Alert';
 import { Modals } from 'layout/components/modals/Modals';
+import { setMenu as setMenuAction } from 'ducks/actions';
 import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import * as Sentry from '@sentry/browser';
 import { Menu } from 'components/menu/Menu';
@@ -14,10 +15,13 @@ import cn from './PrivateLayout.module.scss';
 
 export class PrivateLayoutWrapper extends React.PureComponent {
   static propTypes = {
-    classes: PropTypes.object,
-    history: PropTypes.object,
+    loading: PropTypes.bool,
+    project: PropTypes.object,
+    width: PropTypes.string,
+    open: PropTypes.bool,
     children: PropTypes.any,
-    setHamburger: PropTypes.func,
+    setMenu: PropTypes.func,
+    getProjects: PropTypes.func,
   };
 
   componentDidMount() {
@@ -29,19 +33,33 @@ export class PrivateLayoutWrapper extends React.PureComponent {
     }
   }
 
+  handleToggleMenu = () => {
+    const { setMenu, open } = this.props;
+    if (!open) {
+      setMenu({ open: true, width: '185px' });
+    } else {
+      setMenu({ open: false, width: '75px' });
+    }
+  };
+
   render() {
-    const { loading, project } = this.props;
+    const { loading, project, width, open, children } = this.props;
     return (
       <div className={cn.privateLayout}>
-        <Menu project={project} />
-        <div className={cn.content}>
+        <Menu
+          project={project}
+          width={width}
+          open={open}
+          handleToggleMenu={this.handleToggleMenu}
+        />
+        <div className={cn.content} style={{ width: `calc(100% - ${width})` }}>
           <Navigation />
           <Scrollbars
             className={cn.scroll}
             autoHeight
             autoHeightMin="calc(100vh - 47px)"
           >
-            <div className={cn.views}> {this.props.children}</div>
+            <div className={cn.views}> {children}</div>
           </Scrollbars>
         </div>
         <Alert />
@@ -55,10 +73,13 @@ export class PrivateLayoutWrapper extends React.PureComponent {
 const mapStateToProps = state => ({
   loading: state.settings.loading,
   project: state.project,
+  open: state.settings.open,
+  width: state.settings.width,
 });
 
 const mapDispatchToProps = {
   getProjects: getProjectsAction,
+  setMenu: setMenuAction,
 };
 
 const PrivateLayout = withRouter(

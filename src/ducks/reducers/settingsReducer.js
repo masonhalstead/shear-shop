@@ -3,13 +3,13 @@ import {
   SET_LOADING,
   SHOW_ALERT,
   TOGGLE_MODAL,
+  SET_MENU,
   SET_CURRENT_JOB,
   SET_CURRENT_JOBS,
   SET_CURRENT_DEFINITIONS,
   SAVE_DEFINITION,
   DEFINITION_CHANGED,
 } from 'ducks/types';
-import uuid from 'uuid';
 
 const settingsState = {
   error_message: '',
@@ -24,75 +24,6 @@ const settingsState = {
     definitions: false,
     run_definition: false,
   },
-  definitions: {
-    columns: [],
-    search_string: '',
-    headers: [
-      {
-        title: 'Job',
-        show: true,
-        flex_grow: 1,
-        min_width: '100px',
-        sort: 'default',
-        sort_key: 'job_definition_name',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Requirements',
-        show: true,
-        min_width: '175px',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Location',
-        show: true,
-        min_width: '175px',
-        sort: 'default',
-        sort_key: 'location_name',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Timeout',
-        show: true,
-        min_width: '125px',
-        sort: 'default',
-        sort_key: 'timeout_seconds',
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Method',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created By',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: 'Created',
-        show: true,
-        min_width: '125px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-      {
-        title: '',
-        show: true,
-        min_width: '40px',
-        sort: false,
-        uuid: uuid.v1(),
-      },
-    ],
-    settings: {
-      search_key: 'job_definition_name',
-      row_height: 33,
-    },
-  },
 };
 export const settingsReducer = (state = settingsState, action) => {
   switch (action.type) {
@@ -100,6 +31,8 @@ export const settingsReducer = (state = settingsState, action) => {
       return { ...state, error_message: action.payload };
     case SET_LOADING:
       return { ...state, loading: action.payload };
+    case SET_MENU:
+      return { ...state, width: action.width, open: action.open };
     case SAVE_DEFINITION:
       return { ...state, save_definition: action.payload };
     case DEFINITION_CHANGED:
