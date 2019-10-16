@@ -124,7 +124,7 @@ class ConnectedRunDefinition extends PureComponent {
     );
     additionalParameters[index] = {
       ...additionalParameters[index],
-      parameter_name: value,
+      parameter_name: value.trim(),
       modified: true,
     };
     this.setState(
