@@ -59,6 +59,7 @@ class ConnectedRunDefinition extends PureComponent {
     additionalParameters: [
       {
         parameter_name: '',
+        parameter_name_old: '',
         parameter_direction_id: 1,
         parameter_method_id: 1,
         parameter_value: '',

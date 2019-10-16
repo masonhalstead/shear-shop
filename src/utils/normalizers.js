@@ -33,10 +33,10 @@ export function normalizeDefinition(data) {
 
 export function normalizeParameters(parameters) {
   return parameters.map(parameter => ({
-    parameter_method_id: 1,
-    modified: true,
+    ...parameter,
+    parameter_name_old: parameter.parameter_name,
+    modified: false,
     saved: true,
     uuid: uuid.v1(),
-    ...parameter,
   }));
 }

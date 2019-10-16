@@ -10,10 +10,6 @@ import {
   getDefinitionConfig as getDefinitionConfigAction,
   saveDefinition as saveDefinitionAction,
 } from 'ducks/operators/definition';
-import {
-  editParameters as editParametersProps,
-  saveParameters as saveParametersProps,
-} from 'ducks/operators/parameters';
 import { handleError } from 'ducks/operators/settings';
 import uuid from 'uuid';
 import { DefinitionBlock } from './DefinitionBlock';
@@ -30,7 +26,6 @@ class DefinitionPage extends Component {
     handleErrorProps: PropTypes.func,
     triggerSaveDefiniton: PropTypes.func,
     saveDefinition: PropTypes.func,
-    locations: PropTypes.array,
     location: PropTypes.object,
   };
 
@@ -44,7 +39,6 @@ class DefinitionPage extends Component {
     max_retries: null,
     gpu: null,
     memory_gb: null,
-    region: null,
     stdout_success_text: null,
     tab: 0,
     result_method_id: null,
@@ -506,8 +500,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getDefinitionConfig: getDefinitionConfigAction,
-  editParameters: editParametersProps,
-  saveParameters: saveParametersProps,
   triggerSaveDefiniton: triggerSaveDefinitonAction,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,
