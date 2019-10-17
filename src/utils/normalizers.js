@@ -1,4 +1,8 @@
 import uuid from 'uuid';
+import moment from 'moment';
+import momentDuration from 'moment-duration-format';
+
+momentDuration(moment);
 
 export function normalizeWithUUID(array) {
   return array.map(arr => ({
@@ -19,25 +23,23 @@ export function normalizeDefinition(data) {
   if (!location) {
     location = `~ ${data.region_endpoint_hint}`;
   }
-
   return {
     ...data,
-    timeout: new Date(data.timeout_seconds * 1000)
-      .toUTCString()
-      .match(/(\d\d:\d\d)/)[0],
-    region_endpoint_hint:
-      data.region_endpoint_hint === 'empty' ? null : data.region_endpoint_hint,
     location,
+    timeout_masked: moment
+      .duration(data.timeout_seconds, 'seconds')
+      .format('hh [hrs] mm [mins]'),
+    timeout: moment.duration(data.timeout_seconds, 'seconds').format('hh:mm'),
     uuid: uuid.v1(),
   };
 }
 
 export function normalizeParameters(parameters) {
   return parameters.map(parameter => ({
-    parameter_method_id: 1,
-    modified: true,
+    ...parameter,
+    parameter_name_old: parameter.parameter_name,
+    modified: false,
     saved: true,
     uuid: uuid.v1(),
-    ...parameter,
   }));
 }

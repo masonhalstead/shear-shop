@@ -5,7 +5,7 @@ import cn from './Definition.module.scss';
 
 export class DefinitionTabs extends PureComponent {
   static propTypes = {
-    children: PropTypes.node,
+    children: PropTypes.any,
     tab: PropTypes.number,
     handleChangeTab: PropTypes.func,
   };

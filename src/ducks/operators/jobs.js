@@ -33,6 +33,10 @@ const filters_map = {
     days: 7,
     job_state_id: 98,
   },
+  failed: {
+    days: 7,
+    job_state_id: 99,
+  },
 };
 export const getJobsConfig = (project_id, filter) => async dispatch => {
   const [jobs] = await Promise.all([

@@ -23,6 +23,8 @@ class ConnectedRunDefinition extends PureComponent {
     toggleModalAction: PropTypes.func,
     clearDefinitionAction: PropTypes.func,
     clearParametersAction: PropTypes.func,
+    handleErrorProps: PropTypes.func,
+    setLoadingAction: PropTypes.func,
     run_definition: PropTypes.bool,
     definition: PropTypes.object,
     parameters: PropTypes.array,
@@ -32,6 +34,7 @@ class ConnectedRunDefinition extends PureComponent {
   static getDerivedStateFromProps(props, state) {
     const { definition, parameters } = props;
     const { job_definition_id } = state;
+
     if (definition.job_definition_id !== job_definition_id) {
       return {
         ...definition,
@@ -56,6 +59,7 @@ class ConnectedRunDefinition extends PureComponent {
     additionalParameters: [
       {
         parameter_name: '',
+        parameter_name_old: '',
         parameter_direction_id: 1,
         parameter_method_id: 1,
         parameter_value: '',
@@ -121,7 +125,7 @@ class ConnectedRunDefinition extends PureComponent {
     );
     additionalParameters[index] = {
       ...additionalParameters[index],
-      parameter_name: value,
+      parameter_name: value.trim(),
       modified: true,
     };
     this.setState(
@@ -176,10 +180,10 @@ class ConnectedRunDefinition extends PureComponent {
       job_definition_id,
       docker_image,
       startup_command,
-      required_cpu,
-      required_gpu,
-      required_memory_gb,
-      required_storage_gb,
+      cpu,
+      gpu,
+      memory_gb,
+      storage_gb,
       timeout_seconds,
       region_endpoint_hint,
       result_method_id,
@@ -193,16 +197,16 @@ class ConnectedRunDefinition extends PureComponent {
 
     const data = {
       project_id,
-      batch_id: 0,
+      batch_id: null,
       batch_descriptor: null,
       description,
       job_definition_id,
       docker_image,
       startup_command,
-      required_cpu,
-      required_gpu,
-      required_memory_gb,
-      required_storage_gb,
+      required_cpu: cpu,
+      required_gpu: gpu,
+      required_memory_gb: memory_gb,
+      required_storage_gb: storage_gb,
       timeout_seconds,
       region_endpoint_hint,
       result_method_id,
@@ -212,10 +216,10 @@ class ConnectedRunDefinition extends PureComponent {
       depends_on: [],
       input_file_id_list: [],
       output_file_id_list: [],
-      parameters: [
+      parameters: this.handleParametersFormat([
         ...parameters,
-        ...additionalParameters.filter(param => param.modified),
-      ],
+        ...additionalParameters,
+      ]),
     };
 
     setLoadingAction(true);
@@ -226,6 +230,26 @@ class ConnectedRunDefinition extends PureComponent {
     }
     setLoadingAction(false);
   };
+
+  handleParametersFormat = (params = []) =>
+    params
+      .filter(param => !!param.parameter_name)
+      .map(param => ({
+        parameter_name: param.parameter_name,
+        parameter_direction_id: param.parameter_direction_id,
+        parameter_method_id: param.parameter_method_id,
+        is_required: param.is_required,
+        is_encrypted: param.is_encrypted,
+        parameter_value: param.parameter_value,
+        description: param.description,
+        command_line_prefix: param.command_line_prefix,
+        command_line_assignment_char: param.command_line_assignment_char,
+        command_line_escaped: param.command_line_escaped,
+        command_line_ignore_name: param.command_line_ignore_name,
+        reference_type_id: param.reference_type_id,
+        reference_id: param.reference_id,
+        reference_parameter_name: param.reference_parameter_name,
+      }));
 
   handleDefinitionBlock = input => {
     this.setState({ ...input });

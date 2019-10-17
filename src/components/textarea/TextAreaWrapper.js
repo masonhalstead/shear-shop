@@ -6,7 +6,7 @@ import cn from './TextArea.module.scss';
 
 export class TextAreaWrapper extends Component {
   static propTypes = {
-    component: PropTypes.node,
+    component: PropTypes.any,
     label: PropTypes.string,
     placeholder: PropTypes.string,
     type: PropTypes.string,

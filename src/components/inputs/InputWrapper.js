@@ -6,7 +6,7 @@ import cn from './Input.module.scss';
 
 export class InputWrapper extends Component {
   static propTypes = {
-    component: PropTypes.node,
+    component: PropTypes.any,
     label: PropTypes.string,
     left_icon: PropTypes.any,
     right_icon: PropTypes.any,

@@ -5,7 +5,7 @@ import cn from '../Batches.module.scss';
 
 export class BatchDefinitionTabs extends PureComponent {
   static propTypes = {
-    children: PropTypes.node,
+    children: PropTypes.any,
     tab: PropTypes.number,
     handleChangeTab: PropTypes.func,
   };

@@ -14,6 +14,7 @@ export const CLOSE_MODAL = 'CLOSE_MODAL';
 // SETTINGS REDUCER ACTIONS
 export const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
 export const SET_LOADING = 'SET_LOADING';
+export const SET_MENU = 'SET_MENU';
 
 // JOB REDUCER ACTIONS
 export const SET_JOB = 'SET_JOB';

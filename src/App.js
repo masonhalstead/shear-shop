@@ -67,11 +67,7 @@ export class App extends PureComponent {
               path={routes.DEFINITION}
               component={pages.DefinitionPage}
             />
-            <PrivateRoute
-              exact
-              path={routes.JOB}
-              component={pages.JobPage}
-            />
+            <PrivateRoute exact path={routes.JOB} component={pages.JobPage} />
             <PrivateRoute
               exact
               path={routes.BATCHES}

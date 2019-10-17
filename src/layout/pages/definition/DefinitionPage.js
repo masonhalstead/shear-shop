@@ -10,10 +10,6 @@ import {
   getDefinitionConfig as getDefinitionConfigAction,
   saveDefinition as saveDefinitionAction,
 } from 'ducks/operators/definition';
-import {
-  editParameters as editParametersProps,
-  saveParameters as saveParametersProps,
-} from 'ducks/operators/parameters';
 import { handleError } from 'ducks/operators/settings';
 import uuid from 'uuid';
 import { DefinitionBlock } from './DefinitionBlock';
@@ -25,28 +21,29 @@ import cn from './Definition.module.scss';
 
 class DefinitionPage extends Component {
   static propTypes = {
+    location: PropTypes.object,
+    settings: PropTypes.object,
     getDefinitionConfig: PropTypes.func,
     setLoadingAction: PropTypes.func,
     handleErrorProps: PropTypes.func,
+    definitionChanged: PropTypes.func,
     triggerSaveDefiniton: PropTypes.func,
     saveDefinition: PropTypes.func,
-    locations: PropTypes.array,
-    location: PropTypes.object,
   };
 
   state = {
+    save_definition: false,
     job_definition_id: null,
-    description: '',
-    cpu: '',
-    timeout: '',
-    location_id: 'empty',
-    max_retries: '',
-    gpu: '',
-    memory_gb: '',
-    region: 'empty',
-    stdout_success_text: '',
+    description: null,
+    cpu: null,
+    timeout: '00:00',
+    location_id: null,
+    max_retries: null,
+    gpu: null,
+    memory_gb: null,
+    stdout_success_text: null,
     tab: 0,
-    result_method_id: '',
+    result_method_id: null,
     parameters: [],
     data: {
       create: [],
@@ -68,13 +65,13 @@ class DefinitionPage extends Component {
     this.setInitialData();
   }
 
-  shouldComponentUpdate(nextProps) {
-    const { triggerSaveDefiniton } = this.props;
-    if (nextProps.settings.save_definition === true) {
-      this.handleSubmit();
-      triggerSaveDefiniton(false);
+  static getDerivedStateFromProps(props, state) {
+    if (props.settings.save_definition !== state.save_definition) {
+      return {
+        save_definition: props.settings.save_definition,
+      };
     }
-    return true;
+    return null;
   }
 
   componentWillUnmount() {
@@ -295,14 +292,17 @@ class DefinitionPage extends Component {
 
   handleRowManagement = () => {
     const { definitionChanged } = this.props;
-    definitionChanged(true);
     const { parameters } = this.state;
-    const inputs = parameters.filter(
-      p => p.parameter_direction_id === 1 && p.modified === false,
-    );
-    const outputs = parameters.filter(
-      p => p.parameter_direction_id === 2 && p.modified === false,
-    );
+
+    definitionChanged(true);
+
+    const inputs = parameters
+      .filter(p => p.parameter_direction_id === 1 && p.modified === false)
+      .filter(p => !p.saved);
+
+    const outputs = parameters
+      .filter(p => p.parameter_direction_id === 2 && p.modified === false)
+      .filter(p => !p.saved);
 
     this.handleParametersPayload(parameters);
 
@@ -321,6 +321,7 @@ class DefinitionPage extends Component {
       description: '',
       parameter_direction_id: direction_id,
       modified: false,
+      saved: false,
       uuid: uuid.v1(),
     };
     parameters.push(new_row);
@@ -345,6 +346,8 @@ class DefinitionPage extends Component {
         ...config.definition,
         parameters: config.parameters,
       });
+      await this.configNewRow(1);
+      await this.configNewRow(2);
       await this.handleRowManagement();
     } catch (err) {
       handleErrorProps(err);
@@ -362,7 +365,7 @@ class DefinitionPage extends Component {
       startup_command,
       timeout_seconds,
       stdout_success_text,
-      region,
+      region_endpoint_hint,
       cpu,
       gpu,
       max_retries,
@@ -375,7 +378,7 @@ class DefinitionPage extends Component {
       saveDefinition,
       setLoadingAction,
       handleErrorProps,
-      locations,
+      triggerSaveDefiniton,
     } = this.props;
 
     const definition = {
@@ -387,12 +390,8 @@ class DefinitionPage extends Component {
       startup_command,
       timeout_seconds,
       stdout_success_text,
-      region_endpoint_hint:
-        region !== 'empty'
-          ? locations.filter(filter => filter.location_id === Number(region))[0]
-              .location_name
-          : 'empty',
-      location_id: location_id === 'empty' ? null : location_id,
+      region_endpoint_hint,
+      location_id,
       cpu,
       gpu,
       max_retries,
@@ -401,6 +400,8 @@ class DefinitionPage extends Component {
 
     setLoadingAction(true);
     try {
+      await triggerSaveDefiniton(false);
+      // Firing too fast, might need 1-2 seconds artifical save lag
       await saveDefinition(definition, data);
       this.setState({
         data: {
@@ -417,6 +418,7 @@ class DefinitionPage extends Component {
 
   render() {
     const {
+      save_definition,
       job_definition_name,
       docker_image,
       startup_command,
@@ -436,7 +438,11 @@ class DefinitionPage extends Component {
       callbacks,
       tab,
     } = this.state;
-
+    if (save_definition) {
+      // Not convinced this is best option
+      // Added this instead of ShouldComponentUpdate which was firing twice
+      this.handleSubmit();
+    }
     return (
       <div className={cn.pageWrapper}>
         <DefinitionBlock
@@ -502,8 +508,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getDefinitionConfig: getDefinitionConfigAction,
-  editParameters: editParametersProps,
-  saveParameters: saveParametersProps,
   triggerSaveDefiniton: triggerSaveDefinitonAction,
   setLoadingAction: setLoading,
   handleErrorProps: handleError,

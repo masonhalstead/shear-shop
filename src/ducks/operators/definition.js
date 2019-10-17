@@ -58,7 +58,7 @@ export const updateDefinition = (definition_id, data) => {
 export const updateDefinitionParameters = (definition_id, data) => {
   data.forEach(param => {
     postData(
-      `/job_definitions/${definition_id}/parameters/${param.parameter_name}/update`,
+      `/job_definitions/${definition_id}/parameters/${param.parameter_name_old}/update`,
       param,
     );
   });

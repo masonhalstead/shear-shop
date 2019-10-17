@@ -31,6 +31,11 @@ export const setLoading = loading => ({
   type: constants.SET_LOADING,
   payload: loading,
 });
+export const setMenu = ({ width, open }) => ({
+  type: constants.SET_MENU,
+  width,
+  open,
+});
 
 // ------ JOB ACTIONS ------ //
 export const setJob = job => ({
