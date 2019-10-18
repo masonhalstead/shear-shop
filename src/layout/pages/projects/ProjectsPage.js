@@ -3,18 +3,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   setLoading as setLoadingAction,
-  setProject as setProjectAction,
   toggleModal as toggleModalAction,
+  clearProject as clearProjectAction,
+  setProject as setProjectAction,
 } from 'ducks/actions';
 import {
   getProjects as getProjectsAction,
-  addProject as addProjectAction,
 } from 'ducks/operators/projects';
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CreateProjectModal } from 'layout/components/modals/project-modal/CreateProject';
 
 import cn from './Project.module.scss';
+import { Modals } from 'layout/components/modals/Modals';
 
 class ProjectsPage extends PureComponent {
   static propTypes = {
@@ -26,18 +26,13 @@ class ProjectsPage extends PureComponent {
     handleError: PropTypes.func,
   };
 
-  state = {
-    open: false,
-    projectName: '',
-  };
-
   componentDidMount() {
     this.setInitialData();
   }
 
   setInitialData = async () => {
-    const { getProjects, setLoading, handleError } = this.props;
-
+    const { getProjects, setLoading, handleError, clearProject } = this.props;
+    clearProject();
     setLoading(true);
     try {
       getProjects();
@@ -47,26 +42,6 @@ class ProjectsPage extends PureComponent {
     setLoading(false);
   };
 
-  handleCloseProject = () => {
-    const { toggleModal } = this.props;
-    toggleModal({ project: false });
-  };
-
-  changeProjectName = name => {
-    this.setState({ projectName: name });
-  };
-
-  createProject = async () => {
-    const { projectName } = this.state;
-    const { addProject, getProjects, toggleModal, setProject } = this.props;
-    const projectId = await addProject({ project_name: projectName });
-    await getProjects();
-    toggleModal({ project: false });
-    this.setState({ project_name: '' });
-    setProject({ project_id: projectId, project_name: projectName });
-    this.goToJobsPage({ project_id: projectId, project_name: projectName });
-  };
-
   goToJobsPage = project => {
     const { setProject, history } = this.props;
     setProject(project);
@@ -74,15 +49,14 @@ class ProjectsPage extends PureComponent {
   };
 
   render() {
-    const { projectName } = this.state;
-    const { projects, settings } = this.props;
+    const { projects, history, toggleModal } = this.props;
     return (
       <>
         <div className={cn.pageWrapper}>
           <div
             className={cn.projectItemAdd}
             onClick={() => {
-              this.setState({ open: true });
+              toggleModal({ project: true });
             }}
           >
             <FontAwesomeIcon icon="plus" color="#818fa3" />
@@ -107,13 +81,7 @@ class ProjectsPage extends PureComponent {
               </div>
             ))}
         </div>
-        <CreateProjectModal
-          handleCloseProject={this.handleCloseProject}
-          open={settings.modals.project}
-          projectName={projectName}
-          changeProjectName={this.changeProjectName}
-          createProject={this.createProject}
-        />
+        <Modals project history={history}/>
       </>
     );
   }
@@ -121,16 +89,15 @@ class ProjectsPage extends PureComponent {
 
 const mapStateToProps = state => ({
   projects: state.projects,
-  settings: state.settings,
 });
 
 const mapDispatchToProps = {
   getProjects: getProjectsAction,
-  addProject: addProjectAction,
-  setProject: setProjectAction,
+  clearProject: clearProjectAction,
   handleError: handleErrorAction,
   setLoading: setLoadingAction,
   toggleModal: toggleModalAction,
+  setProject: setProjectAction,
 };
 
 export default connect(

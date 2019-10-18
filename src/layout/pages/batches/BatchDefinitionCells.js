@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import cn from '../Batches.module.scss';
+import cn from './Batches.module.scss';
 
 export const BatchNameCell = ({ row, paths }) => (
   <Link

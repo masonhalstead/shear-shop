@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  setLoading,
+  setLoading as setLoadingAction,
   triggerSaveDefiniton as triggerSaveDefinitonAction,
   definitionChanged as definitionChangedAction,
 } from 'ducks/actions';
@@ -24,7 +24,7 @@ class DefinitionPage extends Component {
     location: PropTypes.object,
     settings: PropTypes.object,
     getDefinitionConfig: PropTypes.func,
-    setLoadingAction: PropTypes.func,
+    setLoading: PropTypes.func,
     handleErrorProps: PropTypes.func,
     definitionChanged: PropTypes.func,
     triggerSaveDefiniton: PropTypes.func,
@@ -333,13 +333,13 @@ class DefinitionPage extends Component {
   setInitialData = async () => {
     const {
       getDefinitionConfig,
-      setLoadingAction,
+      setLoading,
       handleErrorProps,
       location,
     } = this.props;
     const [, , project_id, , , , definition_id] = location.pathname.split('/');
 
-    setLoadingAction(true);
+    setLoading(true);
     try {
       const config = await getDefinitionConfig(project_id, definition_id);
       await this.setState({
@@ -352,7 +352,7 @@ class DefinitionPage extends Component {
     } catch (err) {
       handleErrorProps(err);
     }
-    setLoadingAction(false);
+    setLoading(false);
   };
 
   handleSubmit = async () => {
@@ -376,7 +376,7 @@ class DefinitionPage extends Component {
 
     const {
       saveDefinition,
-      setLoadingAction,
+      setLoading,
       handleErrorProps,
       triggerSaveDefiniton,
     } = this.props;
@@ -397,23 +397,27 @@ class DefinitionPage extends Component {
       max_retries,
       memory_gb,
     };
+    await triggerSaveDefiniton(false);
 
-    setLoadingAction(true);
-    try {
-      await triggerSaveDefiniton(false);
-      // Firing too fast, might need 1-2 seconds artifical save lag
-      await saveDefinition(definition, data);
-      this.setState({
-        data: {
-          create: [],
-          remove: [],
-          update: [],
-        },
-      });
-    } catch (err) {
-      handleErrorProps(err, data);
-    }
-    setLoadingAction(false);
+    setLoading(true);
+    setTimeout(async () => {
+      try {
+        // Firing too fast, might need 1-2 seconds artifical save lag
+        await saveDefinition(definition, data);
+        this.setState({
+          data: {
+            create: [],
+            remove: [],
+            update: [],
+          },
+        });
+        setLoading(false);
+
+      } catch (err) {
+        handleErrorProps(err, data);
+        setLoading(false);
+      }
+    }, 2000);
   };
 
   render() {
@@ -443,6 +447,7 @@ class DefinitionPage extends Component {
       // Added this instead of ShouldComponentUpdate which was firing twice
       this.handleSubmit();
     }
+    console.log(this.props);
     return (
       <div className={cn.pageWrapper}>
         <DefinitionBlock
@@ -509,7 +514,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getDefinitionConfig: getDefinitionConfigAction,
   triggerSaveDefiniton: triggerSaveDefinitonAction,
-  setLoadingAction: setLoading,
+  setLoading: setLoadingAction,
   handleErrorProps: handleError,
   saveDefinition: saveDefinitionAction,
   definitionChanged: definitionChangedAction,

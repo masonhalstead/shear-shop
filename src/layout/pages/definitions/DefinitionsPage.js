@@ -3,16 +3,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getDefinitionsConfig as getDefinitionsConfigAction } from 'ducks/operators/definitions';
 import {
-  createDefinition as createDefinitionAction,
   getDefinitionConfig as getDefinitionConfigAction,
 } from 'ducks/operators/definition';
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import {
-  logoutUser,
   setLoading,
   toggleModal as toggleModalAction,
 } from 'ducks/actions';
-import { CreateJobDefinition } from 'layout/components/modals/create-job-definition/CreateJobDefinition';
 import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import cn from './Definitions.module.scss';
@@ -27,6 +24,7 @@ import {
   RunCell,
 } from './DefinitionCells';
 import { DefinitionsTabs } from './DefinitionsTabs';
+import { Modals } from '../../components/modals/Modals';
 
 class DefinitionsPage extends PureComponent {
   static propTypes = {
@@ -34,7 +32,6 @@ class DefinitionsPage extends PureComponent {
     getDefinitionConfig: PropTypes.func,
     handleError: PropTypes.func,
     setLoadingAction: PropTypes.func,
-    createDefinition: PropTypes.func,
     toggleModal: PropTypes.func,
     definitions: PropTypes.array,
     history: PropTypes.object,
@@ -43,7 +40,6 @@ class DefinitionsPage extends PureComponent {
   };
 
   state = {
-    jobName: '',
     tab: 0,
     headers: [
       {
@@ -140,11 +136,6 @@ class DefinitionsPage extends PureComponent {
     setLoadingAction(false);
   };
 
-  handleCloseDefinition = () => {
-    const { toggleModal } = this.props;
-    toggleModal({ definitions: false });
-  };
-
   openModal = async row => {
     const {
       getDefinitionConfig,
@@ -175,89 +166,10 @@ class DefinitionsPage extends PureComponent {
     );
   };
 
-  openDefinition = definition_id => {
-    const { history, location } = this.props;
-    const [, , project_id, filter] = location.pathname.split('/');
-    history.push(
-      `/projects/${project_id}/definitions/${filter}/definition/${definition_id}`,
-    );
-  };
-
-  changeJobName = name => {
-    this.setState({ jobName: name });
-  };
-
-  createDefinition = async () => {
-    const { jobName } = this.state;
-    const {
-      createDefinition,
-      getDefinitionsConfig,
-      location,
-      setLoadingAction,
-    } = this.props;
-
-    const [, , project_id] = location.pathname.split('/');
-
-    await setLoadingAction(true);
-
-    const definition_id = await createDefinition({
-      job_definition_name: jobName,
-      project_id,
-      description: 'Testing Project Description',
-      docker_image: '/dockerimage',
-      result_method_id: 1,
-      startup_command: 'nothing',
-      timeout_seconds: 86400,
-      stdout_success_text: 'winning',
-      region_endpoint_hint: 'us-east-1e',
-      cpu: 0,
-      gpu: 0,
-      memory_gb: 0,
-      parameters: [
-        {
-          parameter_name: 'Parameter2',
-          parameter_direction_id: 1,
-          parameter_method_id: 1,
-          is_required: true,
-          is_encrypted: true,
-          parameter_value: 'Default Value',
-          description: 'Parameter description',
-          command_line_prefix: null,
-          command_line_assignment_char: null,
-          command_line_escaped: null,
-          command_line_ignore_name: null,
-          reference_type_id: null,
-          reference_id: null,
-          reference_parameter_name: null,
-        },
-        {
-          parameter_name: 'Parameter3',
-          parameter_direction_id: 2,
-          parameter_method_id: 1,
-          is_required: true,
-          is_encrypted: true,
-          parameter_value: 'Default Value',
-          description: 'Parameter description',
-          command_line_prefix: null,
-          command_line_assignment_char: null,
-          command_line_escaped: null,
-          command_line_ignore_name: null,
-          reference_type_id: null,
-          reference_id: null,
-          reference_parameter_name: null,
-        },
-      ],
-    });
-
-    await getDefinitionsConfig(project_id);
-    await setLoadingAction(false);
-    this.openDefinition(definition_id);
-  };
-
   render() {
-    const { definitions, location } = this.props;
-    const { modals, definitions_search_input } = this.props.settings;
-    const { jobName, tab, headers, settings } = this.state;
+    const { definitions, history, location } = this.props;
+    const { definitions_search_input } = this.props.settings;
+    const { tab, headers, settings } = this.state;
 
     return (
       <div className={cn.pageWrapper}>
@@ -282,13 +194,7 @@ class DefinitionsPage extends PureComponent {
             />
           </div>
         </DefinitionsTabs>
-        <CreateJobDefinition
-          handleCloseDefinition={this.handleCloseDefinition}
-          open={modals.definitions}
-          jobName={jobName}
-          changeJobName={this.changeJobName}
-          createDefinition={this.createDefinition}
-        />
+        <Modals definition history={history} location={location}/>
       </div>
     );
   }
@@ -305,10 +211,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getDefinitionsConfig: getDefinitionsConfigAction,
   getDefinitionConfig: getDefinitionConfigAction,
-  createDefinition: createDefinitionAction,
   handleError: handleErrorAction,
   setLoadingAction: setLoading,
-  logoutUserProps: logoutUser,
   toggleModal: toggleModalAction,
 };
 

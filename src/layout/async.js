@@ -6,8 +6,8 @@ export const ProjectsPage = lazy(() => import('./pages/projects/ProjectsPage'));
 export const JobsPage = lazy(() => import('./pages/jobs/JobsPage'));
 export const JobPage = lazy(() => import('./pages/job/JobPage'));
 export const Batches = lazy(() => import('./pages/batches/Batches'));
-export const BatchDefinition = lazy(() => import('./pages/batches/batch-definition/BatchDefinition'));
-export const ScheduleBatches = lazy(() => import('./pages/batches/schedule-batches/ScheduleBatches'));
+export const BatchDefinition = lazy(() => import('./pages/batches/BatchDefinition'));
+export const ScheduleBatches = lazy(() => import('./pages/batches/ScheduleBatches'));
 
 export const DefinitionPage = lazy(() =>
   import('./pages/definition/DefinitionPage'),

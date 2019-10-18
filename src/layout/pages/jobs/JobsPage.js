@@ -1,13 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { BatchModal } from 'layout/components/modals/batch-modal/BatchModal';
-import {
-  getJobsConfig as getJobsConfigAction,
-  addJobBatch as addJobBatchAction,
-} from 'ducks/operators/jobs';
+import { getJobsConfig as getJobsConfigAction } from 'ducks/operators/jobs';
 import { handleError } from 'ducks/operators/settings';
-import { logoutUser, setLoading } from 'ducks/actions';
+import {
+  setBatchRow as setBatchRowAction,
+  setLoading,
+  toggleModal as toggleModalAction,
+} from 'ducks/actions';
 import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import {
@@ -22,6 +22,7 @@ import {
 } from './JobsCells';
 import cn from './Jobs.module.scss';
 import { JobTabs } from './JobTabs';
+import { Modals } from 'layout/components/modals/Modals';
 
 class JobsPage extends PureComponent {
   static propTypes = {
@@ -34,10 +35,7 @@ class JobsPage extends PureComponent {
   };
 
   state = {
-    open: false,
-    jobId: '',
     tab: 0,
-    batchName: '',
     headers: [
       {
         title: 'Job',
@@ -76,9 +74,9 @@ class JobsPage extends PureComponent {
         uuid: uuid.v1(),
       },
       {
-        title: 'Created',
+        title: 'Created At',
         show: true,
-        min_width: '125px',
+        min_width: '135px',
         sort: false,
         uuid: uuid.v1(),
       },
@@ -156,25 +154,6 @@ class JobsPage extends PureComponent {
     setLoadingAction(false);
   };
 
-  handleCloseBatch = () => {
-    this.setState({ open: false });
-  };
-
-  changeBatchName = name => {
-    this.setState({ batchName: name });
-  };
-
-  createBatch = async () => {
-    const { batchName, jobId } = this.state;
-    const { addJobBatch, getJobsConfig, location } = this.props;
-    const [, , project_id, , filter] = location.pathname.split('/');
-    await addJobBatch({ batch_name: batchName, job_id: jobId, project_id });
-
-    await getJobsConfig(project_id, filter);
-
-    this.setState({ open: false, batchName: '', jobId: '' });
-  };
-
   handleChangeTab = (e, value) => {
     const { history, location } = this.props;
     const [, , project_id] = location.pathname.split('/');
@@ -207,18 +186,19 @@ class JobsPage extends PureComponent {
     history.push(`/projects/${project_id}/jobs/${route}`);
   };
 
-  openModal = row => {
-    this.setState({
-      open: true,
+  openModal = async row => {
+    const { toggleModal, setBatchRow } = this.props;
+    await setBatchRow({
       jobId: row.job_id,
       batchName: row.batch_name,
     });
+    await toggleModal({ batch: true });
   };
 
   render() {
-    const { open, batchName, tab, headers, settings, callbacks } = this.state;
-    const { jobs } = this.props;
-    const { jobs_search_input } = this.props.settings;
+    const { tab, headers, settings, callbacks } = this.state;
+    const { jobs, location, history } = this.props;
+    const { jobs_search_input, modals } = this.props.settings;
 
     return (
       <>
@@ -245,13 +225,7 @@ class JobsPage extends PureComponent {
             </div>
           </JobTabs>
         </div>
-        <BatchModal
-          handleCloseBatch={this.handleCloseBatch}
-          open={open}
-          batchName={batchName}
-          changeBatchName={this.changeBatchName}
-          createBatch={this.createBatch}
-        />
+        <Modals batch history={history} location={location} opened={modals.batch}/>
       </>
     );
   }
@@ -266,10 +240,10 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getJobsConfig: getJobsConfigAction,
-  logoutUserProps: logoutUser,
   handleErrorAction: handleError,
   setLoadingAction: setLoading,
-  addJobBatch: addJobBatchAction,
+  toggleModal: toggleModalAction,
+  setBatchRow: setBatchRowAction,
 };
 
 export default connect(

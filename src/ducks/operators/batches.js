@@ -2,6 +2,7 @@ import { setBatches, setBatchDefinitions } from 'ducks/actions';
 import { normalizeWithUUID } from 'utils/normalizers';
 import { getData } from 'utils/axios';
 import { handleError } from './settings';
+import { getProject } from './project';
 
 export const getBatches = (project_id) => async dispatch => {
   try {
@@ -10,6 +11,8 @@ export const getBatches = (project_id) => async dispatch => {
     const res = await getData(route);
     const batches = await normalizeWithUUID(res.data);
     await dispatch(setBatches(batches));
+    await dispatch(getProject(project_id));
+
     return batches;
   } catch (err) {
     dispatch(handleError(err));
@@ -25,6 +28,7 @@ export const getBatchDefinitions = (project_id) => async dispatch => {
     const res = await getData(route);
     const batches = await normalizeWithUUID(res.data);
     await dispatch(setBatchDefinitions(batches));
+    await dispatch(getProject(project_id));
     return batches;
   } catch (err) {
     dispatch(handleError(err));

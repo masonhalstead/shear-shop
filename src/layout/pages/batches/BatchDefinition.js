@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { BatchDefinitionTabs } from './BatchDefinitionTabs';
-import { TableWrapper } from 'components/table/TableWrapper';
+import { TableWrapper } from '../../../components/table/TableWrapper';
 import {
   BatchNameCell,
   BatchDescriptionCell,
@@ -10,11 +10,11 @@ import {
   CalendarCell,
 } from './BatchDefinitionCells';
 import uuid from 'uuid';
-import { getBatchDefinitions as getBatchDefinitionsAction } from 'ducks/operators/batches';
-import { handleError as handleErrorAction } from 'ducks/operators/settings';
-import { setLoading } from 'ducks/actions';
+import { getBatchDefinitions as getBatchDefinitionsAction } from '../../../ducks/operators/batches';
+import { handleError as handleErrorAction } from '../../../ducks/operators/settings';
+import { setLoading } from '../../../ducks/actions';
 import { connect } from 'react-redux';
-import cn from '../Batches.module.scss';
+import cn from './Batches.module.scss';
 
 class BatchDefinition extends PureComponent {
   state = {

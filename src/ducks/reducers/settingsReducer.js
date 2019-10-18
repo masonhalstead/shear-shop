@@ -9,6 +9,7 @@ import {
   SET_CURRENT_DEFINITIONS,
   SAVE_DEFINITION,
   DEFINITION_CHANGED,
+  EDIT_BATCH_ROW,
 } from 'ducks/types';
 
 const settingsState = {
@@ -23,6 +24,11 @@ const settingsState = {
     project: false,
     definitions: false,
     run_definition: false,
+    batch: false,
+  },
+  editBatchRow: {
+    jobId: '',
+    batchName: '',
   },
 };
 export const settingsReducer = (state = settingsState, action) => {
@@ -39,6 +45,11 @@ export const settingsReducer = (state = settingsState, action) => {
       return { ...state, definitionChanged: action.payload };
     case TOGGLE_MODAL:
       return { ...state, modals: { ...state.modals, ...action.payload } };
+    case EDIT_BATCH_ROW:
+      return {
+        ...state,
+        editBatchRow: { ...state.editBatchRow, ...action.payload },
+      };
     case SHOW_ALERT:
       return {
         ...state,

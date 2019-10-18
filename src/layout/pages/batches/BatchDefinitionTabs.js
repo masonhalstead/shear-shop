@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Tabs, Tab } from '@material-ui/core';
-import cn from '../Batches.module.scss';
+import cn from './Batches.module.scss';
 
 export class BatchDefinitionTabs extends PureComponent {
   static propTypes = {
