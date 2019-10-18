@@ -78,11 +78,6 @@ export const setBatch = batch => ({
   type: constants.SET_BATCH,
   payload: batch,
 });
-
-export const setBatchRow = batch => ({
-  type: constants.EDIT_BATCH_ROW,
-  payload: batch,
-});
 export const clearBatch = () => ({
   type: constants.CLEAR_BATCH,
 });

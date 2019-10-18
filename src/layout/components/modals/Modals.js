@@ -1,39 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { RunDefinition } from './run-definition/RunDefinition';
-import CreateProjectModal from './project-modal/CreateProject';
-import CreateJobDefinition from './create-job-definition/CreateJobDefinition';
+import { CreateProject } from './project-modal/CreateProject';
+import { CreateJobDefinition } from './create-job-definition/CreateJobDefinition';
 import BatchModal from './batch-modal/BatchModal';
 
-export class Modals extends React.PureComponent {
+class ModalsWithRouter extends React.PureComponent {
   static propTypes = {
     internal: PropTypes.bool,
+    history: PropTypes.object,
   };
 
   static defaultProps = {
     internal: false,
-    opened: false,
   };
 
   render() {
-    const {
-      internal,
-      project,
-      history,
-      definition,
-      location,
-      batch,
-      opened
-    } = this.props;
+    const { internal, history } = this.props;
     return (
       <>
-        {internal && <RunDefinition />}
-        {project && <CreateProjectModal history={history} />}
-        {definition && (
-          <CreateJobDefinition history={history} location={location} />
+        {internal && (
+          <>
+            <RunDefinition />
+            <CreateProject history={history} />
+            <CreateJobDefinition history={history} />
+            <BatchModal history={history} />
+          </>
         )}
-        {batch && opened && <BatchModal history={history} location={location} />}
       </>
     );
   }
 }
+
+export const Modals = withRouter(ModalsWithRouter);

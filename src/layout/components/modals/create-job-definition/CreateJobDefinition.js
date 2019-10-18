@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-
+import PropTypes from 'prop-types';
 import { Button, Dialog } from '@material-ui/core';
-import cn from './CreateJobDefinition.module.scss';
 import {
   DialogActions,
   DialogContent,
@@ -18,22 +17,33 @@ import {
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import { setLoading, toggleModal as toggleModalAction } from 'ducks/actions';
 import { connect } from 'react-redux';
+import cn from './CreateJobDefinition.module.scss';
 
-class CreateJobDefinition extends PureComponent {
+class ConnectedCreateJobDefinition extends PureComponent {
+  static propTypes = {
+    createDefinition: PropTypes.func,
+    getDefinitionsConfig: PropTypes.func,
+    setLoadingAction: PropTypes.func,
+    toggleModal: PropTypes.func,
+    handleError: PropTypes.func,
+    history: PropTypes.object,
+    modals: PropTypes.object,
+  };
+
   state = {
-    jobName: '',
+    job_definition_name: '',
   };
 
   openDefinition = definition_id => {
-    const { history, location } = this.props;
-    const [, , project_id, filter] = location.pathname.split('/');
+    const { history } = this.props;
+    const [, , project_id, filter] = history.location.pathname.split('/');
     history.push(
       `/projects/${project_id}/definitions/${filter}/definition/${definition_id}`,
     );
   };
 
   changeJobName = name => {
-    this.setState({ jobName: name });
+    this.setState({ job_definition_name: name });
   };
 
   handleCloseDefinition = () => {
@@ -42,76 +52,48 @@ class CreateJobDefinition extends PureComponent {
   };
 
   createDefinition = async () => {
-    const { jobName } = this.state;
+    const { job_definition_name } = this.state;
     const {
       createDefinition,
       getDefinitionsConfig,
-      location,
+      history,
       setLoadingAction,
+      handleError,
       toggleModal,
     } = this.props;
 
-    const [, , project_id] = location.pathname.split('/');
+    const [, , project_id] = history.location.pathname.split('/');
 
-    await setLoadingAction(true);
-
-    const definition_id = await createDefinition({
-      job_definition_name: jobName,
-      project_id,
-      description: 'Testing Project Description',
-      docker_image: '/dockerimage',
-      result_method_id: 1,
-      startup_command: 'nothing',
-      timeout_seconds: 86400,
-      stdout_success_text: 'winning',
-      region_endpoint_hint: 'us-east-1e',
-      cpu: 0,
-      gpu: 0,
-      memory_gb: 0,
-      parameters: [
-        {
-          parameter_name: 'Parameter2',
-          parameter_direction_id: 1,
-          parameter_method_id: 1,
-          is_required: true,
-          is_encrypted: true,
-          parameter_value: 'Default Value',
-          description: 'Parameter description',
-          command_line_prefix: null,
-          command_line_assignment_char: null,
-          command_line_escaped: null,
-          command_line_ignore_name: null,
-          reference_type_id: null,
-          reference_id: null,
-          reference_parameter_name: null,
-        },
-        {
-          parameter_name: 'Parameter3',
-          parameter_direction_id: 2,
-          parameter_method_id: 1,
-          is_required: true,
-          is_encrypted: true,
-          parameter_value: 'Default Value',
-          description: 'Parameter description',
-          command_line_prefix: null,
-          command_line_assignment_char: null,
-          command_line_escaped: null,
-          command_line_ignore_name: null,
-          reference_type_id: null,
-          reference_id: null,
-          reference_parameter_name: null,
-        },
-      ],
-    });
-    await toggleModal({ definitions: false });
-
-    await getDefinitionsConfig(project_id);
-    await setLoadingAction(false);
-    this.openDefinition(definition_id);
+    setLoadingAction(true);
+    try {
+      const definition_id = await createDefinition({
+        job_definition_name,
+        project_id,
+        description: 'N/A',
+        docker_image: 'N/A',
+        result_method_id: 1,
+        startup_command: 'N/A',
+        timeout_seconds: 0,
+        max_retries: 0,
+        stdout_success_text: null,
+        region_endpoint_hint: 'us-east-1c',
+        cpu: 0,
+        gpu: 0,
+        memory_gb: 0,
+        parameters: [],
+      });
+      await toggleModal({ definitions: false });
+      await getDefinitionsConfig(project_id);
+      this.openDefinition(definition_id);
+    } catch (err) {
+      handleError(err);
+    }
+    setLoadingAction(false);
   };
+
   render() {
-    const { modals } = this.props.settings;
-    const { jobName } = this.state;
+    const { modals } = this.props;
+    const { job_definition_name } = this.state;
 
     return (
       <Dialog
@@ -120,18 +102,19 @@ class CreateJobDefinition extends PureComponent {
         open={modals.definitions}
         classes={{ paper: cn.paper }}
       >
-        <DialogTitle id="customized-dialog-title" onClose={this.handleCloseDefinition}>
+        <DialogTitle
+          id="customized-dialog-title"
+          onClose={this.handleCloseDefinition}
+        >
           <div className={cn.title}>Create Job Definition</div>
         </DialogTitle>
         <DialogContent>
           <div className={cn.container}>
             <InputWrapper
               label="Job Definition Name"
-              value={jobName}
+              value={job_definition_name}
               component={Input}
-              handleOnChange={input =>
-                this.changeJobName(input.value)
-              }
+              handleOnChange={input => this.changeJobName(input.value)}
             />
           </div>
         </DialogContent>
@@ -146,14 +129,12 @@ class CreateJobDefinition extends PureComponent {
           </Button>
         </DialogActions>
       </Dialog>
-
-    )
+    );
   }
 }
 
 const mapStateToProps = state => ({
-  hamburger: state.hamburger,
-  settings: state.settings,
+  modals: state.settings.modals,
   project: state.project,
   projects: state.projects,
 });
@@ -167,7 +148,7 @@ const mapDispatchToProps = {
   toggleModal: toggleModalAction,
 };
 
-export default connect(
+export const CreateJobDefinition = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CreateJobDefinition);
+)(ConnectedCreateJobDefinition);

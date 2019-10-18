@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Dialog } from '@material-ui/core';
 import {
   DialogActions,
@@ -8,21 +9,27 @@ import {
 import classNames from 'classnames';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
-import cn from './CreateProject.module.scss';
-import {
-  addProject as addProjectAction,
-} from 'ducks/operators/projects';
+import { addProject as addProjectAction } from 'ducks/operators/projects';
 import {
   setProject as setProjectAction,
   toggleModal as toggleModalAction,
 } from 'ducks/actions';
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import { connect } from 'react-redux';
+import cn from './CreateProject.module.scss';
 
-class CreateProjectModal extends PureComponent {
+class ConnectedCreateProject extends PureComponent {
+  static propTypes = {
+    toggleModal: PropTypes.func,
+    addProject: PropTypes.func,
+    setProject: PropTypes.func,
+    handleError: PropTypes.func,
+    history: PropTypes.object,
+    modals: PropTypes.object,
+  };
+
   state = {
-    projectName: '',
-    open: false,
+    project_name: '',
   };
 
   handleCloseProject = () => {
@@ -31,23 +38,18 @@ class CreateProjectModal extends PureComponent {
   };
 
   changeProjectName = name => {
-    this.setState({ projectName: name });
+    this.setState({ project_name: name });
   };
 
   createProject = async () => {
-    const { projectName } = this.state;
-    const {
-      addProject,
-      toggleModal,
-      setProject,
-      handleError,
-    } = this.props;
-    const projectId = await addProject({ project_name: projectName });
+    const { project_name } = this.state;
+    const { addProject, toggleModal, setProject, handleError } = this.props;
+    const project_id = await addProject({ project_name });
     await toggleModal({ project: false });
     this.setState({ project_name: '' });
     try {
-      setProject({ project_id: projectId, project_name: projectName });
-      this.goToJobsPage({ project_id: projectId, project_name: projectName });
+      setProject({ project_id, project_name });
+      this.goToJobsPage({ project_id, project_name });
     } catch (err) {
       handleError(err);
     }
@@ -60,13 +62,13 @@ class CreateProjectModal extends PureComponent {
   };
 
   render() {
-    const { projectName } = this.state;
-    const { settings } = this.props;
+    const { project_name } = this.state;
+    const { modals } = this.props;
     return (
       <Dialog
         onClose={this.handleCloseProject}
         aria-labelledby="customized-dialog-title"
-        open={settings.modals.project}
+        open={modals.project}
         classes={{ paper: cn.paper }}
       >
         <DialogTitle
@@ -79,7 +81,7 @@ class CreateProjectModal extends PureComponent {
           <div className={cn.container}>
             <InputWrapper
               label="Project Name"
-              value={projectName}
+              value={project_name}
               component={Input}
               handleOnChange={input => this.changeProjectName(input.value)}
             />
@@ -101,7 +103,7 @@ class CreateProjectModal extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  settings: state.settings,
+  modals: state.settings.modals,
 });
 
 const mapDispatchToProps = {
@@ -111,7 +113,7 @@ const mapDispatchToProps = {
   toggleModal: toggleModalAction,
 };
 
-export default connect(
+export const CreateProject = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CreateProjectModal);
+)(ConnectedCreateProject);
