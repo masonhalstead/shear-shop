@@ -1,5 +1,5 @@
 import { Button, Dialog } from '@material-ui/core';
-import cn from './BatchModal.module.scss';
+import PropTypes from 'prop-types';
 import {
   DialogActions,
   DialogContent,
@@ -9,66 +9,77 @@ import classNames from 'classnames';
 import React, { PureComponent } from 'react';
 import { InputWrapper } from 'components/inputs/InputWrapper';
 import { Input } from 'components/inputs/Input';
+import { getJobsConfig as getJobsConfigAction } from 'ducks/operators/jobs';
+import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import {
-  addJobBatch as addJobBatchAction,
-  getJobsConfig as getJobsConfigAction,
-} from 'ducks/operators/jobs';
-
-import { handleError } from 'ducks/operators/settings';
-import {
-  setLoading,
+  setLoading as setLoadingAction,
   toggleModal as toggleModalAction,
-  setBatchRow as setBatchRowAction,
+  clearJob as clearJobAction,
 } from 'ducks/actions';
 import { connect } from 'react-redux';
+import cn from './BatchModal.module.scss';
 
 class BatchModal extends PureComponent {
-  state = {
-    batchName: this.props.settings.editBatchRow.batchName,
+  static propTypes = {
+    getJobsConfig: PropTypes.func,
+    clearJob: PropTypes.func,
+    setLoading: PropTypes.func,
+    toggleModal: PropTypes.func,
+    handleError: PropTypes.func,
+    history: PropTypes.func,
+    job: PropTypes.object,
+    modals: PropTypes.object,
   };
 
+  state = {
+    job_id: null,
+    batch_descriptor: null,
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.job.job_id !== state.job_id) {
+      return {
+        job_id: props.job.job_id,
+        batch_descriptor: props.job.batch_descriptor,
+      };
+    }
+    return null;
+  }
+
   handleCloseBatch = () => {
-    const { toggleModal, setBatchRow } = this.props;
+    const { toggleModal, clearJob } = this.props;
+    clearJob();
     toggleModal({ batch: false });
-    setBatchRow({
-      jobId: '',
-      batchName: '',
-    });
   };
 
   changeBatchName = name => {
-    this.setState({ batchName: name });
+    this.setState({ batch_descriptor: name });
   };
 
   createBatch = async () => {
-    const { batchName, jobId } = this.state;
-    const {
-      addJobBatch,
-      getJobsConfig,
-      location,
-      toggleModal,
-      setBatchRow,
-    } = this.props;
-    const [, , project_id, , filter] = location.pathname.split('/');
-    toggleModal({ batch: false });
-    await addJobBatch({ batch_name: batchName, job_id: jobId, project_id });
+    const { getJobsConfig, history, setLoading, handleError } = this.props;
 
-    await getJobsConfig(project_id, filter);
+    const [, , project_id, , filter] = history.location.pathname.split('/');
 
-    setBatchRow({
-      jobId: '',
-      batchName: '',
-    });
+    setLoading(true);
+    try {
+      // TODO: Still need a route to update batch descriptor
+      await getJobsConfig(project_id, filter);
+      this.handleCloseBatch();
+    } catch (err) {
+      handleError(err);
+    }
+    setLoading(false);
   };
 
   render() {
-    const { batchName } = this.state;
-    const { settings } = this.props;
+    const { batch_descriptor } = this.state;
+    const { modals } = this.props;
     return (
       <Dialog
         onClose={this.handleCloseBatch}
         aria-labelledby="customized-dialog-title"
-        open={settings.modals.batch}
+        open={modals.batch}
         classes={{ paper: cn.paper }}
       >
         <DialogTitle
@@ -80,8 +91,8 @@ class BatchModal extends PureComponent {
         <DialogContent>
           <div className={cn.container}>
             <InputWrapper
-              label="Batch Name"
-              value={batchName}
+              label="Batch Descriptor"
+              value={batch_descriptor}
               component={Input}
               handleOnChange={input => this.changeBatchName(input.value)}
             />
@@ -103,19 +114,16 @@ class BatchModal extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  hamburger: state.hamburger,
-  projects: state.projects,
-  settings: state.settings,
-  jobs: state.jobs,
+  modals: state.settings.modals,
+  job: state.job,
 });
 
 const mapDispatchToProps = {
   getJobsConfig: getJobsConfigAction,
-  handleErrorAction: handleError,
-  setLoadingAction: setLoading,
-  addJobBatch: addJobBatchAction,
+  handleError: handleErrorAction,
+  setLoading: setLoadingAction,
+  clearJob: clearJobAction,
   toggleModal: toggleModalAction,
-  setBatchRow: setBatchRowAction,
 };
 
 export default connect(

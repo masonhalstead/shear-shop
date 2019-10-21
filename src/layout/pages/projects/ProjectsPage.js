@@ -7,20 +7,18 @@ import {
   clearProject as clearProjectAction,
   setProject as setProjectAction,
 } from 'ducks/actions';
-import {
-  getProjects as getProjectsAction,
-} from 'ducks/operators/projects';
+import { getProjects as getProjectsAction } from 'ducks/operators/projects';
 import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import cn from './Project.module.scss';
-import { Modals } from 'layout/components/modals/Modals';
 
 class ProjectsPage extends PureComponent {
   static propTypes = {
     projects: PropTypes.array,
     history: PropTypes.object,
     getProjects: PropTypes.func,
+    setProject: PropTypes.func,
+    clearProject: PropTypes.func,
     toggleModal: PropTypes.func,
     setLoading: PropTypes.func,
     handleError: PropTypes.func,
@@ -49,40 +47,37 @@ class ProjectsPage extends PureComponent {
   };
 
   render() {
-    const { projects, history, toggleModal } = this.props;
+    const { projects, toggleModal } = this.props;
     return (
-      <>
-        <div className={cn.pageWrapper}>
-          <div
-            className={cn.projectItemAdd}
-            onClick={() => {
-              toggleModal({ project: true });
-            }}
-          >
-            <FontAwesomeIcon icon="plus" color="#818fa3" />
-            <p>Add project</p>
-          </div>
-          {projects.length > 0 &&
-            projects.map(project => (
-              <div
-                key={project.project_name}
-                className={cn.projectItem}
-                onClick={() => {
-                  this.goToJobsPage(project);
-                }}
-              >
-                <div>
-                  <div className={cn.projectHeader}>{project.project_name}</div>
-                </div>
-                <div className={cn.projectFooter}>
-                  <FontAwesomeIcon icon="server" color="#818fa3" />
-                  <p className={cn.secondText}>{project.organization_name}</p>
-                </div>
-              </div>
-            ))}
+      <div className={cn.pageWrapper}>
+        <div
+          className={cn.projectItemAdd}
+          onClick={() => {
+            toggleModal({ project: true });
+          }}
+        >
+          <FontAwesomeIcon icon="plus" color="#818fa3" />
+          <p>Add project</p>
         </div>
-        <Modals project history={history}/>
-      </>
+        {projects.length > 0 &&
+          projects.map(project => (
+            <div
+              key={project.project_name}
+              className={cn.projectItem}
+              onClick={() => {
+                this.goToJobsPage(project);
+              }}
+            >
+              <div>
+                <div className={cn.projectHeader}>{project.project_name}</div>
+              </div>
+              <div className={cn.projectFooter}>
+                <FontAwesomeIcon icon="server" color="#818fa3" />
+                <p className={cn.secondText}>{project.organization_name}</p>
+              </div>
+            </div>
+          ))}
+      </div>
     );
   }
 }

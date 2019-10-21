@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 import { getJobsConfig as getJobsConfigAction } from 'ducks/operators/jobs';
 import { handleError } from 'ducks/operators/settings';
 import {
-  setBatchRow as setBatchRowAction,
   setLoading,
   toggleModal as toggleModalAction,
+  setJob as setJobAction,
 } from 'ducks/actions';
 import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
+import { Modals } from 'layout/components/modals/Modals';
 import {
   JobCell,
   StateCell,
@@ -22,16 +23,18 @@ import {
 } from './JobsCells';
 import cn from './Jobs.module.scss';
 import { JobTabs } from './JobTabs';
-import { Modals } from 'layout/components/modals/Modals';
 
 class JobsPage extends PureComponent {
   static propTypes = {
     getJobsConfig: PropTypes.func,
     setLoadingAction: PropTypes.func,
     handleErrorAction: PropTypes.func,
-    addJobBatch: PropTypes.func,
+    toggleModal: PropTypes.func,
+    setJob: PropTypes.func,
     settings: PropTypes.object,
     location: PropTypes.object,
+    history: PropTypes.object,
+    jobs: PropTypes.array,
   };
 
   state = {
@@ -187,11 +190,8 @@ class JobsPage extends PureComponent {
   };
 
   openModal = async row => {
-    const { toggleModal, setBatchRow } = this.props;
-    await setBatchRow({
-      jobId: row.job_id,
-      batchName: row.batch_name,
-    });
+    const { toggleModal, setJob } = this.props;
+    await setJob(row);
     await toggleModal({ batch: true });
   };
 
@@ -225,7 +225,12 @@ class JobsPage extends PureComponent {
             </div>
           </JobTabs>
         </div>
-        <Modals batch history={history} location={location} opened={modals.batch}/>
+        <Modals
+          batch
+          history={history}
+          location={location}
+          opened={modals.batch}
+        />
       </>
     );
   }
@@ -241,9 +246,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getJobsConfig: getJobsConfigAction,
   handleErrorAction: handleError,
+  setJob: setJobAction,
   setLoadingAction: setLoading,
   toggleModal: toggleModalAction,
-  setBatchRow: setBatchRowAction,
 };
 
 export default connect(
