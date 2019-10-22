@@ -121,7 +121,6 @@ class JobPage extends PureComponent {
     let content = '';
     let contentInside = '';
     if (tab === 0) {
-      console.log(stdOutData);
       content = <STDOutTab stdOutData={stdOutData} />;
     }
     if (tab === 1) {

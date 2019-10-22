@@ -68,11 +68,7 @@ CreatedByCell.propTypes = {
 
 export const CreatedCell = ({ row }) => (
   <p className={classNames(cn.cell, cn.textCenter, cn.overflow)}>
-    {`${new Date(row.created_datetime_utc).toLocaleDateString(
-      'en-US',
-    )} ${new Date(row.created_datetime_utc).toLocaleTimeString('en-US', {
-      hour12: false,
-    })}`}
+    {row.created_at}
   </p>
 );
 CreatedCell.propTypes = {
