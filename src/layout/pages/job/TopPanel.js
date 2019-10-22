@@ -11,15 +11,7 @@ export const TopPanel = ({ data }) => (
       <div className={cn.padding}>
         <div className={cn.label}>Description</div>
         <div className={cn.text}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
+          {data.description}
         </div>
       </div>
       <div className={cn.padding}>
@@ -31,21 +23,21 @@ export const TopPanel = ({ data }) => (
       <div className={cn.rowConfig}>
         <div className={cn.textAlign}>
           <div className={cn.label}>CPU</div>
-          <div className={cn.text}>{data.cpu || 0}</div>
+          <div className={cn.text}>{data.required_cpu || 0}</div>
         </div>
         <div className={cn.textAlign}>
           <div className={cn.label}>GPU</div>
-          <div className={cn.text}>{data.gpu || 0}</div>
+          <div className={cn.text}>{data.required_gpu || 0}</div>
         </div>
         <div className={cn.textAlign}>
           <div className={cn.label}>Memory GB</div>
-          <div className={cn.text}>{data.memory_gb || 0}</div>
+          <div className={cn.text}>{data.required_memory_gb || 0}</div>
         </div>
       </div>
       <div className={cn.rowConfig}>
         <div className={cn.textAlign}>
           <div className={cn.label}>Max Retries</div>
-          <div className={cn.text}>{data.max_retries}</div>
+          <div className={cn.text}>{data.retries}</div>
         </div>
         <div className={cn.textAlign}>
           <div className={cn.label}>Timeout</div>

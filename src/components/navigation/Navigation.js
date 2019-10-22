@@ -169,6 +169,22 @@ class NavigationWrapper extends PureComponent {
             </>
           )}
         />
+        <Route
+          path={routes.SCHEDULE_BATCHES}
+          exact
+          render={() => (
+            <>
+              <Link
+                to="/"
+                className={cn.header}
+              >
+                Schedule Batches
+              </Link>
+              <div className={cn.flex} />
+            </>
+          )}
+        />
+
         <div className={cn.logout} onClick={this.logout}>
           <FontAwesomeIcon icon="sign-out-alt" color="#818fa3" />
         </div>
@@ -258,7 +274,7 @@ const JobsRoute = ({
   </>
 );
 
-const JobRoute = ({ route, job }) => {
+const JobRoute = ({ route, job: {job} }) => {
   let label = 'Last 24 Hours';
 
   if (route[4] === '7') {

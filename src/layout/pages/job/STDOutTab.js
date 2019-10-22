@@ -4,7 +4,7 @@ import React from 'react';
 export const STDOutTab = ({ stdOutData }) => (
   <div className={cn.stdoutContainer}>
     {stdOutData.map(data => (
-      <p key={data} className={cn.stdoutText}>{data}</p>
+      <p key={data} className={cn.stdoutText}>{data.job_state_name}</p>
     ))}
   </div>
 );

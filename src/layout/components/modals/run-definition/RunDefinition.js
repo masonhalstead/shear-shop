@@ -225,6 +225,7 @@ class ConnectedRunDefinition extends PureComponent {
     setLoadingAction(true);
     try {
       await postData('/jobs/create', data);
+      this.handleModalClose();
     } catch (err) {
       handleErrorProps(err, data);
     }
@@ -235,7 +236,7 @@ class ConnectedRunDefinition extends PureComponent {
     params
       .filter(param => !!param.parameter_name)
       .map(param => ({
-        parameter_name: param.parameter_name,
+        parameter_name: param.parameter_name.split(' ').join(''),
         parameter_direction_id: param.parameter_direction_id,
         parameter_method_id: param.parameter_method_id,
         is_required: param.is_required,

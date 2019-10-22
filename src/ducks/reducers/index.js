@@ -12,6 +12,9 @@ import { settingsReducer } from './settingsReducer';
 import { projectsReducer } from './projectsReducer';
 import { projectReducer } from './projectReducer';
 import { batchDefinitionReducer } from './batchDefinitionReducer';
+import { scheduleBatchesReducer } from './scheduleBatchesReducer';
+import { containerReducer } from './containerReducer';
+import { containersReducer } from './containersReducer';
 
 const rootReducer = combineReducers({
   batch: batchReducer,
@@ -27,6 +30,9 @@ const rootReducer = combineReducers({
   projects: projectsReducer,
   project: projectReducer,
   batchDefinitions: batchDefinitionReducer,
+  scheduleBatches: scheduleBatchesReducer,
+  container: containerReducer,
+  containers: containersReducer,
 });
 
 export default rootReducer;

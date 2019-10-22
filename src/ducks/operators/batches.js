@@ -1,4 +1,4 @@
-import { setBatches, setBatchDefinitions } from 'ducks/actions';
+import { setBatches, setBatchDefinitions, setScheduleBatches } from 'ducks/actions';
 import { normalizeWithUUID } from 'utils/normalizers';
 import { getData } from 'utils/axios';
 import { handleError } from './settings';
@@ -33,6 +33,22 @@ export const getBatchDefinitions = (project_id) => async dispatch => {
   } catch (err) {
     dispatch(handleError(err));
     dispatch(setBatchDefinitions([]));
+    throw err;
+  }
+};
+
+export const getScheduleBatches = (project_id) => async dispatch => {
+  try {
+    const route = `/projects/${project_id}/scheduled_batches/list`;
+
+    const res = await getData(route);
+    const batches = await normalizeWithUUID(res.data);
+    await dispatch(setScheduleBatches(batches));
+    await dispatch(getProject(project_id));
+    return batches;
+  } catch (err) {
+    dispatch(handleError(err));
+    dispatch(setScheduleBatches([]));
     throw err;
   }
 };

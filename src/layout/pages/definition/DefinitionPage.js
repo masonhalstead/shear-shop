@@ -447,7 +447,6 @@ class DefinitionPage extends Component {
       // Added this instead of ShouldComponentUpdate which was firing twice
       this.handleSubmit();
     }
-    console.log(this.props);
     return (
       <div className={cn.pageWrapper}>
         <DefinitionBlock

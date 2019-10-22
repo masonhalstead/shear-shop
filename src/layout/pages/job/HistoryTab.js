@@ -3,56 +3,6 @@ import { TableWrapper } from 'components/table/TableWrapper';
 import uuid from 'uuid';
 import { HistoryStateCell, HistoryTimestampCell } from './JobCells';
 
-const data = [
-  {
-    state: '344523 Assigned to server',
-    timestamp: '8/13/2019 23:03:32',
-    id: 1,
-    type: 'run',
-  },
-  {
-    state: '344523 Assigned to server',
-    timestamp: '8/13/2019 23:03:32',
-    type: 'run',
-
-    id: 1,
-  },
-  {
-    state: '344523 Assigned to server',
-    timestamp: '8/13/2019 23:03:32',
-    type: 'run',
-
-    id: 1,
-  },
-  {
-    state: '344523 Assigned to server',
-    timestamp: '8/13/2019 23:03:32',
-    type: 'run',
-
-    id: 1,
-  },
-  {
-    state: '344523 Assigned to server',
-    timestamp: '8/13/2019 23:03:32',
-    type: 'run',
-
-    id: 1,
-  },
-  {
-    state: '344523 Assigned to server',
-    timestamp: '8/13/2019 23:03:32',
-    type: 'run',
-
-    id: 1,
-  },
-  {
-    state: '344523 Assigned to server',
-    timestamp: '8/13/2019 23:03:32',
-    type: 'run',
-
-    id: 1,
-  },
-];
 export class HistoryTab extends Component {
   state = {
     headers: [
@@ -77,6 +27,7 @@ export class HistoryTab extends Component {
   };
 
   render() {
+    const {data} = this.props;
     return (
       <TableWrapper
         rows={data}

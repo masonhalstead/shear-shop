@@ -42,6 +42,12 @@ export const setJob = job => ({
   type: constants.SET_JOB,
   payload: job,
 });
+
+// ------ JOB ACTIONS ------ //
+export const setJobLogs = logs => ({
+  type: constants.SET_JOB_LOGS,
+  payload: logs,
+});
 export const clearJob = () => ({
   type: constants.CLEAR_JOB,
 });
@@ -78,6 +84,11 @@ export const setBatch = batch => ({
   type: constants.SET_BATCH,
   payload: batch,
 });
+
+export const setBatchRow = batch => ({
+  type: constants.EDIT_BATCH_ROW,
+  payload: batch,
+});
 export const clearBatch = () => ({
   type: constants.CLEAR_BATCH,
 });
@@ -95,6 +106,11 @@ export const setBatchDefinitions = batches => ({
   type: constants.SET_BATCH_DEFINITIONS,
   payload: batches,
 });
+
+export const setScheduleBatches = batches => ({
+  type: constants.SET_SCHEDULE_BATCHES,
+  payload: batches,
+});
 export const clearBatchDefinitions = () => ({
   type: constants.CLEAR_BATCH_DEFINITIONS,
 });
@@ -103,6 +119,10 @@ export const clearBatchDefinitions = () => ({
 export const setContainer = container => ({
   type: constants.SET_CONTAINER,
   payload: container,
+});
+export const setContainers = containers => ({
+  type: constants.SET_CONTAINERS,
+  payload: containers,
 });
 export const clearContainer = () => ({
   type: constants.CLEAR_CONTAINER,

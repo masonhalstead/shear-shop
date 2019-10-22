@@ -21,7 +21,7 @@ JobCell.propTypes = {
 export const StateCell = ({ row }) => (
   <p
     className={classNames(cn.cell, cn.textCenter, {
-      [cn.stateRed]: [1].includes(row.job_state_id),
+      [cn.stateRed]: [99].includes(row.job_state_id),
       [cn.stateGreen]: [2, 7, 8].includes(row.job_state_id),
       [cn.stateGrey]: [3].includes(row.job_state_id),
     })}

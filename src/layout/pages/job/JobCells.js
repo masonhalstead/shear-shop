@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
+import { toTime } from 'utils/helpers';
 import cn from './Job.module.scss';
 
 export const ParameterNameCell = ({ row }) => (
@@ -28,7 +29,7 @@ ParameterDescriptionCell.propTypes = {
 export const HistoryStateCell = ({ row }) => (
   <p className={cn.cell}>
     <FontAwesomeIcon title="Job State" icon="circle" className={cn.stateIcon} />
-    {row.state}
+    {row.job_state_name}
   </p>
 );
 HistoryStateCell.propTypes = {
@@ -36,7 +37,13 @@ HistoryStateCell.propTypes = {
 };
 
 export const HistoryTimestampCell = ({ row }) => (
-  <p className={classNames(cn.cell, cn.textCenter)}>{row.timestamp}</p>
+  <p className={classNames(cn.cell, cn.textCenter)}>
+    {`${new Date(row.datetime_utc).toLocaleDateString(
+      'en-US',
+    )} ${new Date(row.datetime_utc).toLocaleTimeString('en-US', {
+      hour12: false,
+    })}`}
+  </p>
 );
 HistoryTimestampCell.propTypes = {
   row: PropTypes.object,
