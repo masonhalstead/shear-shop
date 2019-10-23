@@ -1,6 +1,6 @@
 import { setJobs } from 'ducks/actions';
 import { getProject } from 'ducks/operators/project';
-import { normalizeWithUUID } from 'utils/normalizers';
+import { normalizeJobs } from 'utils/normalizers';
 import { postData } from 'utils/axios';
 import { handleError } from './settings';
 
@@ -53,7 +53,7 @@ export const getJobs = (project_id, filter) => async dispatch => {
     ...filter,
   };
   const res = await postData(`/projects/${project_id}/jobs/query`, data);
-  const job = await normalizeWithUUID(res.data);
+  const job = await normalizeJobs(res.data);
   await dispatch(setJobs(job));
   return job;
 };

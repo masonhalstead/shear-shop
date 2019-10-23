@@ -11,6 +11,21 @@ export function normalizeWithUUID(array) {
   }));
 }
 
+export function normalizeJobs(data) {
+  return data.map(job => normalizeJob(job));
+}
+
+export function normalizeJob(data) {
+  return {
+    ...data,
+    duration_masked: moment
+      .duration(data.duration_seconds, 'seconds')
+      .format('d[d] h[h] m[m] s[s]'),
+    created_at: moment(data.created_datetime_utc).format('M/D/YY hh:mm'),
+    uuid: uuid.v1(),
+  };
+}
+
 export function normalizeDefinitions(data, filter) {
   return data
     .filter(definition => definition.is_archived === filter)
@@ -28,8 +43,9 @@ export function normalizeDefinition(data) {
     location,
     timeout_masked: moment
       .duration(data.timeout_seconds, 'seconds')
-      .format('hh [hrs] mm [mins]'),
+      .format('h[hrs] m[mins]'),
     timeout: moment.duration(data.timeout_seconds, 'seconds').format('hh:mm'),
+    created_at: moment(data.created_datetime_utc).format('M/D/YY hh:mm'),
     uuid: uuid.v1(),
   };
 }

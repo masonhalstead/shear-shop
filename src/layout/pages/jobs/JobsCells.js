@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import cn from './Jobs.module.scss';
-import { toTime } from 'utils/helpers';
 
 export const JobCell = ({ row, paths }) => (
   <Link
@@ -16,6 +15,7 @@ export const JobCell = ({ row, paths }) => (
 );
 JobCell.propTypes = {
   row: PropTypes.object,
+  paths: PropTypes.array,
 };
 
 export const StateCell = ({ row }) => (
@@ -34,7 +34,7 @@ StateCell.propTypes = {
 };
 
 export const DurationCell = ({ row }) => (
-  <p className={classNames(cn.cell, cn.textRight)}>{toTime(row.duration_seconds)}</p>
+  <p className={classNames(cn.cell, cn.textRight)}>{row.duration_masked}</p>
 );
 DurationCell.propTypes = {
   row: PropTypes.object,
@@ -60,11 +60,7 @@ CreatedByCell.propTypes = {
 
 export const CreatedCell = ({ row }) => (
   <p className={classNames(cn.cell, cn.textCenter, cn.overflow)}>
-    {`${new Date(row.start_datetime_utc).toLocaleDateString(
-      'en-US',
-    )} ${new Date(row.start_datetime_utc).toLocaleTimeString('en-US', {
-      hour12: false,
-    })}`}
+    {row.created_at}
   </p>
 );
 CreatedCell.propTypes = {
