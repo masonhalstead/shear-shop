@@ -1,5 +1,6 @@
-import { setJob, setLoading, setJobLogs, setContainers } from 'ducks/actions';
+import { setJob, setLoading, setJobLogs } from 'ducks/actions';
 import { getParameters } from 'ducks/operators/parameters';
+import { getContainer } from 'ducks/operators/container';
 import { getData, postData } from 'utils/axios';
 import { handleError } from './settings';
 import { getProject } from './project';
@@ -18,6 +19,7 @@ export const getJob = (project_id, job_id) => async dispatch => {
   try {
     const res = await getData(`/jobs/${job_id}/`);
     await dispatch(setJob(res.data));
+    await dispatch(getContainer(job_id));
     await dispatch(getProject(project_id));
     return res.data;
   } catch (err) {
@@ -58,18 +60,6 @@ export const stopJob = (job_id, data) => async dispatch => {
     return res.data;
   } catch (err) {
     dispatch(handleError(err, data));
-
-    throw err;
-  }
-};
-
-export const getContainers = job_id => async dispatch => {
-  try {
-    const res = await getData(`/jobs/${job_id}/containers/current`);
-    await dispatch(setContainers(res.data));
-    return res.data;
-  } catch (err) {
-    dispatch(handleError(err, job_id));
 
     throw err;
   }

@@ -36,8 +36,8 @@ const tabStyle = {
 class JobPage extends PureComponent {
   static propTypes = {
     getProjects: PropTypes.func,
-    projects: PropTypes.array,
-    history: PropTypes.object,
+    container: PropTypes.object,
+    job: PropTypes.object,
     location: PropTypes.object,
   };
 
@@ -115,15 +115,15 @@ class JobPage extends PureComponent {
   };
 
   render() {
-    const { tab, stdOutData } = this.state;
+    const { tab } = this.state;
     const {
       job: { job, job_logs },
+      container: { standard_out },
     } = this.props;
     let content = '';
     let contentInside = '';
     if (tab === 0) {
-      console.log(stdOutData);
-      content = <STDOutTab stdOutData={stdOutData} />;
+      content = <STDOutTab standard_out={standard_out} />;
     }
     if (tab === 1) {
       content = <InputTab rows={[]} />;
@@ -194,6 +194,7 @@ class JobPage extends PureComponent {
 const mapStateToProps = state => ({
   projects: state.projects,
   settings: state.settings,
+  container: state.container,
   job: state.job,
 });
 

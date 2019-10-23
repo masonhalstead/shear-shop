@@ -11,7 +11,7 @@ export const DefaultCell = ({ row, callbacks }) => (
     value={row.parameter_value}
     component={Input}
     margin="4px 5px"
-    handleOnChange={input => callbacks.saveValue(row, input.value)}
+    handleOnChange={input => callbacks.saveDefault(row, input.value)}
   />
 );
 DefaultCell.propTypes = {

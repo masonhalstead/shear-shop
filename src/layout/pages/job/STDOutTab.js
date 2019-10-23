@@ -1,10 +1,8 @@
-import cn from './Job.module.scss';
 import React from 'react';
+import cn from './Job.module.scss';
 
-export const STDOutTab = ({ stdOutData }) => (
-  <div className={cn.stdoutContainer}>
-    {stdOutData.map(data => (
-      <p key={data} className={cn.stdoutText}>{data.job_state_name}</p>
-    ))}
-  </div>
-);
+export const STDOutTab = ({ standard_out }) => (
+    <div className={cn.stdoutContainer}>
+      <p className={cn.stdoutText}>{standard_out}</p>
+    </div>
+  );
