@@ -10,9 +10,9 @@ import {
   CalendarCell,
 } from './BatchDefinitionCells';
 import uuid from 'uuid';
-import { getBatchDefinitions as getBatchDefinitionsAction } from '../../../ducks/operators/batches';
-import { handleError as handleErrorAction } from '../../../ducks/operators/settings';
-import { setLoading } from '../../../ducks/actions';
+import { getBatchDefinitions as getBatchDefinitionsAction } from 'ducks/operators/batches';
+import { handleError as handleErrorAction } from 'ducks/operators/settings';
+import { setLoading } from 'ducks/actions';
 import { connect } from 'react-redux';
 import cn from './Batches.module.scss';
 

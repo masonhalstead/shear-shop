@@ -15,22 +15,46 @@ export const getJobConfig = (project_id, job_id) => async dispatch => {
 };
 
 export const getJob = (project_id, job_id) => async dispatch => {
-  const res = await getData(`/jobs/${job_id}/`);
-  await dispatch(setJob(res.data));
-  await dispatch(getProject(project_id));
-  return res.data;
+  try {
+    const res = await getData(`/jobs/${job_id}/`);
+    await dispatch(setJob(res.data));
+    await dispatch(getProject(project_id));
+    return res.data;
+  } catch (err) {
+    dispatch(handleError(err, job_id));
+
+    throw err;
+  }
 };
 
 export const getJobLog = job_id => async dispatch => {
-  const res = await getData(`/jobs/${job_id}/get_log`);
-  await dispatch(setJobLogs(res.data));
-  return res.data;
+  try {
+    const res = await getData(`/jobs/${job_id}/get_log`);
+    await dispatch(setJobLogs(res.data));
+    return res.data;
+  } catch (err) {
+    dispatch(handleError(err, job_id));
+
+    throw err;
+  }
 };
 
 export const addJob = data => async dispatch => {
   try {
     await dispatch(setLoading(true));
     const res = await postData('/jobs/create', data);
+    return res.data;
+  } catch (err) {
+    dispatch(handleError(err, data));
+
+    throw err;
+  }
+};
+
+export const stopJob = (job_id, data) => async dispatch => {
+  try {
+    await dispatch(setLoading(true));
+    const res = await postData(`/jobs/${job_id}/stop`, data);
     return res.data;
   } catch (err) {
     dispatch(handleError(err, data));

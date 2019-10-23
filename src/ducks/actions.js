@@ -5,21 +5,9 @@ export const loginUser = user => ({
   type: constants.LOGIN_USER,
   payload: user,
 });
-export const updateUser = user => ({
-  type: constants.UPDATE_USER,
-  payload: user,
-});
+
 export const logoutUser = () => ({
   type: constants.LOGOUT_USER,
-});
-
-// ------ LOOKUPS ACTIONS ------ //
-export const setLookups = lookups => ({
-  type: constants.SET_LOOKUPS,
-  payload: lookups,
-});
-export const clearLookups = () => ({
-  type: constants.CLEAR_LOOKUPS,
 });
 
 // ------ SETTINGS ACTIONS ------ //

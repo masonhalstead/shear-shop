@@ -18,6 +18,7 @@ import { handleError as handleErrorAction } from 'ducks/operators/settings';
 import { setLoading, toggleModal as toggleModalAction } from 'ducks/actions';
 import { connect } from 'react-redux';
 import cn from './CreateJobDefinition.module.scss';
+import { TextAreaWrapper } from 'components/textarea/TextAreaWrapper';
 
 class ConnectedCreateJobDefinition extends PureComponent {
   static propTypes = {
@@ -32,6 +33,8 @@ class ConnectedCreateJobDefinition extends PureComponent {
 
   state = {
     job_definition_name: '',
+    docker_image: '',
+    startup_command: '',
   };
 
   openDefinition = definition_id => {
@@ -42,8 +45,8 @@ class ConnectedCreateJobDefinition extends PureComponent {
     );
   };
 
-  changeJobName = name => {
-    this.setState({ job_definition_name: name });
+  changeParams = (name, value) => {
+    this.setState({ [name]: value });
   };
 
   handleCloseDefinition = () => {
@@ -52,7 +55,7 @@ class ConnectedCreateJobDefinition extends PureComponent {
   };
 
   createDefinition = async () => {
-    const { job_definition_name } = this.state;
+    const { job_definition_name, docker_image, startup_command } = this.state;
     const {
       createDefinition,
       getDefinitionsConfig,
@@ -70,9 +73,9 @@ class ConnectedCreateJobDefinition extends PureComponent {
         job_definition_name,
         project_id,
         description: 'N/A',
-        docker_image: 'N/A',
+        docker_image,
         result_method_id: 1,
-        startup_command: 'N/A',
+        startup_command,
         timeout_seconds: 0,
         max_retries: 0,
         stdout_success_text: null,
@@ -93,7 +96,13 @@ class ConnectedCreateJobDefinition extends PureComponent {
 
   render() {
     const { modals } = this.props;
-    const { job_definition_name } = this.state;
+    const { job_definition_name, docker_image, startup_command } = this.state;
+    const buttonStyle =
+      job_definition_name.length > 0 &&
+      docker_image.length > 0 &&
+      startup_command.length > 0
+        ? cn.btnPrimary
+        : cn.btnPrimaryDisabled;
 
     return (
       <Dialog
@@ -111,19 +120,41 @@ class ConnectedCreateJobDefinition extends PureComponent {
         <DialogContent>
           <div className={cn.container}>
             <InputWrapper
+              required
               label="Job Definition Name"
               value={job_definition_name}
               component={Input}
-              handleOnChange={input => this.changeJobName(input.value)}
+              handleOnChange={input =>
+                this.changeParams('job_definition_name', input.value)
+              }
+            />
+            <InputWrapper
+              margin="5px 0 0 0"
+              required
+              label="Docker Image"
+              value={docker_image}
+              component={Input}
+              handleOnChange={input =>
+                this.changeParams('docker_image', input.value)
+              }
+            />
+            <TextAreaWrapper
+              margin="5px 0 0 0"
+              label="Startup Command"
+              value={startup_command}
+              handleOnChange={input =>
+                this.changeParams('startup_command', input.value)
+              }
             />
           </div>
         </DialogContent>
         <DialogActions className={cn.actions}>
           <Button
+            disabled
             onClick={this.createDefinition}
             color="primary"
             size="large"
-            className={classNames(cn.btn, cn.btnPrimary)}
+            className={classNames(cn.btn, buttonStyle)}
           >
             Create Definition
           </Button>

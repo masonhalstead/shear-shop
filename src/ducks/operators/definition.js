@@ -22,10 +22,15 @@ export const getDefinitionConfig = (
 };
 
 export const getDefinition = definition_id => async dispatch => {
-  const res = await getData(`/job_definitions/${definition_id}`);
-  const definition = normalizeDefinition(res.data);
-  await dispatch(setJobDefinition(definition));
-  return definition;
+  try {
+    const res = await getData(`/job_definitions/${definition_id}`);
+    const definition = normalizeDefinition(res.data);
+    await dispatch(setJobDefinition(definition));
+    return definition;
+  } catch (err) {
+    dispatch(handleError(err, definition_id));
+    throw err;
+  }
 };
 
 export const createDefinition = data => async dispatch => {

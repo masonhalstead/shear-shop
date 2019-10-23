@@ -19,6 +19,7 @@ import { OutputTab } from './OutputTab';
 import { HistoryTab } from './HistoryTab';
 import socketIOClient from 'socket.io-client';
 import cryptoJS from 'crypto-js';
+import classNames from 'classnames';
 
 const { REACT_APP_HOST } = process.env;
 
@@ -121,6 +122,7 @@ class JobPage extends PureComponent {
     let content = '';
     let contentInside = '';
     if (tab === 0) {
+      console.log(stdOutData);
       content = <STDOutTab stdOutData={stdOutData} />;
     }
     if (tab === 1) {
@@ -140,10 +142,24 @@ class JobPage extends PureComponent {
         <Paper className={cn.contentAlignHeader}>
           <div className={cn.firstRow}>
             <div className={cn.textMarginBig}>
-              <div className={cn.circle} />
+              <div
+                className={classNames({
+                  [cn.circleRed]: [99].includes(job.job_state_id),
+                  [cn.circleGreen]: [2, 7, 8].includes(job.job_state_id),
+                  [cn.circleGray]: [3].includes(job.job_state_id),
+                })}
+              />
               <div>{`Job: ${job.job_id}`}</div>
             </div>
-            <div className={cn.textColor}>{job.job_state_name}</div>
+            <div
+              className={classNames({
+                [cn.textRed]: [99].includes(job.job_state_id),
+                [cn.textGreen]: [2, 7, 8].includes(job.job_state_id),
+                [cn.textGray]: [3].includes(job.job_state_id),
+              })}
+            >
+              {job.job_state_name}
+            </div>
           </div>
           <div className={cn.firstRow}>
             <div className={cn.textMargin}>{`Parse Logs: ${moment(

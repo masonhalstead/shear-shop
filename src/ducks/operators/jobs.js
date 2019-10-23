@@ -52,10 +52,15 @@ export const getJobs = (project_id, filter) => async dispatch => {
     days: 1,
     ...filter,
   };
-  const res = await postData(`/projects/${project_id}/jobs/query`, data);
-  const job = await normalizeJobs(res.data);
-  await dispatch(setJobs(job));
-  return job;
+  try {
+    const res = await postData(`/projects/${project_id}/jobs/query`, data);
+    const job = await normalizeJobs(res.data);
+    await dispatch(setJobs(job));
+    return job;
+  } catch (err) {
+    dispatch(handleError(err, project_id));
+    throw err;
+  }
 };
 
 export const addJobBatch = data => async dispatch => {
