@@ -59,3 +59,26 @@ export function postData(url, data) {
     },
   });
 }
+
+export function getWebSocket(url) {
+  const private_key = localStorage.getItem('private_key');
+  const public_key = localStorage.getItem('public_key');
+
+  if (!private_key || !public_key) {
+    throw new Error('Error authenticating credentials');
+  }
+  const hmac = cryptoJS.HmacSHA256(url, private_key);
+
+  return {
+    method: 'get',
+    url: `${REACT_APP_HOST}${url}`,
+    headers: {
+      public_key,
+      hash: hmac
+        .toString()
+        .replace('-', '')
+        .toLowerCase(),
+      'Content-Type': 'application/json',
+    },
+  };
+}

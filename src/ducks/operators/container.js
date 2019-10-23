@@ -5,10 +5,7 @@ import { handleError } from './settings';
 export const getContainer = job_id => async dispatch => {
   try {
     const res = await getData(`/jobs/${job_id}/containers/current`);
-    const standard_out = await dispatch(
-      getContainerStandardOut(res.data.container_id),
-    );
-    await dispatch(setContainer({ ...res.data, standard_out }));
+    await dispatch(setContainer(res.data));
     return res.data;
   } catch (err) {
     dispatch(handleError(err, job_id));

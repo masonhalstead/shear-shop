@@ -10,7 +10,6 @@ export const getJobConfig = (project_id, job_id) => async dispatch => {
   const [job] = await Promise.all([
     dispatch(getJob(project_id, job_id)),
     dispatch(getParameters(job_route)),
-    dispatch(getJobLog(job_id)),
   ]);
   return job;
 };

@@ -10,6 +10,10 @@ import {
   setLoading,
   setJob as setCurrentJobAction,
 } from 'ducks/actions';
+import { getWebSocket } from 'utils/axios';
+import socketIOClient from 'socket.io-client';
+import { normalizeSeconds } from 'utils/normalizers';
+import classNames from 'classnames';
 import cn from './Job.module.scss';
 import { JobTabs } from './JobTabs';
 import { TopPanel } from './TopPanel';
@@ -17,11 +21,6 @@ import { STDOutTab } from './STDOutTab';
 import { InputTab } from './InputTab';
 import { OutputTab } from './OutputTab';
 import { HistoryTab } from './HistoryTab';
-import socketIOClient from 'socket.io-client';
-import cryptoJS from 'crypto-js';
-import classNames from 'classnames';
-
-const { REACT_APP_HOST } = process.env;
 
 const tabStyle = {
   width: '300px',
@@ -35,75 +34,72 @@ const tabStyle = {
 
 class JobPage extends PureComponent {
   static propTypes = {
-    getProjects: PropTypes.func,
+    getJobConfig: PropTypes.func,
+    setLoadingAction: PropTypes.func,
     container: PropTypes.object,
     job: PropTypes.object,
     location: PropTypes.object,
   };
 
-  static getDerivedStateFromProps(props, state) {
-    const filter = props.location.pathname.split('/');
-    const label = filter[4].charAt(0).toUpperCase() + filter[4].slice(1);
-
-    if (state.label !== label) {
-      return { label };
-    }
-
-    return state;
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      tab: 0,
-      endpoint: 'http://127.0.0.1:4001',
-      stdOutData: [],
-    };
-    const [, , , , , , job_id] = props.location.pathname.split('/');
-
-    const private_key = localStorage.getItem('private_key');
-    const public_key = localStorage.getItem('public_key');
-
-    if (!private_key || !public_key) {
-      throw new Error('Error authenticating credentials');
-    }
-    const hmac = cryptoJS.HmacSHA256(`/jobs/${job_id}/get_log`, private_key);
-    const hash = hmac
-      .toString()
-      .replace('-', '')
-      .toLowerCase();
-    this.socket = socketIOClient(this.state.endpoint, {
-      query: {
-        jobId: job_id,
-        private_key: localStorage.getItem('private_key'),
-        public_key: localStorage.getItem('public_key'),
-        host: REACT_APP_HOST,
-        hash,
-      },
-    });
-  }
+  state = {
+    tab: 0,
+    job_id: '',
+    job_state_id: '',
+    job_state_name: '',
+    job_definition_name: '',
+    batch_name: '',
+    datetime_utc: new Date(),
+    seconds_running: 0,
+    standard_out: '',
+  };
 
   componentDidMount() {
     this.setInitialData();
   }
 
-  componentWillUnmount() {
-    this.socket.disconnect();
-    this.setState({ changes: false });
-  }
+  handleWebSocket = () => {
+    const { job_id } = this.props.job;
+    const { container_id } = this.props.container;
+    const socket = socketIOClient('http://127.0.0.1:4001');
+
+    socket.on('connect', () => {
+      const payload = {
+        get_log: getWebSocket(`/jobs/${job_id}/get_log`),
+        standard_out: getWebSocket(
+          `/containers/${container_id}/stdout_contents`,
+        ),
+      };
+      socket.send(payload);
+    });
+    socket.on('FromAPI', data => {
+      const { datetime_utc } = data.get_log;
+
+      const current_date = moment().utc();
+      const compare_date = moment(datetime_utc).utc();
+      const difference = current_date.diff(compare_date, 'seconds');
+      this.setState({
+        ...data.get_log,
+        seconds_running: difference,
+        standard_out: data.standard_out,
+      });
+    });
+  };
 
   setInitialData = async () => {
-    const { getJobConfig, setLoadingAction, location, setJob } = this.props;
+    const { getJobConfig, setLoadingAction, location } = this.props;
     const [, , project_id, , , , job_id] = location.pathname.split('/');
-
-    this.socket.on('FromAPI', data => {
-      this.setState({ stdOutData: [...data] });
-    });
 
     try {
       await setLoadingAction(true);
       const job = await getJobConfig(project_id, job_id);
-      setJob({ ...job, job_id, jobName: job.job_definition_name });
+      this.setState({
+        job_id: job.job_id,
+        job_state_id: job.job_state_id,
+        job_state_name: job.job_state_name,
+        job_definition_name: job.job_definition_name,
+        batch_name: job.batch_name,
+      });
+      await this.handleWebSocket();
     } catch (err) {
       Sentry.captureException(err);
     }
@@ -115,10 +111,19 @@ class JobPage extends PureComponent {
   };
 
   render() {
-    const { tab } = this.state;
     const {
-      job: { job, job_logs },
-      container: { standard_out },
+      tab,
+      standard_out,
+      job_id,
+      job_state_id,
+      job_state_name,
+      job_definition_name,
+      batch_name,
+      seconds_running,
+      datetime_utc,
+    } = this.state;
+    const {
+      job: { logs, ...rest },
     } = this.props;
     let content = '';
     let contentInside = '';
@@ -127,14 +132,14 @@ class JobPage extends PureComponent {
     }
     if (tab === 1) {
       content = <InputTab rows={[]} />;
-      contentInside = <TopPanel data={job} />;
+      contentInside = <TopPanel data={rest} />;
     }
     if (tab === 2) {
       content = <OutputTab options={this.options} />;
     }
 
     if (tab === 3) {
-      content = <HistoryTab options={this.options} data={job_logs} />;
+      content = <HistoryTab options={this.options} data={logs} />;
     }
 
     return (
@@ -144,33 +149,33 @@ class JobPage extends PureComponent {
             <div className={cn.textMarginBig}>
               <div
                 className={classNames({
-                  [cn.circleRed]: [99].includes(job.job_state_id),
-                  [cn.circleGreen]: [2, 7, 8].includes(job.job_state_id),
-                  [cn.circleGray]: [3].includes(job.job_state_id),
+                  [cn.circleRed]: [99].includes(job_state_id),
+                  [cn.circleGreen]: [2, 7, 8].includes(job_state_id),
+                  [cn.circleGray]: [3].includes(job_state_id),
                 })}
               />
-              <div>{`Job: ${job.job_id}`}</div>
+              <div>{`Job: ${job_id}`}</div>
             </div>
             <div
               className={classNames({
-                [cn.textRed]: [99].includes(job.job_state_id),
-                [cn.textGreen]: [2, 7, 8].includes(job.job_state_id),
-                [cn.textGray]: [3].includes(job.job_state_id),
+                [cn.textRed]: [99].includes(job_state_id),
+                [cn.textGreen]: [2, 7, 8].includes(job_state_id),
+                [cn.textGray]: [3].includes(job_state_id),
               })}
             >
-              {job.job_state_name}
+              {job_state_name}
             </div>
           </div>
           <div className={cn.firstRow}>
-            <div className={cn.textMargin}>{`Parse Logs: ${moment(
-              job.start_datetime_utc,
-            ).format('MM/DD/YYYY HH:MM:ss')}`}</div>
+            <div className={cn.textMargin}>{`${job_definition_name}: ${moment(
+              datetime_utc,
+            ).format('MM/DD/YYYY')}`}</div>
             <div className={cn.textMargin}>
-              {moment(job.duration_seconds).format('HH:MM:ss')}
+              {normalizeSeconds(seconds_running, 'd[d] h[h] m[m] s[s]')}
             </div>
           </div>
           <div className={cn.firstRow}>
-            <div className={cn.textMargin}>{job.project_name}</div>
+            <div className={cn.textMargin}>{batch_name}</div>
             <div className={cn.textMargin}>460MB / 900MB</div>
           </div>
         </Paper>

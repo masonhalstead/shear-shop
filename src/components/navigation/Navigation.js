@@ -144,10 +144,7 @@ class NavigationWrapper extends PureComponent {
           exact
           render={() => (
             <>
-              <Link
-                to="/"
-                className={cn.header}
-              >
+              <Link to="/" className={cn.header}>
                 Batches
               </Link>
               <div className={cn.flex} />
@@ -159,10 +156,7 @@ class NavigationWrapper extends PureComponent {
           exact
           render={() => (
             <>
-              <Link
-                to="/"
-                className={cn.header}
-              >
+              <Link to="/" className={cn.header}>
                 Batch Definitions
               </Link>
               <div className={cn.flex} />
@@ -174,10 +168,7 @@ class NavigationWrapper extends PureComponent {
           exact
           render={() => (
             <>
-              <Link
-                to="/"
-                className={cn.header}
-              >
+              <Link to="/" className={cn.header}>
                 Schedule Batches
               </Link>
               <div className={cn.flex} />
@@ -212,7 +203,6 @@ const mapDispatchToProps = {
   setCurrentDefinitions: setCurrentDefinitionsAction,
   logoutUser: logoutUserProps,
 };
-
 
 export const Navigation = withRouter(
   connect(
@@ -274,7 +264,7 @@ const JobsRoute = ({
   </>
 );
 
-const JobRoute = ({ route, job: {job} }) => {
+const JobRoute = ({ route, job }) => {
   let label = 'Last 24 Hours';
 
   if (route[4] === '7') {

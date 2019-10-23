@@ -26,6 +26,10 @@ export function normalizeJob(data) {
   };
 }
 
+export function normalizeSeconds(date, format = 's[sec]') {
+  return moment.duration(date, 'seconds').format(format);
+}
+
 export function normalizeDefinitions(data, filter) {
   return data
     .filter(definition => definition.is_archived === filter)

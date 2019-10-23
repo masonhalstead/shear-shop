@@ -1,4 +1,3 @@
-const cryptoJS = require('crypto-js');
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -10,46 +9,50 @@ socketServer.use(index);
 const server = http.createServer(socketServer);
 const io = socketIo(server);
 let interval;
+
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
 io.on('connection', socket => {
   console.log('New client connected');
+  let payload = {
+    get_log: false,
+    standard_out: false,
+  };
   if (interval) {
     clearInterval(interval);
   }
-  let jobId = socket.handshake.query['jobId'];
-  let private_key = socket.handshake.query['private_key'];
-  let public_key = socket.handshake.query['public_key'];
-  let host = socket.handshake.query['host'];
-  let hash = socket.handshake.query['hash'];
-
-  interval = setInterval(() => getApiAndEmit(socket, jobId, private_key, public_key, host, hash), 2000);
+  socket.on('message', message => {
+    payload = {
+      get_log: message.get_log || false,
+      standard_out: message.standard_out || false,
+    };
+  });
+  interval = setInterval(() => getApiAndEmit(socket, payload), 1000);
   socket.on('disconnect', () => {
     clearInterval(interval);
     console.log('Client disconnected');
   });
 });
-
-const getApiAndEmit = async (socket, jobId, private_key, public_key, host, hash) => {
+const getApiAndEmit = async (socket, payload) => {
   try {
-
-    if (!private_key || !public_key) {
-      throw new Error('Error authenticating credentials');
+    let get_log;
+    let standard_out;
+    let length = 1;
+    if (payload.get_log) {
+      get_log = await axios(payload.get_log);
+      length = get_log.data.length - 1;
     }
-    const url = `/jobs/${jobId}/get_log`;
-
-    const res = await axios({
-      method: 'get',
-      url: `${host}${url}`,
-      headers: {
-        public_key: public_key,
-        'content-type': 'application/json',
-        hash: hash
-      },
+    if (payload.standard_out) {
+      standard_out = await axios(payload.standard_out);
+    }
+    socket.emit('FromAPI', {
+      get_log: get_log.data[length] || {},
+      standard_out: standard_out.data || '',
     });
-    socket.emit('FromAPI', res.data);
   } catch (error) {
-    console.log(error);
-    console.error(`Error: ${error}`);
+    socket.emit('FromAPI', {
+      get_log: {},
+      standard_out: error.message,
+    });
   }
 };
