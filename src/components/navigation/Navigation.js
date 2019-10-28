@@ -276,10 +276,8 @@ const JobRoute = ({ route, job }) => {
   return (
     <>
       <Link to={`/projects/${route[2]}/jobs/${route[4]}`} className={cn.header}>
-        Jobs
+        Jobs: {label}
       </Link>
-      <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
-      <div className={cn.header}>{label}</div>
       <FontAwesomeIcon className={cn.separator} icon="chevron-right" />
       <div className={cn.header}>{job.job_id}</div>
       <div className={cn.flex} />
@@ -338,6 +336,7 @@ const DefinitionsRoute = ({
       left_icon="search"
       width="400px"
       margin="0px 0px 0px 0px"
+
       handleOnChange={handleOnSearch}
     />
     <div

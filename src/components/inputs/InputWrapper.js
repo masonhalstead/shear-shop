@@ -33,6 +33,8 @@ export class InputWrapper extends Component {
     left_icon: false,
     right_icon: false,
     type: 'text',
+    display: 'initial',
+    height: 'auto',
     margin: '0px',
     bulk: false,
     handleClose() {},
@@ -67,11 +69,16 @@ export class InputWrapper extends Component {
       right_icon,
       bulk,
       margin,
+      display,
       width,
+      height,
       ...rest
     } = this.props;
     return (
-      <div className={cn.inputWrapper} style={{ margin, width }}>
+      <div
+        className={cn.inputWrapper}
+        style={{ margin, width, height, display }}
+      >
         {label && (
           <InputLabel label={label} handleClose={this.props.handleClose} />
         )}

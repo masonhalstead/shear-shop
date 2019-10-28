@@ -3,6 +3,7 @@
 .inputWrapper {
   overflow: hidden;
   width: 100%;
+  align-items: center; // set for when display flex is active
 }
 .inputContainer {
   display: flex;
@@ -50,7 +51,7 @@
     text-overflow: ellipsis;
     word-break: break-all;
     white-space: nowrap;
-    color: #444;
+    color: #62738d;
     font-size: 13px;
     margin: 0px;
     
@@ -90,6 +91,8 @@
   width: 100%;
   margin: 0px;
 }
+.inputContainer:hover .selectValue,
+.inputContainer:hover .inputRightIcon,
 .inputLeftIcon:hover,
 .inputRightIcon:hover,
 .inputIcon:hover svg {

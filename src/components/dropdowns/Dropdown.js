@@ -11,6 +11,7 @@ export class Dropdown extends Component {
     right_icon: PropTypes.any,
     placeholder: PropTypes.string,
     type: PropTypes.string,
+    height: PropTypes.string,
     disabled: PropTypes.bool,
     value: PropTypes.string,
     empty_text: PropTypes.string,
@@ -36,6 +37,7 @@ export class Dropdown extends Component {
     extended: [],
     inner_title: false,
     row_key: 'uuid',
+    height: 'auto',
     empty_text: 'Nothing to select',
     bulk: false,
   };
@@ -56,6 +58,7 @@ export class Dropdown extends Component {
       type,
       margin,
       rows,
+      height,
       extended,
       inner_title,
       row_key,
@@ -69,6 +72,7 @@ export class Dropdown extends Component {
         disabled={disabled}
         bulk={bulk}
         margin={margin}
+        height={height}
         input={{
           component: InputSelect,
           label,
@@ -76,6 +80,7 @@ export class Dropdown extends Component {
           right_icon,
           placeholder,
           disabled,
+          height,
           value,
           type,
         }}

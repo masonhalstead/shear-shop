@@ -14,14 +14,16 @@ export class ConnectedDropdownNav extends Component {
     placeholder: PropTypes.string,
     type: PropTypes.string,
     disabled: PropTypes.bool,
-    value: PropTypes.string,
     empty_text: PropTypes.string,
-    rows: PropTypes.array,
+    height: PropTypes.string,
     extended: PropTypes.array,
     inner_title: PropTypes.any,
-    row_key: PropTypes.string,
+    display: PropTypes.string,
+    list_id: PropTypes.any,
+    route_id: PropTypes.string,
+    list_key: PropTypes.string,
+    list_name: PropTypes.string,
     margin: PropTypes.string,
-    bulk: PropTypes.bool,
     handleOnSelect: PropTypes.func,
   };
 
@@ -31,15 +33,13 @@ export class ConnectedDropdownNav extends Component {
     right_icon: 'sort',
     placeholder: 'Projects',
     type: 'text',
+    height: '100%',
+    display: 'flex',
     disabled: false,
-    value: '',
     margin: '',
-    rows: [],
     extended: [],
     inner_title: false,
-    row_key: 'uuid',
     empty_text: 'Nothing to select',
-    bulk: false,
   };
 
   handleOnSelect = row => {
@@ -70,6 +70,8 @@ export class ConnectedDropdownNav extends Component {
       margin,
       list_key,
       extended,
+      height,
+      display,
       inner_title,
       list_name,
       empty_text,
@@ -82,6 +84,7 @@ export class ConnectedDropdownNav extends Component {
         bulk
         margin={margin}
         width="auto"
+        height={height}
         input={{
           component: InputSelect,
           label,
@@ -91,6 +94,8 @@ export class ConnectedDropdownNav extends Component {
           disabled,
           value,
           type,
+          display,
+          height,
         }}
         select={{
           component: Select,

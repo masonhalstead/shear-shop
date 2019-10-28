@@ -8,6 +8,7 @@ export const SelectContainer = ({
   select,
   margin,
   width,
+  height,
   disabled,
   bulk,
   handleOnKeyDown,
@@ -49,7 +50,11 @@ export const SelectContainer = ({
   }, [open]);
   const { component: Select } = select;
   return (
-    <div ref={node} className={cn.selectContainer} style={{ margin, width }}>
+    <div
+      ref={node}
+      className={cn.selectContainer}
+      style={{ margin, width, height }}
+    >
       <InputWrapper
         {...input}
         bulk={bulk}
@@ -81,6 +86,7 @@ SelectContainer.defaultProps = {
   disabled: false,
   margin: '',
   width: '100%',
+  height: 'auto',
   bulk: false,
   handleOnKeyDown: () => {},
   handleOnChange: () => {},

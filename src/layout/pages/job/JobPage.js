@@ -124,7 +124,8 @@ class JobPage extends PureComponent {
       datetime_utc,
     } = this.state;
     const {
-      job: { logs, ...rest },
+      job: { logs, required_memory_gb, ...rest },
+      container: { max_memory_mb },
       parameters,
     } = this.props;
     let content = '';
@@ -134,11 +135,24 @@ class JobPage extends PureComponent {
       content = <STDOutTab standard_out={standard_out} />;
     }
     if (tab === 1) {
-      content = <InputTab rows={parameters.filter(filter => filter.parameter_direction_id === 1)} />;
-      contentInside = <TopPanel data={rest} />;
+      content = (
+        <InputTab
+          rows={parameters.filter(
+            filter => filter.parameter_direction_id === 1,
+          )}
+        />
+      );
+      contentInside = <TopPanel data={{ ...rest, required_memory_gb }} />;
     }
     if (tab === 2) {
-      content = <OutputTab options={this.options} rows={parameters.filter(filter => filter.parameter_direction_id === 2)}/>;
+      content = (
+        <OutputTab
+          options={this.options}
+          rows={parameters.filter(
+            filter => filter.parameter_direction_id === 2,
+          )}
+        />
+      );
     }
 
     if (tab === 3) {
@@ -179,7 +193,9 @@ class JobPage extends PureComponent {
           </div>
           <div className={cn.firstRow}>
             <div className={cn.textMargin}>{batch_name}</div>
-            <div className={cn.textMargin}>460MB / 900MB</div>
+            <div className={cn.textMargin}>
+              {max_memory_mb || 0}MB / {required_memory_gb * 1000}MB
+            </div>
           </div>
         </Paper>
         <Paper className={cn.contentAlignSecond}>
