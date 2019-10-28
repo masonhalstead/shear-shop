@@ -12,7 +12,7 @@ import CloseIcon from '@material-ui/icons/Close';
 const styles = theme => ({
   root: {
     margin: 0,
-    padding: 10,
+    padding: '0 10px 10px 10px',
   },
   closeButton: {
     position: 'absolute',
@@ -51,7 +51,7 @@ const DialogContent = withStyles(theme => ({
 const DialogActions = withStyles(theme => ({
   root: {
     margin: 0,
-    padding: 10,
+    padding: '10px 10px 0 10px',
   },
 }))(MuiDialogActions);
 

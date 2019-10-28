@@ -92,6 +92,7 @@ class JobPage extends PureComponent {
     try {
       await setLoadingAction(true);
       const job = await getJobConfig(project_id, job_id);
+      console.log(job);
       this.setState({
         job_id: job.job_id,
         job_state_id: job.job_state_id,
@@ -124,22 +125,24 @@ class JobPage extends PureComponent {
     } = this.state;
     const {
       job: { logs, ...rest },
+      parameters,
     } = this.props;
     let content = '';
     let contentInside = '';
+
     if (tab === 0) {
       content = <STDOutTab standard_out={standard_out} />;
     }
     if (tab === 1) {
-      content = <InputTab rows={[]} />;
+      content = <InputTab rows={parameters.filter(filter => filter.parameter_direction_id === 1)} />;
       contentInside = <TopPanel data={rest} />;
     }
     if (tab === 2) {
-      content = <OutputTab options={this.options} />;
+      content = <OutputTab options={this.options} rows={parameters.filter(filter => filter.parameter_direction_id === 2)}/>;
     }
 
     if (tab === 3) {
-      content = <HistoryTab options={this.options} data={logs} />;
+      content = <HistoryTab options={this.options} rows={logs} />;
     }
 
     return (
@@ -201,6 +204,7 @@ const mapStateToProps = state => ({
   settings: state.settings,
   container: state.container,
   job: state.job,
+  parameters: state.parameters,
 });
 
 const mapDispatchToProps = {

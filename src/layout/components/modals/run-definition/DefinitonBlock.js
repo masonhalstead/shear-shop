@@ -11,7 +11,7 @@ import { Dropdown } from 'components/dropdowns/Dropdown';
 import uuid from 'uuid';
 import cn from './RunDefinition.module.scss';
 
-export const DefinitionBlock = ({
+export const DefinitionBlock = React.memo(({
   docker_image,
   startup_command,
   handleDefinitionBlock,
@@ -158,4 +158,4 @@ export const DefinitionBlock = ({
       </div>
     </div>
   </Typography>
-);
+));

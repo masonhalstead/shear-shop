@@ -8,9 +8,10 @@
   position: absolute !important;
   top: 15px !important;
   padding: 10px !important;
+  margin: 10px !important;
 }
 .root {
-  padding: 15px 0px !important;
+  padding: 0 !important;
 }
 .subTitle {
   color: $color-5;
@@ -22,7 +23,6 @@
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  padding: 15px 0px;
 }
 .btn {
   display: inline-block;

@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from './Job.module.scss';
 
-export const TopPanel = ({ data }) => (
+export const TopPanel = React.memo(({ data }) => (
   <>
     <div className={cn.containerTabRow}>
       <div className={cn.padding}>
@@ -56,4 +56,4 @@ export const TopPanel = ({ data }) => (
       </div>
     </div>
   </>
-);
+));

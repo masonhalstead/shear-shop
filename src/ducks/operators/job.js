@@ -19,6 +19,7 @@ export const getJob = (project_id, job_id) => async dispatch => {
     const res = await getData(`/jobs/${job_id}/`);
     await dispatch(setJob(res.data));
     await dispatch(getContainer(job_id));
+    await dispatch(getJobLog(job_id));
     await dispatch(getProject(project_id));
     return res.data;
   } catch (err) {

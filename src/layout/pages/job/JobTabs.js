@@ -1,8 +1,9 @@
 import { Tab, Tabs } from '@material-ui/core';
 import cn from './Job.module.scss';
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export const JobTabs = ({tab, handleChangeTab, tabStyle}) => (
+export const JobTabs = React.memo(({ tab, handleChangeTab, tabStyle }) => (
   <Tabs
     value={tab}
     indicatorColor="primary"
@@ -46,4 +47,10 @@ export const JobTabs = ({tab, handleChangeTab, tabStyle}) => (
       label="History"
     />
   </Tabs>
-);
+));
+
+JobTabs.propTypes = {
+  children: PropTypes.any,
+  tab: PropTypes.number,
+  handleChangeTab: PropTypes.func,
+};
