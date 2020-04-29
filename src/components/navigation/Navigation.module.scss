@@ -1,57 +1,37 @@
 @import "src/scss/styles";
 
+.navigationWrapper {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    height: 50px;
+    width: 100%;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid lighten(#292929,10%);
+    z-index: 2;
+    background: #292929;
+}
 .navigationContainer {
     display: flex;
     align-items: center;
-    height: 46px;
+    max-width: 1250px;
     width: 100%;
-    padding-left: 15px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
-    border-bottom: 1px solid #cfd7e6;
-    background: #fff;
+    margin: auto;
 }
-
-.header {
-    display: flex;
-    align-items: center;
-    padding: 0px 5px;
-    font-size: 13px;
-    font-weight: 400;
-    cursor: pointer;
-    color: #62738d;
-}
-.header:hover {
-    color: #3e96ed;
-}
-
-.iconContainer {
-    display: flex;
-    align-self: stretch;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    width: 50px;
-}
-
-.logout {
-    display: flex;
-    align-self: stretch;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    width: 50px;
-    border-left: 1px solid #cfd7e6;
-}
-.logout:hover svg, .iconContainer:hover svg {
-    color: #3e96ed;
-}
-
-.separator {
-    margin-left: 30px !important;
-    margin-right: 30px !important;
-    color: #818fa3;
-}
-
-.flex {
+.flexGrow {
     flex-grow: 1;
+}
+.navigationLink {
+    font-family: 'Raleway', sans-serif;
+    text-transform: uppercase;
+    color: #fff;
+    cursor: pointer;
+    padding: 0px 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    align-items: stretch;
+    font-weight: 600;
+}
+.navigationLink:hover {
+    color: #d9ba75;
 }

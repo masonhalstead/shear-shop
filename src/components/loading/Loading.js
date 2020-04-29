@@ -23,7 +23,7 @@ export class Loading extends PureComponent {
         <img
           className={classNames(cn.spinner)}
           src={`${PUBLIC_URL}/spinner.gif`}
-          alt="Loading Andromeda Dashboard"
+          alt="Loading Shop"
         />
       </div>
     );
