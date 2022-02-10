@@ -13,7 +13,7 @@
     "env-cmd": "^9.0.3",
     "font-awesome": "^4.7.0",
     "google-maps-react": "^2.0.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "prettier": "^1.18.2",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
